@@ -29,3 +29,4 @@ export interface ApiResponse<T> {
 export type Id = string;
 
 export * from './user';
+export * from './business';
