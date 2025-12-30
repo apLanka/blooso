@@ -33,6 +33,7 @@ model User {
 
   sessions      Session[]
   refreshTokens RefreshToken[]
+  businesses    Business[]
 
   @@map("users")
 }
@@ -65,4 +66,64 @@ model RefreshToken {
   @@index([userId])
   @@index([token])
   @@map("refresh_tokens")
+}
+
+model Business {
+  id          String   @id @default(uuid())
+  ownerId     String
+  name        String
+  slug        String   @unique
+  description String?
+  logoUrl     String?
+  category    String
+  settings    Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner    User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  locations Location[]
+
+  @@index([ownerId])
+  @@index([slug])
+  @@map("businesses")
+}
+
+model Location {
+  id         String   @id @default(uuid())
+  businessId String
+  name       String
+  address    String
+  city       String?
+  state      String?
+  postalCode String?
+  country    String
+  lat        Float?
+  lng        Float?
+  timezone   String   @default("UTC")
+  phone      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  business      Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessHours BusinessHours[]
+
+  @@index([businessId])
+  @@map("locations")
+}
+
+model BusinessHours {
+  id         String   @id @default(uuid())
+  locationId String
+  dayOfWeek  Int // 0 = Sunday, 6 = Saturday
+  openTime   String // "09:00"
+  closeTime  String // "17:00"
+  isClosed   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([locationId, dayOfWeek])
+  @@index([locationId])
+  @@map("business_hours")
 }
