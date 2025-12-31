@@ -4,7 +4,7 @@
 **Date:** March 9, 2026  
 **Status:** Active  
 **Total Tasks:** 218  
-**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks)  
+**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks)  
 **Estimated Duration:** 22 weeks (11 sprints × 2 weeks)  
 **Related:**
 
@@ -104,47 +104,48 @@
 
 ---
 
-## Sprint 2 — Business Onboarding
+## Sprint 2 — Business Onboarding ✅ Complete
 
 **Goal:** Business owners create and configure their business  
 **Duration:** Week 5–6  
-**Total Points:** 46
+**Total Points:** 46  
+**Completed:** March 22, 2026
 
 ### Backend
 
 | ID    | Task                                                               | Type    | Priority | Estimate | Depends On | Acceptance Criteria                                                                | Status |
 | ----- | ------------------------------------------------------------------ | ------- | -------- | -------- | ---------- | ---------------------------------------------------------------------------------- | ------ |
-| S2-01 | Prisma schema: `businesses`, `locations`, `business_hours`         | backend | P0       | 3        | S1-01      | Migration runs, relations defined, indexes on `slug` (unique)                      | todo   |
-| S2-02 | Create `BusinessModule` (controller, service, repository)          | backend | P0       | 2        | S2-01      | Module registered, DI wired, imports PrismaModule                                  | todo   |
-| S2-03 | Implement `POST /v1/businesses`                                    | backend | P0       | 3        | S2-02      | Creates business, auto-generates unique slug from name, sets current user as owner | todo   |
-| S2-04 | Implement slug generation utility                                  | backend | P1       | 2        | —          | Converts name to URL-safe slug, appends number if duplicate exists                 | todo   |
-| S2-05 | Implement `GET /v1/businesses/:id`                                 | backend | P0       | 2        | S2-02      | Returns business with locations and hours, requires auth + ownership               | todo   |
-| S2-06 | Implement `PATCH /v1/businesses/:id`                               | backend | P1       | 2        | S2-02      | Updates business fields (name, description, logo_url, category, settings)          | todo   |
-| S2-07 | Implement `GET /v1/businesses/slug/:slug`                          | backend | P0       | 2        | S2-02      | Public endpoint (no auth), returns business profile for booking page               | todo   |
-| S2-08 | Create `BusinessContextGuard`                                      | backend | P0       | 3        | S1-11      | Verifies user is owner/manager/staff of the business in URL, injects `businessId`  | todo   |
-| S2-09 | Implement location CRUD: `POST/PATCH /v1/businesses/:id/locations` | backend | P1       | 3        | S2-08      | Create/update location with address, phone, timezone, lat/lng                      | todo   |
-| S2-10 | Implement `PUT /v1/businesses/:id/locations/:locId/hours`          | backend | P1       | 2        | S2-09      | Set/update business hours for each day of week (open_time, close_time, is_closed)  | todo   |
-| S2-11 | Swagger documentation for business endpoints                       | backend | P2       | 1        | S2-03      | All business endpoints documented with request/response schemas                    | todo   |
+| S2-01 | Prisma schema: `businesses`, `locations`, `business_hours`         | backend | P0       | 3        | S1-01      | Migration runs, relations defined, indexes on `slug` (unique)                      | done   |
+| S2-02 | Create `BusinessModule` (controller, service, repository)          | backend | P0       | 2        | S2-01      | Module registered, DI wired, imports PrismaModule                                  | done   |
+| S2-03 | Implement `POST /v1/businesses`                                    | backend | P0       | 3        | S2-02      | Creates business, auto-generates unique slug from name, sets current user as owner | done   |
+| S2-04 | Implement slug generation utility                                  | backend | P1       | 2        | —          | Converts name to URL-safe slug, appends number if duplicate exists                 | done   |
+| S2-05 | Implement `GET /v1/businesses/:id`                                 | backend | P0       | 2        | S2-02      | Returns business with locations and hours, requires auth + ownership               | done   |
+| S2-06 | Implement `PATCH /v1/businesses/:id`                               | backend | P1       | 2        | S2-02      | Updates business fields (name, description, logo_url, category, settings)          | done   |
+| S2-07 | Implement `GET /v1/businesses/slug/:slug`                          | backend | P0       | 2        | S2-02      | Public endpoint (no auth), returns business profile for booking page               | done   |
+| S2-08 | Create `BusinessContextGuard`                                      | backend | P0       | 3        | S1-11      | Verifies user is owner/manager/staff of the business in URL, injects `businessId`  | done   |
+| S2-09 | Implement location CRUD: `POST/PATCH /v1/businesses/:id/locations` | backend | P1       | 3        | S2-08      | Create/update location with address, phone, timezone, lat/lng                      | done   |
+| S2-10 | Implement `PUT /v1/businesses/:id/locations/:locId/hours`          | backend | P1       | 2        | S2-09      | Set/update business hours for each day of week (open_time, close_time, is_closed)  | done   |
+| S2-11 | Swagger documentation for business endpoints                       | backend | P2       | 1        | S2-03      | All business endpoints documented with request/response schemas                    | done   |
 
 ### Frontend
 
-| ID    | Task                                                | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                            | Status |
-| ----- | --------------------------------------------------- | -------- | -------- | -------- | ---------- | ------------------------------------------------------------------------------ | ------ |
-| S2-12 | Create `(dashboard)` layout with sidebar navigation | frontend | P0       | 5        | S0-06      | Responsive sidebar (collapsible on mobile), header with user menu, breadcrumbs | todo   |
-| S2-13 | Build onboarding wizard — Step 1: Business info     | frontend | P0       | 3        | S2-03      | Name, category (select), description. Validation. Next button                  | todo   |
-| S2-14 | Build onboarding wizard — Step 2: Location          | frontend | P0       | 3        | S2-13      | Address, phone, timezone. Optional map preview                                 | todo   |
-| S2-15 | Build onboarding wizard — Step 3: Business hours    | frontend | P0       | 3        | S2-14      | Weekly grid: set open/close times per day, toggle day off                      | todo   |
-| S2-16 | Build onboarding wizard — Completion                | frontend | P1       | 1        | S2-15      | Success screen, redirect to dashboard                                          | todo   |
-| S2-17 | Build business settings page                        | frontend | P1       | 3        | S2-12      | Edit business info, location, hours. Logo upload                               | todo   |
-| S2-18 | Integrate Uploadthing for image uploads             | frontend | P1       | 3        | —          | Business logo upload, preview, remove. Max 5MB, image types only               | todo   |
+| ID    | Task                                                | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                               | Status |
+| ----- | --------------------------------------------------- | -------- | -------- | -------- | ---------- | ----------------------------------------------------------------- | ------ |
+| S2-12 | Create `(dashboard)` layout with sidebar navigation | frontend | P0       | 5        | S0-06      | Responsive sidebar (collapsible on mobile), header with user menu | done   |
+| S2-13 | Build onboarding wizard — Step 1: Business info     | frontend | P0       | 3        | S2-03      | Name, category (select), description. Validation. Next button     | done   |
+| S2-14 | Build onboarding wizard — Step 2: Location          | frontend | P0       | 3        | S2-13      | Address, phone, timezone                                          | done   |
+| S2-15 | Build onboarding wizard — Step 3: Business hours    | frontend | P0       | 3        | S2-14      | Weekly grid: set open/close times per day, toggle day off         | done   |
+| S2-16 | Build onboarding wizard — Completion                | frontend | P1       | 1        | S2-15      | Success screen, redirect to dashboard                             | done   |
+| S2-17 | Build business settings page                        | frontend | P1       | 3        | S2-12      | Edit business info, location. Logo URL input                      | done   |
+| S2-18 | Integrate Uploadthing for image uploads             | frontend | P1       | 3        | —          | Business logo upload, preview, remove. Max 5MB, image types only  | todo   |
 
 ### Shared
 
 | ID    | Task                                  | Type   | Priority | Estimate | Depends On | Acceptance Criteria                                                        | Status |
 | ----- | ------------------------------------- | ------ | -------- | -------- | ---------- | -------------------------------------------------------------------------- | ------ |
-| S2-19 | Define business types and interfaces  | shared | P0       | 1        | S0-04      | `Business`, `Location`, `BusinessHours`, `BusinessCategory`                | todo   |
-| S2-20 | Define business Zod schemas           | shared | P0       | 1        | S0-04      | `createBusinessSchema`, `updateBusinessSchema`, `businessHoursSchema`      | todo   |
-| S2-21 | Define `BUSINESS_CATEGORIES` constant | shared | P1       | 1        | S0-04      | Array of categories: salon, barbershop, spa, wellness, nails, tattoo, etc. | todo   |
+| S2-19 | Define business types and interfaces  | shared | P0       | 1        | S0-04      | `Business`, `Location`, `BusinessHours`, `BusinessCategory`                | done   |
+| S2-20 | Define business Zod schemas           | shared | P0       | 1        | S0-04      | `createBusinessSchema`, `updateBusinessSchema`, `businessHoursSchema`      | done   |
+| S2-21 | Define `BUSINESS_CATEGORIES` constant | shared | P1       | 1        | S0-04      | Array of categories: salon, barbershop, spa, wellness, nails, tattoo, etc. | done   |
 
 ---
 
@@ -500,7 +501,7 @@
 | ---------------------------- | ------- | ------- | ----------------------------- | ------- |
 | 0 — Foundation               | 20      | 34      | Monorepo, DB, dev environment | ✅ done |
 | 1 — Authentication           | 25      | 52      | Register, login, JWT, RBAC    | ✅ done |
-| 2 — Business Onboarding      | 21      | 46      | Business creation, settings   | todo    |
+| 2 — Business Onboarding      | 21      | 46      | Business creation, settings   | ✅ done |
 | 3 — Service Management       | 15      | 36      | Service menu CRUD             | todo    |
 | 4 — Staff Management         | 18      | 42      | Staff profiles, schedules     | todo    |
 | 5 — Availability & Booking   | 18      | 47      | Core availability engine      | todo    |
@@ -543,3 +544,4 @@ S0-02 (NestJS init)
 | 1.0     | March 9, 2026  | Initial task plan                                                              |
 | 1.1     | March 9, 2026  | Sprint 0 complete — all 20 tasks marked done, Task Summary status column added |
 | 1.2     | March 15, 2026 | Sprint 1 complete — auth backend + frontend, 24 tasks marked done              |
+| 1.3     | March 22, 2026 | Sprint 2 complete — business onboarding, 20 tasks marked done                  |
