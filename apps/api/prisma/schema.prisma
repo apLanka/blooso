@@ -80,12 +80,52 @@ model Business {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  owner    User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  locations Location[]
+  owner             User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  locations         Location[]
+  serviceCategories ServiceCategory[]
+  services          Service[]
 
   @@index([ownerId])
   @@index([slug])
   @@map("businesses")
+}
+
+model ServiceCategory {
+  id         String   @id @default(uuid())
+  businessId String
+  name       String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  business Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  services Service[]
+
+  @@index([businessId])
+  @@map("service_categories")
+}
+
+model Service {
+  id                  String   @id @default(uuid())
+  businessId          String
+  categoryId          String
+  name                String
+  description         String?
+  durationMinutes     Int
+  price               Float
+  bufferBeforeMinutes Int      @default(0)
+  bufferAfterMinutes  Int      @default(0)
+  isActive            Boolean  @default(true)
+  sortOrder           Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  business Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  category ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([businessId])
+  @@index([categoryId])
+  @@map("services")
 }
 
 model Location {
