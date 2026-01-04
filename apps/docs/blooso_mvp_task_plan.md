@@ -4,7 +4,7 @@
 **Date:** March 9, 2026  
 **Status:** Active  
 **Total Tasks:** 218  
-**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks)  
+**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks), Sprint 3 (15 tasks)  
 **Estimated Duration:** 22 weeks (11 sprints × 2 weeks)  
 **Related:**
 
@@ -149,41 +149,42 @@
 
 ---
 
-## Sprint 3 — Service Management
+## Sprint 3 — Service Management ✅ Complete
 
 **Goal:** Businesses create and manage their service menu  
 **Duration:** Week 7–8  
-**Total Points:** 36
+**Total Points:** 36  
+**Completed:** March 29, 2026
 
 ### Backend
 
 | ID    | Task                                                                    | Type    | Priority | Estimate | Depends On | Acceptance Criteria                                                      | Status |
 | ----- | ----------------------------------------------------------------------- | ------- | -------- | -------- | ---------- | ------------------------------------------------------------------------ | ------ |
-| S3-01 | Prisma schema: `service_categories`, `services`                         | backend | P0       | 2        | S2-01      | Migration runs, `business_id` FK, `sort_order` on categories             | todo   |
-| S3-02 | Create `ServiceModule` (controller, service, repository)                | backend | P0       | 2        | S3-01      | Module registered, guarded by `BusinessContextGuard`                     | todo   |
-| S3-03 | Implement category CRUD: `POST/GET/PATCH/DELETE`                        | backend | P0       | 3        | S3-02      | Full CRUD at `/v1/businesses/:id/service-categories`, scoped to business | todo   |
-| S3-04 | Implement category reorder: `PATCH .../service-categories/reorder`      | backend | P2       | 2        | S3-03      | Accepts array of `{ id, sort_order }`, updates in transaction            | todo   |
-| S3-05 | Implement service CRUD: `POST/GET/PATCH/DELETE`                         | backend | P0       | 3        | S3-02      | Full CRUD at `/v1/businesses/:id/services`, includes category relation   | todo   |
-| S3-06 | Implement service activation toggle                                     | backend | P1       | 1        | S3-05      | `PATCH .../services/:id` with `{ is_active: boolean }`                   | todo   |
-| S3-07 | Implement public service list: `GET /v1/businesses/slug/:slug/services` | backend | P0       | 2        | S3-05      | No auth, returns active services grouped by category, for booking page   | todo   |
-| S3-08 | Swagger documentation for service endpoints                             | backend | P2       | 1        | S3-05      | All service endpoints documented                                         | todo   |
+| S3-01 | Prisma schema: `service_categories`, `services`                         | backend | P0       | 2        | S2-01      | Migration runs, `business_id` FK, `sort_order` on categories             | done   |
+| S3-02 | Create `ServiceModule` (controller, service, repository)                | backend | P0       | 2        | S3-01      | Module registered, guarded by `BusinessContextGuard`                     | done   |
+| S3-03 | Implement category CRUD: `POST/GET/PATCH/DELETE`                        | backend | P0       | 3        | S3-02      | Full CRUD at `/v1/businesses/:id/service-categories`, scoped to business | done   |
+| S3-04 | Implement category reorder: `PATCH .../service-categories/reorder`      | backend | P2       | 2        | S3-03      | Accepts array of `{ id, sort_order }`, updates in transaction            | done   |
+| S3-05 | Implement service CRUD: `POST/GET/PATCH/DELETE`                         | backend | P0       | 3        | S3-02      | Full CRUD at `/v1/businesses/:id/services`, includes category relation   | done   |
+| S3-06 | Implement service activation toggle                                     | backend | P1       | 1        | S3-05      | `PATCH .../services/:id` with `{ is_active: boolean }`                   | done   |
+| S3-07 | Implement public service list: `GET /v1/businesses/slug/:slug/services` | backend | P0       | 2        | S3-05      | No auth, returns active services grouped by category, for booking page   | done   |
+| S3-08 | Swagger documentation for service endpoints                             | backend | P2       | 1        | S3-05      | All service endpoints documented                                         | done   |
 
 ### Frontend
 
-| ID    | Task                                   | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                             | Status |
-| ----- | -------------------------------------- | -------- | -------- | -------- | ---------- | ------------------------------------------------------------------------------- | ------ |
-| S3-09 | Build services page (dashboard)        | frontend | P0       | 3        | S2-12      | Lists all services grouped by category, with add/edit/delete actions            | todo   |
-| S3-10 | Build category management UI           | frontend | P1       | 3        | S3-09      | Add, rename, delete categories. Drag-and-drop reorder                           | todo   |
-| S3-11 | Build service form (create/edit)       | frontend | P0       | 3        | S3-09      | Dialog/sheet: name, description, category, duration, price, buffer before/after | todo   |
-| S3-12 | Active/inactive toggle on service list | frontend | P1       | 1        | S3-09      | Switch component, optimistic update, visual indicator for inactive              | todo   |
-| S3-13 | Empty state for services page          | frontend | P2       | 1        | S3-09      | Illustration + CTA when no services exist                                       | todo   |
+| ID    | Task                                   | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                   | Status |
+| ----- | -------------------------------------- | -------- | -------- | -------- | ---------- | --------------------------------------------------------------------- | ------ |
+| S3-09 | Build services page (dashboard)        | frontend | P0       | 3        | S2-12      | Lists all services grouped by category, with add/edit/delete actions  | done   |
+| S3-10 | Build category management UI           | frontend | P1       | 3        | S3-09      | Add, rename, delete categories                                        | done   |
+| S3-11 | Build service form (create/edit)       | frontend | P0       | 3        | S3-09      | Form: name, description, category, duration, price, buffer, is_active | done   |
+| S3-12 | Active/inactive toggle on service list | frontend | P1       | 1        | S3-09      | Switch component, optimistic update, visual indicator for inactive    | done   |
+| S3-13 | Empty state for services page          | frontend | P2       | 1        | S3-09      | Illustration + CTA when no services exist                             | done   |
 
 ### Shared
 
 | ID    | Task                       | Type   | Priority | Estimate | Depends On | Acceptance Criteria                                                  | Status |
 | ----- | -------------------------- | ------ | -------- | -------- | ---------- | -------------------------------------------------------------------- | ------ |
-| S3-14 | Define service types       | shared | P0       | 1        | S0-04      | `Service`, `ServiceCategory`, `ServiceWithCategory`                  | todo   |
-| S3-15 | Define service Zod schemas | shared | P0       | 1        | S0-04      | `createServiceSchema`, `updateServiceSchema`, `createCategorySchema` | todo   |
+| S3-14 | Define service types       | shared | P0       | 1        | S0-04      | `Service`, `ServiceCategory`, `ServiceWithCategory`                  | done   |
+| S3-15 | Define service Zod schemas | shared | P0       | 1        | S0-04      | `createServiceSchema`, `updateServiceSchema`, `createCategorySchema` | done   |
 
 ---
 
@@ -502,7 +503,7 @@
 | 0 — Foundation               | 20      | 34      | Monorepo, DB, dev environment | ✅ done |
 | 1 — Authentication           | 25      | 52      | Register, login, JWT, RBAC    | ✅ done |
 | 2 — Business Onboarding      | 21      | 46      | Business creation, settings   | ✅ done |
-| 3 — Service Management       | 15      | 36      | Service menu CRUD             | todo    |
+| 3 — Service Management       | 15      | 36      | Service menu CRUD             | ✅ done |
 | 4 — Staff Management         | 18      | 42      | Staff profiles, schedules     | todo    |
 | 5 — Availability & Booking   | 18      | 47      | Core availability engine      | todo    |
 | 6 — Calendar & Booking UI    | 19      | 55      | Calendar + booking flow       | todo    |
@@ -545,3 +546,4 @@ S0-02 (NestJS init)
 | 1.1     | March 9, 2026  | Sprint 0 complete — all 20 tasks marked done, Task Summary status column added |
 | 1.2     | March 15, 2026 | Sprint 1 complete — auth backend + frontend, 24 tasks marked done              |
 | 1.3     | March 22, 2026 | Sprint 2 complete — business onboarding, 20 tasks marked done                  |
+| 1.4     | March 29, 2026 | Sprint 3 complete — service management, 15 tasks marked done                   |
