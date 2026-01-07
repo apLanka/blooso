@@ -18,3 +18,4 @@ export type PaginationInput = z.infer<typeof paginationSchema>;
 export * from './auth';
 export * from './business';
 export * from './service';
+export * from './staff';
