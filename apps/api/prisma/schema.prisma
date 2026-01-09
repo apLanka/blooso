@@ -21,6 +21,14 @@ enum UserRole {
   admin
 }
 
+enum StaffRole {
+  owner
+  manager
+  senior_staff
+  staff
+  junior_staff
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -34,6 +42,7 @@ model User {
   sessions      Session[]
   refreshTokens RefreshToken[]
   businesses    Business[]
+  staffMembers  StaffMember[]
 
   @@map("users")
 }
@@ -84,6 +93,7 @@ model Business {
   locations         Location[]
   serviceCategories ServiceCategory[]
   services          Service[]
+  staffMembers      StaffMember[]
 
   @@index([ownerId])
   @@index([slug])
@@ -120,12 +130,69 @@ model Service {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  business Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  category ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  business     Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  category     ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  staffServices StaffService[]
 
   @@index([businessId])
   @@index([categoryId])
   @@map("services")
+}
+
+model StaffMember {
+  id             String    @id @default(uuid())
+  userId         String
+  businessId     String
+  role           StaffRole @default(staff)
+  commissionRate Float     @default(0)
+  bio            String?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  business       Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  staffSchedules StaffSchedule[]
+  staffServices  StaffService[]
+
+  @@unique([userId, businessId])
+  @@index([businessId])
+  @@map("staff_members")
+}
+
+model StaffSchedule {
+  id          String   @id @default(uuid())
+  staffId     String
+  dayOfWeek   Int
+  startTime   String
+  endTime     String
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  staff StaffMember @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, dayOfWeek])
+  @@index([staffId])
+  @@map("staff_schedules")
+}
+
+model StaffService {
+  id             String   @id @default(uuid())
+  staffId        String
+  serviceId      String
+  customDuration Int?
+  customPrice    Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  staff   StaffMember @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  service Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, serviceId])
+  @@index([staffId])
+  @@index([serviceId])
+  @@map("staff_services")
 }
 
 model Location {
