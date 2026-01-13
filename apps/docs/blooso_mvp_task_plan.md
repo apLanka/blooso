@@ -4,7 +4,7 @@
 **Date:** March 9, 2026  
 **Status:** Active  
 **Total Tasks:** 218  
-**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks), Sprint 3 (15 tasks)  
+**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks), Sprint 3 (15 tasks), Sprint 4 (18 tasks)  
 **Estimated Duration:** 22 weeks (11 sprints × 2 weeks)  
 **Related:**
 
@@ -188,44 +188,45 @@
 
 ---
 
-## Sprint 4 — Staff Management
+## Sprint 4 — Staff Management ✅ Complete
 
 **Goal:** Businesses add staff, assign services, configure schedules  
 **Duration:** Week 9–10  
-**Total Points:** 42
+**Total Points:** 42  
+**Completed:** April 5, 2026
 
 ### Backend
 
 | ID    | Task                                                                | Type    | Priority | Estimate | Depends On | Acceptance Criteria                                                         | Status |
 | ----- | ------------------------------------------------------------------- | ------- | -------- | -------- | ---------- | --------------------------------------------------------------------------- | ------ |
-| S4-01 | Prisma schema: `staff_members`, `staff_schedules`, `staff_services` | backend | P0       | 3        | S3-01      | Migration runs, relations to users, services, businesses                    | todo   |
-| S4-02 | Create `StaffModule` (controller, service, repository)              | backend | P0       | 2        | S4-01      | Module registered, guarded by `BusinessContextGuard`                        | todo   |
-| S4-03 | Implement `POST /v1/businesses/:id/staff`                           | backend | P0       | 3        | S4-02      | Creates user account (if new) + staff_member record, sends invite email     | todo   |
-| S4-04 | Implement `GET /v1/businesses/:id/staff`                            | backend | P0       | 2        | S4-02      | Lists all staff with role, service count, schedule status                   | todo   |
-| S4-05 | Implement `GET /v1/businesses/:id/staff/:staffId`                   | backend | P1       | 2        | S4-02      | Full staff profile: info + assigned services + weekly schedule              | todo   |
-| S4-06 | Implement `PATCH /v1/businesses/:id/staff/:staffId`                 | backend | P1       | 2        | S4-02      | Update name, role, commission_rate, bio                                     | todo   |
-| S4-07 | Implement `DELETE /v1/businesses/:id/staff/:staffId`                | backend | P1       | 2        | S4-02      | Soft delete, reassign/cancel future appointments check                      | todo   |
-| S4-08 | Implement `PUT .../staff/:staffId/services`                         | backend | P0       | 2        | S4-02      | Replace service assignments (array of service IDs)                          | todo   |
-| S4-09 | Implement `PUT .../staff/:staffId/schedule`                         | backend | P0       | 3        | S4-02      | Set weekly schedule: array of `{ day, start_time, end_time, is_available }` | todo   |
-| S4-10 | Swagger documentation for staff endpoints                           | backend | P2       | 1        | S4-04      | All staff endpoints documented                                              | todo   |
+| S4-01 | Prisma schema: `staff_members`, `staff_schedules`, `staff_services` | backend | P0       | 3        | S3-01      | Migration runs, relations to users, services, businesses                    | done   |
+| S4-02 | Create `StaffModule` (controller, service, repository)              | backend | P0       | 2        | S4-01      | Module registered, guarded by `BusinessContextGuard`                        | done   |
+| S4-03 | Implement `POST /v1/businesses/:id/staff`                           | backend | P0       | 3        | S4-02      | Creates user account (if new) + staff_member record, sends invite email     | done   |
+| S4-04 | Implement `GET /v1/businesses/:id/staff`                            | backend | P0       | 2        | S4-02      | Lists all staff with role, service count, schedule status                   | done   |
+| S4-05 | Implement `GET /v1/businesses/:id/staff/:staffId`                   | backend | P1       | 2        | S4-02      | Full staff profile: info + assigned services + weekly schedule              | done   |
+| S4-06 | Implement `PATCH /v1/businesses/:id/staff/:staffId`                 | backend | P1       | 2        | S4-02      | Update name, role, commission_rate, bio                                     | done   |
+| S4-07 | Implement `DELETE /v1/businesses/:id/staff/:staffId`                | backend | P1       | 2        | S4-02      | Soft delete, reassign/cancel future appointments check                      | done   |
+| S4-08 | Implement `PUT .../staff/:staffId/services`                         | backend | P0       | 2        | S4-02      | Replace service assignments (array of service IDs)                          | done   |
+| S4-09 | Implement `PUT .../staff/:staffId/schedule`                         | backend | P0       | 3        | S4-02      | Set weekly schedule: array of `{ day, start_time, end_time, is_available }` | done   |
+| S4-10 | Swagger documentation for staff endpoints                           | backend | P2       | 1        | S4-04      | All staff endpoints documented                                              | done   |
 
 ### Frontend
 
 | ID    | Task                                   | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                       | Status |
 | ----- | -------------------------------------- | -------- | -------- | -------- | ---------- | ------------------------------------------------------------------------- | ------ |
-| S4-11 | Build staff list page (dashboard)      | frontend | P0       | 3        | S2-12      | Table/grid: name, role badge, assigned services count, schedule indicator | todo   |
-| S4-12 | Build add staff form                   | frontend | P0       | 3        | S4-11      | Dialog: name, email, role (select), commission rate                       | todo   |
-| S4-13 | Build staff detail page                | frontend | P0       | 3        | S4-11      | Tabs: profile info, assigned services, weekly schedule                    | todo   |
-| S4-14 | Build weekly schedule editor component | frontend | P0       | 5        | S4-13      | Visual grid: 7 days, set start/end time per day, toggle day off           | todo   |
-| S4-15 | Build service assignment UI            | frontend | P1       | 2        | S4-13      | Checkbox list of all business services, save assignments                  | todo   |
+| S4-11 | Build staff list page (dashboard)      | frontend | P0       | 3        | S2-12      | Table/grid: name, role badge, assigned services count, schedule indicator | done   |
+| S4-12 | Build add staff form                   | frontend | P0       | 3        | S4-11      | Dialog: name, email, role (select), commission rate                       | done   |
+| S4-13 | Build staff detail page                | frontend | P0       | 3        | S4-11      | Tabs: profile info, assigned services, weekly schedule                    | done   |
+| S4-14 | Build weekly schedule editor component | frontend | P0       | 5        | S4-13      | Visual grid: 7 days, set start/end time per day, toggle day off           | done   |
+| S4-15 | Build service assignment UI            | frontend | P1       | 2        | S4-13      | Checkbox list of all business services, save assignments                  | done   |
 
 ### Shared
 
 | ID    | Task                     | Type   | Priority | Estimate | Depends On | Acceptance Criteria                                             | Status |
 | ----- | ------------------------ | ------ | -------- | -------- | ---------- | --------------------------------------------------------------- | ------ |
-| S4-16 | Define staff types       | shared | P0       | 1        | S0-04      | `StaffMember`, `StaffSchedule`, `StaffWithDetails`              | todo   |
-| S4-17 | Define staff Zod schemas | shared | P0       | 1        | S0-04      | `createStaffSchema`, `updateStaffSchema`, `staffScheduleSchema` | todo   |
-| S4-18 | Define `StaffRole` enum  | shared | P0       | 1        | S0-04      | `owner`, `manager`, `senior_staff`, `staff`, `junior_staff`     | todo   |
+| S4-16 | Define staff types       | shared | P0       | 1        | S0-04      | `StaffMember`, `StaffSchedule`, `StaffWithDetails`              | done   |
+| S4-17 | Define staff Zod schemas | shared | P0       | 1        | S0-04      | `createStaffSchema`, `updateStaffSchema`, `staffScheduleSchema` | done   |
+| S4-18 | Define `StaffRole` enum  | shared | P0       | 1        | S0-04      | `owner`, `manager`, `senior_staff`, `staff`, `junior_staff`     | done   |
 
 ---
 
