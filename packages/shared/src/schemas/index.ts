@@ -19,3 +19,4 @@ export * from './auth';
 export * from './business';
 export * from './service';
 export * from './staff';
+export * from './booking';

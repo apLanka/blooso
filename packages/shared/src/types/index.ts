@@ -32,3 +32,5 @@ export * from './user';
 export * from './business';
 export * from './service';
 export * from './staff';
+export * from './booking';
+export * from './availability';
