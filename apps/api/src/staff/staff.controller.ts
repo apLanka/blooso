@@ -23,6 +23,8 @@ import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { SetStaffScheduleDto } from './dto/staff-schedule.dto';
 import { SetStaffServicesDto } from './dto/staff-services.dto';
+import { AvailabilityService } from '../availability/availability.service';
+import { CreateOverrideDto } from '../availability/dto/create-override.dto';
 
 interface JwtUser {
   id: string;
@@ -37,7 +39,10 @@ interface JwtUser {
 @UseGuards(JwtAuthGuard, BusinessContextGuard)
 @ApiBearerAuth()
 export class StaffController {
-  constructor(private readonly staffService: StaffService) {}
+  constructor(
+    private readonly staffService: StaffService,
+    private readonly availabilityService: AvailabilityService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Add staff member' })
@@ -122,6 +127,23 @@ export class StaffController {
       staffId,
       user,
       dto.schedule,
+    );
+  }
+
+  @Post(':staffId/overrides')
+  @ApiOperation({ summary: 'Create availability override (time off)' })
+  @ApiResponse({ status: 201 })
+  createOverride(
+    @Param('id') businessId: string,
+    @Param('staffId') staffId: string,
+    @CurrentUser() user: JwtUser,
+    @Body() dto: CreateOverrideDto,
+  ) {
+    return this.availabilityService.createOverride(
+      businessId,
+      staffId,
+      user,
+      dto,
     );
   }
 }
