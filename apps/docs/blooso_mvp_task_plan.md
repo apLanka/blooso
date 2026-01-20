@@ -4,7 +4,7 @@
 **Date:** March 9, 2026  
 **Status:** Active  
 **Total Tasks:** 218  
-**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks), Sprint 3 (15 tasks), Sprint 4 (18 tasks)  
+**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks), Sprint 3 (15 tasks), Sprint 4 (18 tasks), Sprint 5 (24 tasks)  
 **Estimated Duration:** 22 weeks (11 sprints × 2 weeks)  
 **Related:**
 
@@ -230,39 +230,40 @@
 
 ---
 
-## Sprint 5 — Availability Engine & Booking API
+## Sprint 5 — Availability Engine & Booking API ✅ Complete
 
 **Goal:** Core availability algorithm + booking creation with conflict prevention  
 **Duration:** Week 11–12  
-**Total Points:** 47
+**Total Points:** 47  
+**Completed:** April 19, 2026
 
 ### Backend
 
 | ID    | Task                                                                            | Type    | Priority | Estimate | Depends On   | Acceptance Criteria                                                                                               | Status |
 | ----- | ------------------------------------------------------------------------------- | ------- | -------- | -------- | ------------ | ----------------------------------------------------------------------------------------------------------------- | ------ |
-| S5-01 | Prisma schema: `appointments`, `appointment_services`, `availability_overrides` | backend | P0       | 3        | S4-01        | Migration runs, composite indexes on `(business_id, start_time)` and `(staff_id, start_time)`                     | todo   |
-| S5-02 | Create `AvailabilityModule` with `AvailabilityService`                          | backend | P0       | 2        | S5-01        | Module registered, service injectable                                                                             | todo   |
-| S5-03 | Implement slot generation algorithm                                             | backend | P0       | 8        | S5-02        | Given staff + service + date → generates all possible start times based on duration + buffer, respecting schedule | todo   |
-| S5-04 | Implement conflict detection                                                    | backend | P0       | 5        | S5-03        | Filters out slots that overlap with existing appointments (query by staff + date range)                           | todo   |
-| S5-05 | Implement availability override support                                         | backend | P1       | 3        | S5-03        | Overrides (time off, special hours) modify available slots for specific dates                                     | todo   |
-| S5-06 | Implement `GET /v1/availability`                                                | backend | P0       | 3        | S5-04        | Query params: `businessId`, `staffId` (optional), `serviceId`, `date` → returns `TimeSlot[]`                      | todo   |
-| S5-07 | Create `BookingModule` (controller, service)                                    | backend | P0       | 2        | S5-01        | Module registered, imports AvailabilityModule                                                                     | todo   |
-| S5-08 | Implement `POST /v1/bookings`                                                   | backend | P0       | 5        | S5-07, S5-06 | Validates slot still available (re-check), creates appointment + services in transaction                          | todo   |
-| S5-09 | Implement double-booking prevention (optimistic lock)                           | backend | P0       | 3        | S5-08        | Transaction with row-level lock, returns 409 Conflict if slot taken                                               | todo   |
-| S5-10 | Implement `GET /v1/businesses/:id/appointments`                                 | backend | P0       | 3        | S5-07        | Query: `date`, `staffId`, `status`. Returns appointments with relations                                           | todo   |
-| S5-11 | Implement `PATCH /v1/businesses/:id/appointments/:id`                           | backend | P1       | 2        | S5-07        | Update status, notes, reschedule (with availability re-check)                                                     | todo   |
-| S5-12 | Implement `POST .../appointments/:id/cancel`                                    | backend | P0       | 2        | S5-07        | Sets status to `cancelled`, records reason, triggers notification                                                 | todo   |
-| S5-13 | Implement `POST .../staff/:id/overrides`                                        | backend | P1       | 2        | S5-02        | Create availability override: date, start/end time, is_available, reason                                          | todo   |
-| S5-14 | Swagger documentation for availability + booking                                | backend | P2       | 1        | S5-06, S5-08 | All endpoints documented with query params and response schemas                                                   | todo   |
+| S5-01 | Prisma schema: `appointments`, `appointment_services`, `availability_overrides` | backend | P0       | 3        | S4-01        | Migration runs, composite indexes on `(business_id, start_time)` and `(staff_id, start_time)`                     | done   |
+| S5-02 | Create `AvailabilityModule` with `AvailabilityService`                          | backend | P0       | 2        | S5-01        | Module registered, service injectable                                                                             | done   |
+| S5-03 | Implement slot generation algorithm                                             | backend | P0       | 8        | S5-02        | Given staff + service + date → generates all possible start times based on duration + buffer, respecting schedule | done   |
+| S5-04 | Implement conflict detection                                                    | backend | P0       | 5        | S5-03        | Filters out slots that overlap with existing appointments (query by staff + date range)                           | done   |
+| S5-05 | Implement availability override support                                         | backend | P1       | 3        | S5-03        | Overrides (time off, special hours) modify available slots for specific dates                                     | done   |
+| S5-06 | Implement `GET /v1/availability`                                                | backend | P0       | 3        | S5-04        | Query params: `businessId`, `staffId` (optional), `serviceId`, `date` → returns `TimeSlot[]`                      | done   |
+| S5-07 | Create `BookingModule` (controller, service)                                    | backend | P0       | 2        | S5-01        | Module registered, imports AvailabilityModule                                                                     | done   |
+| S5-08 | Implement `POST /v1/bookings`                                                   | backend | P0       | 5        | S5-07, S5-06 | Validates slot still available (re-check), creates appointment + services in transaction                          | done   |
+| S5-09 | Implement double-booking prevention (optimistic lock)                           | backend | P0       | 3        | S5-08        | Transaction with row-level lock, returns 409 Conflict if slot taken                                               | done   |
+| S5-10 | Implement `GET /v1/businesses/:id/appointments`                                 | backend | P0       | 3        | S5-07        | Query: `date`, `staffId`, `status`. Returns appointments with relations                                           | done   |
+| S5-11 | Implement `PATCH /v1/businesses/:id/appointments/:id`                           | backend | P1       | 2        | S5-07        | Update status, notes, reschedule (with availability re-check)                                                     | done   |
+| S5-12 | Implement `POST .../appointments/:id/cancel`                                    | backend | P0       | 2        | S5-07        | Sets status to `cancelled`, records reason, triggers notification                                                 | done   |
+| S5-13 | Implement `POST .../staff/:id/overrides`                                        | backend | P1       | 2        | S5-02        | Create availability override: date, start/end time, is_available, reason                                          | done   |
+| S5-14 | Swagger documentation for availability + booking                                | backend | P2       | 1        | S5-06, S5-08 | All endpoints documented with query params and response schemas                                                   | done   |
 
 ### Shared
 
 | ID    | Task                        | Type   | Priority | Estimate | Depends On | Acceptance Criteria                                           | Status |
 | ----- | --------------------------- | ------ | -------- | -------- | ---------- | ------------------------------------------------------------- | ------ |
-| S5-15 | Define appointment types    | shared | P0       | 1        | S0-04      | `Appointment`, `AppointmentService`, `AppointmentStatus` enum | todo   |
-| S5-16 | Define booking Zod schemas  | shared | P0       | 1        | S0-04      | `createBookingSchema`, `cancelBookingSchema`                  | todo   |
-| S5-17 | Define availability types   | shared | P0       | 1        | S0-04      | `TimeSlot`, `AvailabilityQuery`, `AvailabilityOverride`       | todo   |
-| S5-18 | Define `BookingSource` enum | shared | P1       | 1        | S0-04      | `web`, `mobile`, `walk_in`, `phone`, `marketplace`            | todo   |
+| S5-15 | Define appointment types    | shared | P0       | 1        | S0-04      | `Appointment`, `AppointmentService`, `AppointmentStatus` enum | done   |
+| S5-16 | Define booking Zod schemas  | shared | P0       | 1        | S0-04      | `createBookingSchema`, `cancelBookingSchema`                  | done   |
+| S5-17 | Define availability types   | shared | P0       | 1        | S0-04      | `TimeSlot`, `AvailabilityQuery`, `AvailabilityOverride`       | done   |
+| S5-18 | Define `BookingSource` enum | shared | P1       | 1        | S0-04      | `web`, `mobile`, `walk_in`, `phone`, `marketplace`            | done   |
 
 ---
 
