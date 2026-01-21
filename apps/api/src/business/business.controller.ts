@@ -6,6 +6,7 @@ import {
   Put,
   Body,
   Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -54,6 +55,24 @@ export class BusinessController {
   @ApiResponse({ status: 200, description: 'List of businesses' })
   findMy(@CurrentUser() user: JwtUser) {
     return this.businessService.findMyBusinesses(user);
+  }
+
+  @Get('search')
+  @Public()
+  @ApiOperation({ summary: 'Search businesses (public)' })
+  @ApiResponse({ status: 200, description: 'Paginated business list' })
+  search(
+    @Query('q') q?: string,
+    @Query('category') category?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.businessService.search({
+      q,
+      category,
+      page: page ? parseInt(page, 10) : undefined,
+      limit: limit ? parseInt(limit, 10) : undefined,
+    });
   }
 
   @Get('slug/:slug')

@@ -66,6 +66,22 @@ export class BusinessService {
         locations: {
           include: { businessHours: { orderBy: { dayOfWeek: 'asc' } } },
         },
+        serviceCategories: {
+          orderBy: { sortOrder: 'asc' },
+          include: {
+            services: {
+              where: { isActive: true },
+              orderBy: { sortOrder: 'asc' },
+            },
+          },
+        },
+        staffMembers: {
+          where: { isActive: true },
+          include: {
+            user: { select: { name: true, avatarUrl: true } },
+            staffServices: { select: { serviceId: true } },
+          },
+        },
       },
     });
 
@@ -74,6 +90,52 @@ export class BusinessService {
     }
 
     return business;
+  }
+
+  async search(query: {
+    q?: string;
+    category?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const page = Math.max(1, query.page ?? 1);
+    const limit = Math.min(50, Math.max(1, query.limit ?? 20));
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+    if (query.q?.trim()) {
+      where.OR = [
+        { name: { contains: query.q.trim(), mode: 'insensitive' } },
+        { description: { contains: query.q.trim(), mode: 'insensitive' } },
+        { slug: { contains: query.q.trim(), mode: 'insensitive' } },
+      ];
+    }
+    if (query.category?.trim()) {
+      where.category = query.category.trim();
+    }
+
+    const [businesses, total] = await Promise.all([
+      this.prisma.business.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { name: 'asc' },
+        include: {
+          locations: { take: 1 },
+        },
+      }),
+      this.prisma.business.count({ where }),
+    ]);
+
+    return {
+      data: businesses,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async update(id: string, user: JwtUser, dto: UpdateBusinessDto) {

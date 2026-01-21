@@ -76,6 +76,48 @@ export async function getMyBusinesses(token: string) {
   });
 }
 
+export interface BusinessSearchResult {
+  data: BusinessWithDetails[];
+  meta: { total: number; page: number; limit: number; totalPages: number };
+}
+
+export async function searchBusinesses(params?: {
+  q?: string;
+  category?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const search = new URLSearchParams();
+  if (params?.q) search.set('q', params.q);
+  if (params?.category) search.set('category', params.category);
+  if (params?.page) search.set('page', String(params.page));
+  if (params?.limit) search.set('limit', String(params.limit));
+  const q = search.toString();
+  return apiClient<BusinessSearchResult>(`/v1/businesses/search${q ? `?${q}` : ''}`);
+}
+
+export interface BusinessPublicProfile extends BusinessWithDetails {
+  serviceCategories?: Array<{
+    id: string;
+    name: string;
+    services: Array<{
+      id: string;
+      name: string;
+      durationMinutes: number;
+      price: number;
+    }>;
+  }>;
+  staffMembers?: Array<{
+    id: string;
+    user: { name: string; avatarUrl: string | null };
+    staffServices: { serviceId: string }[];
+  }>;
+}
+
+export async function getBusinessBySlug(slug: string) {
+  return apiClient<BusinessPublicProfile>(`/v1/businesses/slug/${slug}`);
+}
+
 export async function getBusinessById(token: string, id: string) {
   return apiClient<BusinessWithDetails>(`/v1/businesses/${id}`, {
     token,
@@ -85,7 +127,12 @@ export async function getBusinessById(token: string, id: string) {
 export async function updateBusiness(
   token: string,
   id: string,
-  data: Partial<{ name: string; category: string; description: string | null; logoUrl: string | null }>
+  data: Partial<{
+    name: string;
+    category: string;
+    description: string | null;
+    logoUrl: string | null;
+  }>
 ) {
   return apiClient<BusinessWithDetails>(`/v1/businesses/${id}`, {
     method: 'PATCH',
@@ -130,14 +177,11 @@ export async function updateLocation(
     phone: string | null;
   }>
 ) {
-  return apiClient<Location>(
-    `/v1/businesses/${businessId}/locations/${locationId}`,
-    {
-      method: 'PATCH',
-      token,
-      body: JSON.stringify(data),
-    }
-  );
+  return apiClient<Location>(`/v1/businesses/${businessId}/locations/${locationId}`, {
+    method: 'PATCH',
+    token,
+    body: JSON.stringify(data),
+  });
 }
 
 export async function setBusinessHours(
@@ -146,12 +190,9 @@ export async function setBusinessHours(
   locationId: string,
   hours: { dayOfWeek: number; openTime: string; closeTime: string; isClosed: boolean }[]
 ) {
-  return apiClient<BusinessHours[]>(
-    `/v1/businesses/${businessId}/locations/${locationId}/hours`,
-    {
-      method: 'PUT',
-      token,
-      body: JSON.stringify({ hours }),
-    }
-  );
+  return apiClient<BusinessHours[]>(`/v1/businesses/${businessId}/locations/${locationId}/hours`, {
+    method: 'PUT',
+    token,
+    body: JSON.stringify({ hours }),
+  });
 }
