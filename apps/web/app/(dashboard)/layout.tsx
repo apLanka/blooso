@@ -5,12 +5,22 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Settings, Menu, X, LogOut, Scissors, Users } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Settings,
+  Menu,
+  X,
+  LogOut,
+  Scissors,
+  Users,
+  Calendar,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/calendar', label: 'Calendar', icon: Calendar },
   { href: '/services', label: 'Services', icon: Scissors },
   { href: '/staff', label: 'Staff', icon: Users },
   { href: '/settings', label: 'Settings', icon: Settings },

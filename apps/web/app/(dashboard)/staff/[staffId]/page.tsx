@@ -168,10 +168,15 @@ export default function StaffDetailPage() {
     if (!token || !currentBusinessId) return;
     setError(null);
     try {
-      const scheduleArray = DAYS.map((d) => ({
-        dayOfWeek: d.value,
-        ...schedule[d.value],
-      }));
+      const scheduleArray = DAYS.map((d) => {
+        const s = schedule[d.value];
+        return {
+          dayOfWeek: d.value,
+          startTime: s?.startTime ?? '09:00',
+          endTime: s?.endTime ?? '17:00',
+          isAvailable: s?.isAvailable ?? true,
+        };
+      });
       await staffClient.setStaffSchedule(token, currentBusinessId, staffId, scheduleArray);
       const updated = await staffClient.getStaffById(token, currentBusinessId, staffId);
       setStaff(updated);
@@ -365,13 +370,17 @@ export default function StaffDetailPage() {
                       type="checkbox"
                       checked={s.isAvailable}
                       onChange={(e) =>
-                        setSchedule((prev) => ({
-                          ...prev,
-                          [day.value]: {
-                            ...prev[day.value],
-                            isAvailable: e.target.checked,
-                          },
-                        }))
+                        setSchedule((prev) => {
+                          const cur = prev[day.value];
+                          return {
+                            ...prev,
+                            [day.value]: {
+                              startTime: cur?.startTime ?? '09:00',
+                              endTime: cur?.endTime ?? '17:00',
+                              isAvailable: e.target.checked,
+                            },
+                          };
+                        })
                       }
                     />
                     Available
@@ -382,13 +391,17 @@ export default function StaffDetailPage() {
                         type="time"
                         value={s.startTime}
                         onChange={(e) =>
-                          setSchedule((prev) => ({
-                            ...prev,
-                            [day.value]: {
-                              ...prev[day.value],
-                              startTime: e.target.value.slice(0, 5),
-                            },
-                          }))
+                          setSchedule((prev) => {
+                            const cur = prev[day.value];
+                            return {
+                              ...prev,
+                              [day.value]: {
+                                startTime: e.target.value.slice(0, 5),
+                                endTime: cur?.endTime ?? '17:00',
+                                isAvailable: cur?.isAvailable ?? true,
+                              },
+                            };
+                          })
                         }
                         className="w-28"
                       />
@@ -397,13 +410,17 @@ export default function StaffDetailPage() {
                         type="time"
                         value={s.endTime}
                         onChange={(e) =>
-                          setSchedule((prev) => ({
-                            ...prev,
-                            [day.value]: {
-                              ...prev[day.value],
-                              endTime: e.target.value.slice(0, 5),
-                            },
-                          }))
+                          setSchedule((prev) => {
+                            const cur = prev[day.value];
+                            return {
+                              ...prev,
+                              [day.value]: {
+                                startTime: cur?.startTime ?? '09:00',
+                                endTime: e.target.value.slice(0, 5),
+                                isAvailable: cur?.isAvailable ?? true,
+                              },
+                            };
+                          })
                         }
                         className="w-28"
                       />
