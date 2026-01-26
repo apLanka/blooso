@@ -5,7 +5,13 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8">
       <h1 className="text-4xl font-bold">Blooso</h1>
       <p className="text-muted-foreground">Premium booking platform for beauty & wellness</p>
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-4 justify-center">
+        <Link
+          href="/search"
+          className="rounded-lg border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
+        >
+          Find a business
+        </Link>
         <Link
           href="/login"
           className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
