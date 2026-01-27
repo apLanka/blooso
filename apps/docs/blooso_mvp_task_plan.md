@@ -4,7 +4,7 @@
 **Date:** March 9, 2026  
 **Status:** Active  
 **Total Tasks:** 218  
-**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks), Sprint 3 (15 tasks), Sprint 4 (18 tasks), Sprint 5 (24 tasks)  
+**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks), Sprint 3 (15 tasks), Sprint 4 (18 tasks), Sprint 5 (24 tasks), Sprint 6 (18 tasks)  
 **Estimated Duration:** 22 weeks (11 sprints × 2 weeks)  
 **Related:**
 
@@ -267,45 +267,46 @@
 
 ---
 
-## Sprint 6 — Calendar UI & Client Booking Flow
+## Sprint 6 — Calendar UI & Client Booking Flow ✅ Complete
 
 **Goal:** Business calendar + full client booking experience  
 **Duration:** Week 13–14  
-**Total Points:** 55
+**Total Points:** 55  
+**Completed:** May 3, 2026
 
 ### Frontend — Business Calendar
 
 | ID    | Task                                            | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                                 | Status |
 | ----- | ----------------------------------------------- | -------- | -------- | -------- | ---------- | ----------------------------------------------------------------------------------- | ------ |
-| S6-01 | Build calendar page layout with day/week toggle | frontend | P0       | 3        | S2-12      | Date header, view toggle, staff filter dropdown, time grid column layout            | todo   |
-| S6-02 | Build time grid component                       | frontend | P0       | 5        | S6-01      | Vertical time axis (business hours), horizontal staff columns, 15min row increments | todo   |
-| S6-03 | Render appointments on calendar                 | frontend | P0       | 5        | S6-02      | Positioned by time, colored by status, shows service name + client name             | todo   |
-| S6-04 | Click-to-create appointment                     | frontend | P0       | 3        | S6-02      | Click empty slot → open form pre-filled with time + staff → save                    | todo   |
-| S6-05 | Appointment creation form (walk-in)             | frontend | P0       | 3        | S6-04      | Select client (search/create), service, staff, time. Uses availability API          | todo   |
-| S6-06 | Appointment detail side panel                   | frontend | P1       | 3        | S6-03      | Click appointment → slide-over with: client info, services, status, actions         | todo   |
-| S6-07 | Status update buttons                           | frontend | P1       | 2        | S6-06      | Confirm, check-in, complete, no-show, cancel — with confirmation dialog             | todo   |
+| S6-01 | Build calendar page layout with day/week toggle | frontend | P0       | 3        | S2-12      | Date header, view toggle, staff filter dropdown, time grid column layout            | done   |
+| S6-02 | Build time grid component                       | frontend | P0       | 5        | S6-01      | Vertical time axis (business hours), horizontal staff columns, 15min row increments | done   |
+| S6-03 | Render appointments on calendar                 | frontend | P0       | 5        | S6-02      | Positioned by time, colored by status, shows service name + client name             | done   |
+| S6-04 | Click-to-create appointment                     | frontend | P0       | 3        | S6-02      | Click empty slot → open form pre-filled with time + staff → save                    | done   |
+| S6-05 | Appointment creation form (walk-in)             | frontend | P0       | 3        | S6-04      | Select client (search/create), service, staff, time. Uses availability API          | done   |
+| S6-06 | Appointment detail side panel                   | frontend | P1       | 3        | S6-03      | Click appointment → slide-over with: client info, services, status, actions         | done   |
+| S6-07 | Status update buttons                           | frontend | P1       | 2        | S6-06      | Confirm, check-in, complete, no-show, cancel — with confirmation dialog             | done   |
 | S6-08 | Drag-and-drop reschedule                        | frontend | P2       | 5        | S6-03      | Drag appointment to new time/staff, calls reschedule API, snaps to grid             | todo   |
-| S6-09 | Date navigation                                 | frontend | P0       | 2        | S6-01      | Previous/next buttons, date picker, "Today" shortcut                                | todo   |
-| S6-10 | Staff filter                                    | frontend | P1       | 2        | S6-01      | Dropdown to show single staff or all staff columns                                  | todo   |
+| S6-09 | Date navigation                                 | frontend | P0       | 2        | S6-01      | Previous/next buttons, date picker, "Today" shortcut                                | done   |
+| S6-10 | Staff filter                                    | frontend | P1       | 2        | S6-01      | Dropdown to show single staff or all staff columns                                  | done   |
 
 ### Frontend — Client Booking Flow
 
 | ID    | Task                                             | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                                   | Status |
 | ----- | ------------------------------------------------ | -------- | -------- | -------- | ---------- | ------------------------------------------------------------------------------------- | ------ |
-| S6-11 | Build business public profile page (`/b/[slug]`) | frontend | P0       | 3        | S2-07      | Business name, logo, description, category, hours, rating, service list               | todo   |
-| S6-12 | Build service selection step                     | frontend | P0       | 3        | S6-11      | Categorized service list, select one or more, running total, "Continue" button        | todo   |
-| S6-13 | Build staff selection step                       | frontend | P1       | 2        | S6-12      | Optional: choose staff or "Any available". Show staff photo, name, bio                | todo   |
-| S6-14 | Build date/time selection step                   | frontend | P0       | 5        | S6-13      | Calendar date picker + time slot grid, fetches availability API, highlights available | todo   |
-| S6-15 | Build booking summary & confirmation step        | frontend | P0       | 3        | S6-14      | Summary: business, service(s), staff, date/time, price. Guest form or login prompt    | todo   |
-| S6-16 | Build booking success page                       | frontend | P1       | 2        | S6-15      | Confirmation: booking details, "Add to Calendar" link, "Book Again" button            | todo   |
+| S6-11 | Build business public profile page (`/b/[slug]`) | frontend | P0       | 3        | S2-07      | Business name, logo, description, category, hours, rating, service list               | done   |
+| S6-12 | Build service selection step                     | frontend | P0       | 3        | S6-11      | Categorized service list, select one or more, running total, "Continue" button        | done   |
+| S6-13 | Build staff selection step                       | frontend | P1       | 2        | S6-12      | Optional: choose staff or "Any available". Show staff photo, name, bio                | done   |
+| S6-14 | Build date/time selection step                   | frontend | P0       | 5        | S6-13      | Calendar date picker + time slot grid, fetches availability API, highlights available | done   |
+| S6-15 | Build booking summary & confirmation step        | frontend | P0       | 3        | S6-14      | Summary: business, service(s), staff, date/time, price. Guest form or login prompt    | done   |
+| S6-16 | Build booking success page                       | frontend | P1       | 2        | S6-15      | Confirmation: booking details, "Add to Calendar" link, "Book Again" button            | done   |
 
 ### Frontend — Search/Discovery
 
 | ID    | Task                                              | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                     | Status |
 | ----- | ------------------------------------------------- | -------- | -------- | -------- | ---------- | ----------------------------------------------------------------------- | ------ |
-| S6-17 | Build search page (`/search`)                     | frontend | P1       | 3        | S0-06      | Search bar, category filters, results grid                              | todo   |
-| S6-18 | Build search backend: `GET /v1/businesses/search` | backend  | P1       | 3        | S2-02      | Query: `q`, `category`, `page`, `limit`. PostgreSQL `ILIKE` + `pg_trgm` | todo   |
-| S6-19 | Build business card component for search results  | frontend | P1       | 2        | S6-17      | Business logo, name, category, rating, price range, CTA button          | todo   |
+| S6-17 | Build search page (`/search`)                     | frontend | P1       | 3        | S0-06      | Search bar, category filters, results grid                              | done   |
+| S6-18 | Build search backend: `GET /v1/businesses/search` | backend  | P1       | 3        | S2-02      | Query: `q`, `category`, `page`, `limit`. PostgreSQL `ILIKE` + `pg_trgm` | done   |
+| S6-19 | Build business card component for search results  | frontend | P1       | 2        | S6-17      | Business logo, name, category, rating, price range, CTA button          | done   |
 
 ---
 
