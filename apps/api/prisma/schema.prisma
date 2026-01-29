@@ -281,10 +281,42 @@ model Appointment {
   location   Location           @relation(fields: [locationId], references: [id], onDelete: Cascade)
   staff      StaffMember        @relation(fields: [staffId], references: [id], onDelete: Cascade)
   appointmentServices AppointmentService[]
+  payments   Payment[]
 
   @@index([businessId, startTime])
   @@index([staffId, startTime])
   @@map("appointments")
+}
+
+enum PaymentMethod {
+  card
+  cash
+  transfer
+  other
+}
+
+enum PaymentStatus {
+  pending
+  completed
+  failed
+  refunded
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  appointmentId   String
+  amount          Float
+  method          PaymentMethod
+  status          PaymentStatus @default(pending)
+  stripePaymentId String?
+  tipAmount       Float         @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@index([appointmentId])
+  @@map("payments")
 }
 
 model AppointmentService {
