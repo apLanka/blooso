@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AvailabilityService } from '../availability/availability.service';
+import { NotificationService } from '../notification/notification.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { BookingSource } from '@prisma/client';
@@ -22,6 +23,7 @@ export class BookingService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly availabilityService: AvailabilityService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   private async ensureBusinessAccess(businessId: string, user: JwtUser) {
@@ -85,7 +87,7 @@ export class BookingService {
     const endTime = new Date(startTime.getTime() + totalDuration * 60 * 1000);
     const totalPrice = services.reduce((acc, s) => acc + s.price, 0);
 
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const conflicting = await tx.appointment.findFirst({
         where: {
           staffId: dto.staffId,
@@ -138,9 +140,30 @@ export class BookingService {
           appointmentServices: {
             include: { service: { select: { name: true } } },
           },
+          location: true,
+          business: true,
         },
       });
     });
+    const apt = result;
+    if (apt?.guestEmail) {
+      this.notificationService
+        .sendBookingConfirmation({
+          to: apt.guestEmail,
+          guestName: apt.guestName ?? 'Guest',
+          businessName: apt.business.name,
+          serviceNames: apt.appointmentServices
+            .map((as) => as.service?.name)
+            .filter(Boolean)
+            .join(', '),
+          startTime: apt.startTime.toISOString(),
+          endTime: apt.endTime.toISOString(),
+          locationAddress: apt.location?.address,
+          totalPrice: apt.totalPrice,
+        })
+        .catch(() => {});
+    }
+    return apt;
   }
 
   async findAppointments(
@@ -244,10 +267,14 @@ export class BookingService {
 
     const apt = await this.prisma.appointment.findFirst({
       where: { id: appointmentId, businessId },
+      include: {
+        business: true,
+        appointmentServices: { include: { service: true } },
+      },
     });
     if (!apt) throw new NotFoundException('Appointment not found');
 
-    return this.prisma.appointment.update({
+    const updated = await this.prisma.appointment.update({
       where: { id: appointmentId },
       data: {
         status: 'cancelled',
@@ -262,5 +289,22 @@ export class BookingService {
         },
       },
     });
+
+    if (apt.guestEmail) {
+      this.notificationService
+        .sendCancellationNotice({
+          to: apt.guestEmail,
+          guestName: apt.guestName ?? 'Guest',
+          businessName: apt.business.name,
+          serviceNames: apt.appointmentServices
+            .map((as) => as.service?.name)
+            .filter(Boolean)
+            .join(', '),
+          originalStartTime: apt.startTime.toISOString(),
+          reason: reason ?? undefined,
+        })
+        .catch(() => {});
+    }
+    return updated;
   }
 }
