@@ -7,6 +7,7 @@ import { getMyBusinesses, type BusinessWithDetails } from '@/lib/business-client
 import * as staffClient from '@/lib/staff-client';
 import * as serviceClient from '@/lib/service-client';
 import * as appointmentsClient from '@/lib/appointments-client';
+import { recordInPersonPayment, getAppointmentPayments, type Payment } from '@/lib/payment-client';
 import { getAvailability } from '@/lib/availability-client';
 import type { Appointment } from '@/lib/booking-client';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ChevronLeft, ChevronRight, Plus, X, User, Clock, Check, XCircle } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  X,
+  User,
+  Clock,
+  Check,
+  XCircle,
+  CreditCard,
+  Banknote,
+} from 'lucide-react';
 
 const ROW_HEIGHT = 48;
 const SLOT_MINUTES = 15;
@@ -93,6 +105,12 @@ export default function CalendarPage() {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [detailPayments, setDetailPayments] = useState<Payment[]>([]);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutMethod, setCheckoutMethod] = useState<'cash' | 'card' | 'transfer' | 'other'>(
+    'card'
+  );
+  const [checkoutSubmitting, setCheckoutSubmitting] = useState(false);
 
   const token = getToken();
   const currentBusinessId = businessId || businesses[0]?.id;
@@ -136,6 +154,44 @@ export default function CalendarPage() {
     setLoading(true);
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (!token || !currentBusinessId || !detailAppointment) {
+      setDetailPayments([]);
+      return;
+    }
+    getAppointmentPayments(token, currentBusinessId, detailAppointment.id)
+      .then(setDetailPayments)
+      .catch(() => setDetailPayments([]));
+  }, [token, currentBusinessId, detailAppointment?.id]);
+
+  const handleInPersonCheckout = async () => {
+    if (!token || !currentBusinessId || !detailAppointment) return;
+    const amount =
+      detailAppointment.totalPrice ??
+      detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ??
+      0;
+    if (amount <= 0) return;
+    setCheckoutSubmitting(true);
+    setError(null);
+    try {
+      await recordInPersonPayment(token, currentBusinessId, detailAppointment.id, {
+        amount,
+        method: checkoutMethod,
+      });
+      setCheckoutOpen(false);
+      setDetailAppointment(null);
+      loadData();
+    } catch (err: unknown) {
+      setError(
+        err && typeof err === 'object' && 'body' in err
+          ? ((err as { body?: { message?: string } }).body?.message as string)
+          : 'Failed to record payment'
+      );
+    } finally {
+      setCheckoutSubmitting(false);
+    }
+  };
 
   if (isLoading || !user) {
     router.replace('/login');
@@ -553,6 +609,43 @@ export default function CalendarPage() {
                     .join(', ')}
                 </p>
                 <p className="text-sm text-muted-foreground">Status: {detailAppointment.status}</p>
+                {(() => {
+                  const total =
+                    detailAppointment.totalPrice ??
+                    detailAppointment.appointmentServices?.reduce(
+                      (s, as) => s + (as.priceCharged ?? 0),
+                      0
+                    ) ??
+                    0;
+                  const paid = detailPayments
+                    .filter((p) => p.status === 'completed')
+                    .reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
+                  const refunded = detailPayments.some((p) => p.status === 'refunded');
+                  return (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span
+                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                          refunded
+                            ? 'bg-amber-100 text-amber-800'
+                            : paid >= total && total > 0
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        {refunded ? 'Refunded' : paid >= total && total > 0 ? 'Paid' : 'Unpaid'}
+                      </span>
+                      {total > 0 && (
+                        <span className="text-sm text-muted-foreground">
+                          {paid > 0 ? `$${paid.toFixed(2)} paid` : ''}
+                          {paid > 0 && paid < total ? ` of $${total.toFixed(2)}` : ''}
+                          {paid === 0 && total > 0 ? `$${total.toFixed(2)} total` : ''}
+                          {detailPayments.length > 0 &&
+                            ` · ${detailPayments.map((p) => p.method).join(', ')}`}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {detailAppointment.status === 'pending' && (
@@ -592,6 +685,27 @@ export default function CalendarPage() {
                     No-show
                   </Button>
                 )}
+                {(() => {
+                  const total =
+                    detailAppointment.totalPrice ??
+                    detailAppointment.appointmentServices?.reduce(
+                      (s, as) => s + (as.priceCharged ?? 0),
+                      0
+                    ) ??
+                    0;
+                  const paid = detailPayments
+                    .filter((p) => p.status === 'completed')
+                    .reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
+                  const needsPayment = total > 0 && paid < total;
+                  return (
+                    needsPayment && (
+                      <Button size="sm" variant="outline" onClick={() => setCheckoutOpen(true)}>
+                        <Banknote className="mr-1 h-4 w-4" />
+                        Checkout
+                      </Button>
+                    )
+                  );
+                })()}
                 {detailAppointment.status !== 'cancelled' && (
                   <Button
                     size="sm"
@@ -602,6 +716,75 @@ export default function CalendarPage() {
                     Cancel
                   </Button>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {checkoutOpen && detailAppointment && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50">
+          <Card className="w-full max-w-sm">
+            <CardContent className="pt-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-lg font-semibold">In-person checkout</h3>
+                <Button variant="ghost" size="icon" onClick={() => setCheckoutOpen(false)}>
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Amount: $
+                {(
+                  detailAppointment.totalPrice ??
+                  detailAppointment.appointmentServices?.reduce(
+                    (s, as) => s + (as.priceCharged ?? 0),
+                    0
+                  ) ??
+                  0
+                ).toFixed(2)}
+              </p>
+              <div className="mb-4">
+                <Label>Payment method</Label>
+                <Select
+                  value={checkoutMethod}
+                  onValueChange={(v) =>
+                    setCheckoutMethod(v as 'cash' | 'card' | 'transfer' | 'other')
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="card">
+                      <CreditCard className="mr-2 inline h-4 w-4" />
+                      Card
+                    </SelectItem>
+                    <SelectItem value="cash">
+                      <Banknote className="mr-2 inline h-4 w-4" />
+                      Cash
+                    </SelectItem>
+                    <SelectItem value="transfer">Transfer</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {error && <p className="mb-2 text-sm text-destructive">{error}</p>}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setCheckoutOpen(false)}
+                  disabled={checkoutSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="flex-1"
+                  onClick={handleInPersonCheckout}
+                  disabled={checkoutSubmitting}
+                >
+                  {checkoutSubmitting ? 'Recording...' : 'Record payment'}
+                </Button>
               </div>
             </CardContent>
           </Card>

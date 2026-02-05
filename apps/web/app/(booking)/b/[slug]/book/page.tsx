@@ -5,12 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { getBusinessBySlug, type BusinessPublicProfile } from '@/lib/business-client';
 import { getAvailability } from '@/lib/availability-client';
 import { createBooking } from '@/lib/booking-client';
+import { createCheckoutSession } from '@/lib/payment-client';
 import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, CreditCard } from 'lucide-react';
 
 type Step = 'services' | 'staff' | 'datetime' | 'confirm' | 'success';
 
@@ -39,6 +40,7 @@ export default function BookPage() {
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [booking, setBooking] = useState<{ id: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -127,6 +129,29 @@ export default function BookPage() {
       );
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handlePayWithCard = async () => {
+    if (!token || !booking) return;
+    setPaying(true);
+    setError(null);
+    try {
+      const base = typeof window !== 'undefined' ? window.location.origin : '';
+      const { url } = await createCheckoutSession(token, {
+        appointmentId: booking.id,
+        successUrl: `${base}/booking/success`,
+        cancelUrl: `${base}/booking/cancel`,
+      });
+      if (url) window.location.href = url;
+    } catch (err: unknown) {
+      setError(
+        err && typeof err === 'object' && 'body' in err
+          ? ((err as { body?: { message?: string } }).body?.message as string)
+          : 'Could not start payment'
+      );
+    } finally {
+      setPaying(false);
     }
   };
 
@@ -355,6 +380,16 @@ export default function BookPage() {
               <p className="mt-2 text-muted-foreground">
                 Your appointment is confirmed. We&apos;ll send a reminder before your visit.
               </p>
+              {totalPrice > 0 && (
+                <div className="mt-4 w-full space-y-2">
+                  <p className="text-sm text-muted-foreground">Total: ${totalPrice}</p>
+                  <Button className="w-full" onClick={handlePayWithCard} disabled={paying}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    {paying ? 'Redirecting...' : 'Pay with card'}
+                  </Button>
+                </div>
+              )}
+              {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
               <div className="mt-6 flex gap-2">
                 <Button onClick={() => router.push(`/b/${slug}/book`)}>Book again</Button>
                 <Button variant="outline" onClick={() => router.push(`/b/${slug}`)}>
