@@ -320,36 +320,36 @@
 
 | ID    | Task                                         | Type    | Priority | Estimate | Depends On | Acceptance Criteria                                                                    | Status |
 | ----- | -------------------------------------------- | ------- | -------- | -------- | ---------- | -------------------------------------------------------------------------------------- | ------ |
-| S7-01 | Prisma schema: `payments`, `invoices`        | backend | P0       | 2        | S5-01      | Migration runs, FK to appointments, payment method enum                                | todo   |
-| S7-02 | Create `PaymentModule` (controller, service) | backend | P0       | 2        | S7-01      | Module registered, Stripe SDK initialized via config                                   | todo   |
-| S7-03 | Implement `POST /v1/payments/checkout`       | backend | P0       | 5        | S7-02      | Creates Stripe Checkout Session with line items from appointment services              | todo   |
-| S7-04 | Implement Stripe webhook handler             | backend | P0       | 5        | S7-02      | `POST /v1/payments/webhook` — verifies signature, handles `checkout.session.completed` | todo   |
-| S7-05 | Record payment on webhook success            | backend | P0       | 3        | S7-04      | Creates payment record, updates appointment status to `confirmed`                      | todo   |
-| S7-06 | Implement in-person checkout                 | backend | P1       | 3        | S7-02      | `POST /v1/businesses/:id/appointments/:id/checkout` — record cash/card payment         | todo   |
-| S7-07 | Implement tip recording                      | backend | P2       | 1        | S7-06      | `tip_amount` field on payment record                                                   | todo   |
+| S7-01 | Prisma schema: `payments`, `invoices`        | backend | P0       | 2        | S5-01      | Migration runs, FK to appointments, payment method enum                                | done   |
+| S7-02 | Create `PaymentModule` (controller, service) | backend | P0       | 2        | S7-01      | Module registered, Stripe SDK initialized via config                                   | done   |
+| S7-03 | Implement `POST /v1/payments/checkout`       | backend | P0       | 5        | S7-02      | Creates Stripe Checkout Session with line items from appointment services              | done   |
+| S7-04 | Implement Stripe webhook handler             | backend | P0       | 5        | S7-02      | `POST /v1/payments/webhook` — verifies signature, handles `checkout.session.completed` | done   |
+| S7-05 | Record payment on webhook success            | backend | P0       | 3        | S7-04      | Creates payment record, updates appointment status to `confirmed`                      | done   |
+| S7-06 | Implement in-person checkout                 | backend | P1       | 3        | S7-02      | `POST /v1/businesses/:id/appointments/:id/checkout` — record cash/card payment         | done   |
+| S7-07 | Implement tip recording                      | backend | P2       | 1        | S7-06      | `tip_amount` field on payment record                                                   | done   |
 
 ### Backend — Notifications
 
 | ID    | Task                                              | Type    | Priority | Estimate | Depends On   | Acceptance Criteria                                                   | Status |
 | ----- | ------------------------------------------------- | ------- | -------- | -------- | ------------ | --------------------------------------------------------------------- | ------ |
-| S7-08 | Set up Redis connection + BullMQ in NestJS        | infra   | P0       | 3        | S0-08        | `@nestjs/bullmq` configured, Redis connects, test queue works         | todo   |
-| S7-09 | Create `NotificationModule` with email service    | backend | P0       | 2        | S7-08        | Module with Resend SDK, `sendEmail()` method                          | todo   |
-| S7-10 | Create React Email template: booking confirmation | backend | P0       | 3        | S7-09        | Beautiful HTML email with business logo, service, date/time, location | todo   |
-| S7-11 | Create React Email template: appointment reminder | backend | P1       | 2        | S7-09        | Reminder email with appointment details, cancel/reschedule link       | todo   |
-| S7-12 | Create React Email template: cancellation notice  | backend | P1       | 2        | S7-09        | Cancellation email with reason and re-booking CTA                     | todo   |
-| S7-13 | Implement booking confirmation email trigger      | backend | P0       | 2        | S7-10, S5-08 | Sends on `POST /v1/bookings` success                                  | todo   |
-| S7-14 | Implement appointment reminder queue job          | backend | P1       | 3        | S7-11, S7-08 | BullMQ delayed job: scheduled 24h and 1h before appointment           | todo   |
-| S7-15 | Implement cancellation email trigger              | backend | P1       | 1        | S7-12, S5-12 | Sends on appointment cancellation                                     | todo   |
+| S7-08 | Set up Redis connection + BullMQ in NestJS        | infra   | P0       | 3        | S0-08        | `@nestjs/bullmq` configured, Redis connects, test queue works         | done   |
+| S7-09 | Create `NotificationModule` with email service    | backend | P0       | 2        | S7-08        | Module with Resend SDK, `sendEmail()` method                          | done   |
+| S7-10 | Create React Email template: booking confirmation | backend | P0       | 3        | S7-09        | Beautiful HTML email with business logo, service, date/time, location | done   |
+| S7-11 | Create React Email template: appointment reminder | backend | P1       | 2        | S7-09        | Reminder email with appointment details, cancel/reschedule link       | done   |
+| S7-12 | Create React Email template: cancellation notice  | backend | P1       | 2        | S7-09        | Cancellation email with reason and re-booking CTA                     | done   |
+| S7-13 | Implement booking confirmation email trigger      | backend | P0       | 2        | S7-10, S5-08 | Sends on `POST /v1/bookings` success                                  | done   |
+| S7-14 | Implement appointment reminder queue job          | backend | P1       | 3        | S7-11, S7-08 | BullMQ delayed job: scheduled 24h and 1h before appointment           | done   |
+| S7-15 | Implement cancellation email trigger              | backend | P1       | 1        | S7-12, S5-12 | Sends on appointment cancellation                                     | done   |
 
 ### Frontend
 
 | ID    | Task                                      | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                            | Status |
 | ----- | ----------------------------------------- | -------- | -------- | -------- | ---------- | ------------------------------------------------------------------------------ | ------ |
-| S7-16 | Integrate Stripe Checkout in booking flow | frontend | P0       | 3        | S7-03      | After booking confirmation → redirect to Stripe → return to success page       | todo   |
-| S7-17 | Build payment success callback page       | frontend | P1       | 2        | S7-16      | `/booking/success?session_id=` — verifies payment, shows confirmation          | todo   |
-| S7-18 | Build payment cancel callback page        | frontend | P2       | 1        | S7-16      | `/booking/cancel` — message + retry booking link                               | todo   |
-| S7-19 | Build in-person checkout in dashboard     | frontend | P1       | 3        | S7-06      | On appointment detail → "Checkout" button → select method (cash/card) → record | todo   |
-| S7-20 | Show payment status on appointment detail | frontend | P1       | 1        | S7-19      | Badge: paid, unpaid, refunded. Payment amount and method                       | todo   |
+| S7-16 | Integrate Stripe Checkout in booking flow | frontend | P0       | 3        | S7-03      | After booking confirmation → redirect to Stripe → return to success page       | done   |
+| S7-17 | Build payment success callback page       | frontend | P1       | 2        | S7-16      | `/booking/success?session_id=` — verifies payment, shows confirmation          | done   |
+| S7-18 | Build payment cancel callback page        | frontend | P2       | 1        | S7-16      | `/booking/cancel` — message + retry booking link                               | done   |
+| S7-19 | Build in-person checkout in dashboard     | frontend | P1       | 3        | S7-06      | On appointment detail → "Checkout" button → select method (cash/card) → record | done   |
+| S7-20 | Show payment status on appointment detail | frontend | P1       | 1        | S7-19      | Badge: paid, unpaid, refunded. Payment amount and method                       | done   |
 
 ---
 
