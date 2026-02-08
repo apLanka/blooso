@@ -95,6 +95,7 @@ model Business {
   services          Service[]
   staffMembers      StaffMember[]
   appointments      Appointment[]
+  clients           Client[]
 
   @@index([ownerId])
   @@index([slug])
@@ -280,6 +281,7 @@ model Appointment {
   business   Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
   location   Location           @relation(fields: [locationId], references: [id], onDelete: Cascade)
   staff      StaffMember        @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  client     Client?            @relation(fields: [clientId], references: [id], onDelete: SetNull)
   appointmentServices AppointmentService[]
   payments   Payment[]
 
@@ -354,4 +356,52 @@ model AvailabilityOverride {
 
   @@index([staffId, date])
   @@map("availability_overrides")
+}
+
+model Client {
+  id          String    @id @default(uuid())
+  businessId  String
+  firstName   String
+  lastName    String
+  email       String
+  phone       String?
+  dateOfBirth DateTime? @db.Date
+  preferences Json      @default("{}")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  business   Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  notes       ClientNote[]
+  tags        ClientTag[]
+
+  @@unique([businessId, email])
+  @@index([businessId])
+  @@map("clients")
+}
+
+model ClientNote {
+  id        String   @id @default(uuid())
+  clientId  String
+  content   String
+  isPrivate Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@map("client_notes")
+}
+
+model ClientTag {
+  id       String @id @default(uuid())
+  clientId String
+  tag      String
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, tag])
+  @@index([clientId])
+  @@map("client_tags")
 }
