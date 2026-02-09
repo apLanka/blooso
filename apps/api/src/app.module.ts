@@ -11,6 +11,7 @@ import { StaffModule } from './staff/staff.module';
 import { AvailabilityModule } from './availability/availability.module';
 import { BookingModule } from './booking/booking.module';
 import { PaymentModule } from './payment/payment.module';
+import { ClientModule } from './client/client.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
@@ -35,6 +36,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     AvailabilityModule,
     BookingModule,
     PaymentModule,
+    ClientModule,
   ],
   controllers: [AppController],
   providers: [
