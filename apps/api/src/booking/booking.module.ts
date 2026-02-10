@@ -5,9 +5,10 @@ import { AppointmentsController } from './appointments.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AvailabilityModule } from '../availability/availability.module';
 import { NotificationModule } from '../notification/notification.module';
+import { ClientModule } from '../client/client.module';
 
 @Module({
-  imports: [PrismaModule, AvailabilityModule, NotificationModule],
+  imports: [PrismaModule, AvailabilityModule, NotificationModule, ClientModule],
   controllers: [BookingController, AppointmentsController],
   providers: [BookingService],
   exports: [BookingService],

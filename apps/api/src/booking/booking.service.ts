@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AvailabilityService } from '../availability/availability.service';
 import { NotificationService } from '../notification/notification.service';
+import { ClientService } from '../client/client.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { BookingSource } from '@prisma/client';
@@ -24,6 +25,7 @@ export class BookingService {
     private readonly prisma: PrismaService,
     private readonly availabilityService: AvailabilityService,
     private readonly notificationService: NotificationService,
+    private readonly clientService: ClientService,
   ) {}
 
   private async ensureBusinessAccess(businessId: string, user: JwtUser) {
@@ -87,6 +89,18 @@ export class BookingService {
     const endTime = new Date(startTime.getTime() + totalDuration * 60 * 1000);
     const totalPrice = services.reduce((acc, s) => acc + s.price, 0);
 
+    let clientId = dto.clientId ?? null;
+    if (!clientId && dto.guestEmail) {
+      clientId = await this.clientService.findOrCreateByEmail(
+        dto.businessId,
+        {
+          email: dto.guestEmail,
+          guestName: dto.guestName,
+          phone: dto.guestPhone,
+        },
+      );
+    }
+
     const result = await this.prisma.$transaction(async (tx) => {
       const conflicting = await tx.appointment.findFirst({
         where: {
@@ -105,7 +119,7 @@ export class BookingService {
           businessId: dto.businessId,
           locationId: dto.locationId,
           staffId: dto.staffId,
-          clientId: dto.clientId ?? null,
+          clientId,
           guestName: dto.guestName ?? null,
           guestEmail: dto.guestEmail ?? null,
           guestPhone: dto.guestPhone ?? null,
