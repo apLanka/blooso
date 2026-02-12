@@ -13,6 +13,7 @@ import {
   LogOut,
   Scissors,
   Users,
+  UserCircle,
   Calendar,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -21,6 +22,7 @@ import { useRouter } from 'next/navigation';
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/calendar', label: 'Calendar', icon: Calendar },
+  { href: '/clients', label: 'Clients', icon: UserCircle },
   { href: '/services', label: 'Services', icon: Scissors },
   { href: '/staff', label: 'Staff', icon: Users },
   { href: '/settings', label: 'Settings', icon: Settings },
