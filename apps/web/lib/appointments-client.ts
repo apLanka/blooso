@@ -34,6 +34,7 @@ export async function createAppointment(
     staffId: string;
     serviceIds: string[];
     startTime: string;
+    clientId?: string;
     guestName?: string;
     guestEmail?: string;
     guestPhone?: string;

@@ -7,7 +7,12 @@ import { getMyBusinesses, type BusinessWithDetails } from '@/lib/business-client
 import * as staffClient from '@/lib/staff-client';
 import * as serviceClient from '@/lib/service-client';
 import * as appointmentsClient from '@/lib/appointments-client';
-import { recordInPersonPayment, getAppointmentPayments, type Payment } from '@/lib/payment-client';
+import {
+  recordInPersonPayment,
+  getAppointmentPayments,
+  type Payment,
+} from '@/lib/payment-client';
+import * as clientClient from '@/lib/client-client';
 import { getAvailability } from '@/lib/availability-client';
 import type { Appointment } from '@/lib/booking-client';
 import { Button } from '@/components/ui/button';
@@ -98,11 +103,16 @@ export default function CalendarPage() {
     staffId: '',
     serviceIds: [] as string[],
     startTime: '',
+    clientId: '',
     guestName: '',
     guestEmail: '',
     guestPhone: '',
     notes: '',
   });
+  const [clientSearch, setClientSearch] = useState('');
+  const [clientSearchResults, setClientSearchResults] = useState<
+    clientClient.Client[]
+  >([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [detailPayments, setDetailPayments] = useState<Payment[]>([]);
@@ -228,13 +238,33 @@ export default function CalendarPage() {
       staffId,
       serviceIds: [],
       startTime,
+      clientId: '',
       guestName: '',
       guestEmail: '',
       guestPhone: '',
       notes: '',
     });
+    setClientSearch('');
+    setClientSearchResults([]);
     setCreateOpen(true);
   };
+
+  useEffect(() => {
+    if (!token || !currentBusinessId || !clientSearch.trim()) {
+      setClientSearchResults([]);
+      return;
+    }
+    const t = setTimeout(() => {
+      clientClient
+        .getClients(token, currentBusinessId, {
+          search: clientSearch.trim(),
+          limit: 8,
+        })
+        .then((res) => setClientSearchResults(res.data))
+        .catch(() => setClientSearchResults([]));
+    }, 200);
+    return () => clearTimeout(t);
+  }, [token, currentBusinessId, clientSearch]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -254,6 +284,7 @@ export default function CalendarPage() {
         staffId: createForm.staffId,
         serviceIds: createForm.serviceIds,
         startTime: createForm.startTime,
+        clientId: createForm.clientId || undefined,
         guestName: createForm.guestName || undefined,
         guestEmail: createForm.guestEmail || undefined,
         guestPhone: createForm.guestPhone || undefined,
@@ -538,6 +569,49 @@ export default function CalendarPage() {
                       }))
                     }
                   />
+                </div>
+                <div>
+                  <Label>Client (optional)</Label>
+                  <Input
+                    placeholder="Search client by name, email..."
+                    value={clientSearch}
+                    onChange={(e) => {
+                      setClientSearch(e.target.value);
+                      if (!e.target.value) {
+                        setCreateForm((f) => ({
+                          ...f,
+                          clientId: '',
+                          guestName: '',
+                          guestEmail: '',
+                          guestPhone: '',
+                        }));
+                      }
+                    }}
+                  />
+                  {clientSearchResults.length > 0 && (
+                    <div className="mt-1 max-h-32 overflow-y-auto rounded border">
+                      {clientSearchResults.map((c) => (
+                        <button
+                          key={c.id}
+                          type="button"
+                          className="block w-full px-3 py-2 text-left text-sm hover:bg-muted"
+                          onClick={() => {
+                            setCreateForm((f) => ({
+                              ...f,
+                              clientId: c.id,
+                              guestName: `${c.firstName} ${c.lastName}`.trim(),
+                              guestEmail: c.email,
+                              guestPhone: c.phone || '',
+                            }));
+                            setClientSearch(`${c.firstName} ${c.lastName}`);
+                            setClientSearchResults([]);
+                          }}
+                        >
+                          {c.firstName} {c.lastName} · {c.email}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label>Guest name</Label>
