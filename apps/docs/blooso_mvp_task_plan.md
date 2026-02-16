@@ -363,32 +363,32 @@
 
 | ID    | Task                                                            | Type    | Priority | Estimate | Depends On   | Acceptance Criteria                                                                      | Status |
 | ----- | --------------------------------------------------------------- | ------- | -------- | -------- | ------------ | ---------------------------------------------------------------------------------------- | ------ |
-| S8-01 | Prisma schema: `clients`, `client_notes`, `client_tags`         | backend | P0       | 2        | S5-01        | Migration runs, unique constraint on `(business_id, email)`                              | todo   |
-| S8-02 | Create `ClientModule` (controller, service, repository)         | backend | P0       | 2        | S8-01        | Module registered, guarded by `BusinessContextGuard`                                     | todo   |
-| S8-03 | Implement client CRUD: `POST/GET/PATCH`                         | backend | P0       | 3        | S8-02        | Create, list (paginated + search), get by ID, update profile                             | todo   |
-| S8-04 | Implement client search: `GET .../clients?search=`              | backend | P0       | 3        | S8-02        | Searches across first_name, last_name, email, phone using `ILIKE`                        | todo   |
-| S8-05 | Implement client notes: `POST/GET/DELETE .../clients/:id/notes` | backend | P1       | 2        | S8-02        | Create note (with `is_private` flag), list notes, delete own notes                       | todo   |
-| S8-06 | Implement client tags: `POST/DELETE .../clients/:id/tags`       | backend | P1       | 2        | S8-02        | Add/remove string tags on client profile                                                 | todo   |
-| S8-07 | Auto-create client on first booking                             | backend | P0       | 2        | S8-02, S5-08 | If no client record exists for email when booking created, auto-create from booking data | todo   |
-| S8-08 | Implement `GET .../clients/:id/appointments`                    | backend | P1       | 2        | S8-02        | Client appointment history: past + upcoming, sorted by date                              | todo   |
-| S8-09 | Swagger documentation for client endpoints                      | backend | P2       | 1        | S8-03        | All client endpoints documented                                                          | todo   |
+| S8-01 | Prisma schema: `clients`, `client_notes`, `client_tags`         | backend | P0       | 2        | S5-01        | Migration runs, unique constraint on `(business_id, email)`                              | done   |
+| S8-02 | Create `ClientModule` (controller, service, repository)         | backend | P0       | 2        | S8-01        | Module registered, guarded by `BusinessContextGuard`                                     | done   |
+| S8-03 | Implement client CRUD: `POST/GET/PATCH`                         | backend | P0       | 3        | S8-02        | Create, list (paginated + search), get by ID, update profile                             | done   |
+| S8-04 | Implement client search: `GET .../clients?search=`              | backend | P0       | 3        | S8-02        | Searches across first_name, last_name, email, phone using `ILIKE`                        | done   |
+| S8-05 | Implement client notes: `POST/GET/DELETE .../clients/:id/notes` | backend | P1       | 2        | S8-02        | Create note (with `is_private` flag), list notes, delete own notes                       | done   |
+| S8-06 | Implement client tags: `POST/DELETE .../clients/:id/tags`       | backend | P1       | 2        | S8-02        | Add/remove string tags on client profile                                                 | done   |
+| S8-07 | Auto-create client on first booking                             | backend | P0       | 2        | S8-02, S5-08 | If no client record exists for email when booking created, auto-create from booking data | done   |
+| S8-08 | Implement `GET .../clients/:id/appointments`                    | backend | P1       | 2        | S8-02        | Client appointment history: past + upcoming, sorted by date                              | done   |
+| S8-09 | Swagger documentation for client endpoints                      | backend | P2       | 1        | S8-03        | All client endpoints documented                                                          | done   |
 
 ### Frontend
 
 | ID    | Task                       | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                       | Status |
 | ----- | -------------------------- | -------- | -------- | -------- | ---------- | ------------------------------------------------------------------------- | ------ |
-| S8-10 | Build clients list page    | frontend | P0       | 3        | S2-12      | Searchable data table: name, email, phone, last visit, total visits, tags | todo   |
-| S8-11 | Build client detail page   | frontend | P0       | 5        | S8-10      | Tabs: overview (stats + info), appointments (history), notes, tags        | todo   |
-| S8-12 | Build add/edit client form | frontend | P0       | 3        | S8-10      | Dialog: first name, last name, email, phone, DOB, preferences             | todo   |
-| S8-13 | Build client notes section | frontend | P1       | 2        | S8-11      | Add note (text area + private toggle), list with date and author, delete  | todo   |
-| S8-14 | Build client tags UI       | frontend | P1       | 2        | S8-11      | Tag input: type to add, click X to remove, shows colored badges           | todo   |
+| S8-10 | Build clients list page    | frontend | P0       | 3        | S2-12      | Searchable data table: name, email, phone, last visit, total visits, tags | done   |
+| S8-11 | Build client detail page   | frontend | P0       | 5        | S8-10      | Tabs: overview (stats + info), appointments (history), notes, tags        | done   |
+| S8-12 | Build add/edit client form | frontend | P0       | 3        | S8-10      | Dialog: first name, last name, email, phone, DOB, preferences             | done   |
+| S8-13 | Build client notes section | frontend | P1       | 2        | S8-11      | Add note (text area + private toggle), list with date and author, delete  | done   |
+| S8-14 | Build client tags UI       | frontend | P1       | 2        | S8-11      | Tag input: type to add, click X to remove, shows colored badges           | done   |
 
 ### Shared
 
 | ID    | Task                      | Type   | Priority | Estimate | Depends On | Acceptance Criteria                                            | Status |
 | ----- | ------------------------- | ------ | -------- | -------- | ---------- | -------------------------------------------------------------- | ------ |
-| S8-15 | Define client types       | shared | P0       | 1        | S0-04      | `Client`, `ClientNote`, `ClientWithStats`                      | todo   |
-| S8-16 | Define client Zod schemas | shared | P0       | 1        | S0-04      | `createClientSchema`, `updateClientSchema`, `createNoteSchema` | todo   |
+| S8-15 | Define client types       | shared | P0       | 1        | S0-04      | `Client`, `ClientNote`, `ClientWithStats`                      | done   |
+| S8-16 | Define client Zod schemas | shared | P0       | 1        | S0-04      | `createClientSchema`, `updateClientSchema`, `createNoteSchema` | done   |
 
 ---
 
