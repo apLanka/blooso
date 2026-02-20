@@ -23,6 +23,8 @@ export interface Business {
   logoUrl: string | null;
   category: string;
   settings: Record<string, unknown>;
+  avgRating?: number;
+  reviewCount?: number;
   createdAt: string;
   updatedAt: string;
 }

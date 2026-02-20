@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getBusinessBySlug, type BusinessPublicProfile } from '@/lib/business-client';
+import { getReviews, type Review } from '@/lib/review-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Clock } from 'lucide-react';
+import { MapPin, Clock, Star } from 'lucide-react';
 
 export default function BusinessProfilePage() {
   const params = useParams();
@@ -13,6 +14,7 @@ export default function BusinessProfilePage() {
   const slug = params.slug as string;
 
   const [business, setBusiness] = useState<BusinessPublicProfile | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,6 +24,13 @@ export default function BusinessProfilePage() {
       .catch(() => setBusiness(null))
       .finally(() => setLoading(false));
   }, [slug]);
+
+  useEffect(() => {
+    if (!business?.id) return;
+    getReviews(business.id, { limit: 10 })
+      .then((r) => setReviews(r.data))
+      .catch(() => setReviews([]));
+  }, [business?.id]);
 
   if (loading) {
     return (
@@ -58,9 +67,17 @@ export default function BusinessProfilePage() {
           </div>
         )}
         <h1 className="text-3xl font-bold">{business.name}</h1>
-        <p className="mt-1 text-sm capitalize text-muted-foreground">
-          {business.category.replace(/_/g, ' ')}
-        </p>
+        <div className="mt-1 flex items-center gap-2">
+          <p className="text-sm capitalize text-muted-foreground">
+            {business.category.replace(/_/g, ' ')}
+          </p>
+          {(business.avgRating ?? 0) > 0 && (
+            <span className="flex items-center gap-1 text-sm">
+              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+              {business.avgRating?.toFixed(1)} ({business.reviewCount ?? 0} reviews)
+            </span>
+          )}
+        </div>
         {business.description && (
           <p className="mt-2 text-muted-foreground">{business.description}</p>
         )}
@@ -122,6 +139,41 @@ export default function BusinessProfilePage() {
           </div>
         </CardContent>
       </Card>
+
+      {reviews.length > 0 && (
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <h3 className="font-semibold">Reviews</h3>
+            <div className="mt-4 space-y-4">
+              {reviews.map((r) => (
+                <div key={r.id} className="border-b pb-4 last:border-0 last:pb-0">
+                  <div className="flex items-center gap-2">
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i <= r.rating ? 'fill-amber-400 text-amber-400' : 'text-muted'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {r.clientName ?? 'Anonymous'} · {new Date(r.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  {r.comment && <p className="mt-1 text-sm">{r.comment}</p>}
+                  {r.businessReply && (
+                    <p className="mt-2 rounded bg-muted/50 p-2 text-sm italic">
+                      Reply: {r.businessReply}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Button className="w-full" size="lg" onClick={() => router.push(`/b/${slug}/book`)}>
         Book now
