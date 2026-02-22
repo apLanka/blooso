@@ -7,11 +7,7 @@ import { getMyBusinesses, type BusinessWithDetails } from '@/lib/business-client
 import * as staffClient from '@/lib/staff-client';
 import * as serviceClient from '@/lib/service-client';
 import * as appointmentsClient from '@/lib/appointments-client';
-import {
-  recordInPersonPayment,
-  getAppointmentPayments,
-  type Payment,
-} from '@/lib/payment-client';
+import { recordInPersonPayment, getAppointmentPayments, type Payment } from '@/lib/payment-client';
 import * as clientClient from '@/lib/client-client';
 import { getAvailability } from '@/lib/availability-client';
 import type { Appointment } from '@/lib/booking-client';
@@ -110,9 +106,7 @@ export default function CalendarPage() {
     notes: '',
   });
   const [clientSearch, setClientSearch] = useState('');
-  const [clientSearchResults, setClientSearchResults] = useState<
-    clientClient.Client[]
-  >([]);
+  const [clientSearchResults, setClientSearchResults] = useState<clientClient.Client[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [detailPayments, setDetailPayments] = useState<Payment[]>([]);
@@ -747,6 +741,18 @@ export default function CalendarPage() {
                     onClick={() => handleStatusUpdate(detailAppointment.id, 'completed')}
                   >
                     Complete
+                  </Button>
+                )}
+                {detailAppointment.status === 'completed' && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/review/${detailAppointment.id}`;
+                      navigator.clipboard?.writeText(url);
+                    }}
+                  >
+                    Copy review link
                   </Button>
                 )}
                 {(detailAppointment.status === 'pending' ||
