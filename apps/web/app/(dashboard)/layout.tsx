@@ -15,6 +15,7 @@ import {
   Users,
   UserCircle,
   Calendar,
+  MessageSquare,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -25,6 +26,7 @@ const navItems = [
   { href: '/clients', label: 'Clients', icon: UserCircle },
   { href: '/services', label: 'Services', icon: Scissors },
   { href: '/staff', label: 'Staff', icon: Users },
+  { href: '/reviews', label: 'Reviews', icon: MessageSquare },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
