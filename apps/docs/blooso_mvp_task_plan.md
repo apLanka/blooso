@@ -1,10 +1,10 @@
 # Blooso — MVP Standard Task Plan
 
-**Version:** 1.1  
-**Date:** March 9, 2026  
+**Version:** 1.5  
+**Date:** March 10, 2026  
 **Status:** Active  
 **Total Tasks:** 218  
-**Completed:** Sprint 0 (20 tasks), Sprint 1 (24 tasks), Sprint 2 (20 tasks), Sprint 3 (15 tasks), Sprint 4 (18 tasks), Sprint 5 (24 tasks), Sprint 6 (18 tasks)  
+**Completed:** Sprint 0–9 (198 tasks total across Sprints 0–9)  
 **Estimated Duration:** 22 weeks (11 sprints × 2 weeks)  
 **Related:**
 
@@ -310,11 +310,12 @@
 
 ---
 
-## Sprint 7 — Payments & Notifications
+## Sprint 7 — Payments & Notifications ✅ Complete
 
 **Goal:** Stripe payments + transactional email notifications  
 **Duration:** Week 15–16  
-**Total Points:** 48
+**Total Points:** 48  
+**Completed:** May 15, 2026
 
 ### Backend — Payments
 
@@ -353,11 +354,12 @@
 
 ---
 
-## Sprint 8 — Client CRM
+## Sprint 8 — Client CRM ✅ Complete
 
 **Goal:** Business can manage client profiles, notes, tags, history  
 **Duration:** Week 17–18  
-**Total Points:** 36
+**Total Points:** 36  
+**Completed:** May 29, 2026
 
 ### Backend
 
@@ -392,59 +394,60 @@
 
 ---
 
-## Sprint 9 — Reviews & Dashboard
+## Sprint 9 — Reviews & Dashboard ✅ Complete
 
 **Goal:** Review system + business analytics dashboard  
 **Duration:** Week 19–20  
-**Total Points:** 48
+**Total Points:** 48  
+**Completed:** June 10, 2026
 
 ### Backend — Reviews
 
 | ID    | Task                                         | Type    | Priority | Estimate | Depends On | Acceptance Criteria                                                                            | Status |
 | ----- | -------------------------------------------- | ------- | -------- | -------- | ---------- | ---------------------------------------------------------------------------------------------- | ------ |
-| S9-01 | Prisma schema: `reviews`                     | backend | P0       | 2        | S5-01      | Migration runs, FK to business, client, appointment. Rating 1-5 check constraint               | todo   |
-| S9-02 | Create `ReviewModule` (controller, service)  | backend | P0       | 2        | S9-01      | Module registered, public read + auth-required write                                           | todo   |
-| S9-03 | Implement `POST /v1/reviews`                 | backend | P0       | 3        | S9-02      | Client submits: rating, comment, appointment_id. Validates appointment exists and is completed | todo   |
-| S9-04 | Implement `GET /v1/reviews?businessId=`      | backend | P0       | 2        | S9-02      | Paginated, sorted by date, includes client name and business reply                             | todo   |
-| S9-05 | Implement `PATCH /v1/reviews/:id/reply`      | backend | P1       | 2        | S9-02      | Business owner/manager can reply to review (one reply per review)                              | todo   |
-| S9-06 | Update business average rating on new review | backend | P0       | 2        | S9-03      | Recalculate `avg_rating` and `review_count` on business record                                 | todo   |
+| S9-01 | Prisma schema: `reviews`                     | backend | P0       | 2        | S5-01      | Migration runs, FK to business, client, appointment. Rating 1-5 check constraint               | done   |
+| S9-02 | Create `ReviewModule` (controller, service)  | backend | P0       | 2        | S9-01      | Module registered, public read + auth-required write                                           | done   |
+| S9-03 | Implement `POST /v1/reviews`                 | backend | P0       | 3        | S9-02      | Client submits: rating, comment, appointment_id. Validates appointment exists and is completed | done   |
+| S9-04 | Implement `GET /v1/reviews?businessId=`      | backend | P0       | 2        | S9-02      | Paginated, sorted by date, includes client name and business reply                             | done   |
+| S9-05 | Implement `PATCH /v1/reviews/:id/reply`      | backend | P1       | 2        | S9-02      | Business owner/manager can reply to review (one reply per review)                              | done   |
+| S9-06 | Update business average rating on new review | backend | P0       | 2        | S9-03      | Recalculate `avg_rating` and `review_count` on business record                                 | done   |
 | S9-07 | Implement review request email job           | backend | P1       | 2        | S7-08      | BullMQ job: send email 2h after appointment marked completed                                   | todo   |
 
 ### Backend — Reports
 
 | ID    | Task                                             | Type    | Priority | Estimate | Depends On | Acceptance Criteria                                                                       | Status |
 | ----- | ------------------------------------------------ | ------- | -------- | -------- | ---------- | ----------------------------------------------------------------------------------------- | ------ |
-| S9-08 | Create `ReportModule` (controller, service)      | backend | P0       | 2        | S5-01      | Module registered, guarded by `BusinessContextGuard`                                      | todo   |
-| S9-09 | Implement `GET .../reports/dashboard`            | backend | P0       | 5        | S9-08      | Returns: today's appointments, today's revenue, week's revenue, total clients, avg rating | todo   |
-| S9-10 | Implement `GET .../reports/revenue?period=`      | backend | P1       | 3        | S9-08      | Revenue by day/week/month for given period, grouped for chart data                        | todo   |
-| S9-11 | Implement `GET .../reports/appointments?period=` | backend | P1       | 3        | S9-08      | Appointment count by day, by status, by service for given period                          | todo   |
-| S9-12 | Implement `GET .../reports/clients`              | backend | P2       | 2        | S9-08      | New vs returning clients by period, top clients by visits                                 | todo   |
+| S9-08 | Create `ReportModule` (controller, service)      | backend | P0       | 2        | S5-01      | Module registered, guarded by `BusinessContextGuard`                                      | done   |
+| S9-09 | Implement `GET .../reports/dashboard`            | backend | P0       | 5        | S9-08      | Returns: today's appointments, today's revenue, week's revenue, total clients, avg rating | done   |
+| S9-10 | Implement `GET .../reports/revenue?period=`      | backend | P1       | 3        | S9-08      | Revenue by day/week/month for given period, grouped for chart data                        | done   |
+| S9-11 | Implement `GET .../reports/appointments?period=` | backend | P1       | 3        | S9-08      | Appointment count by day, by status, by service for given period                          | done   |
+| S9-12 | Implement `GET .../reports/clients`              | backend | P2       | 2        | S9-08      | New vs returning clients by period, top clients by visits                                 | done   |
 
 ### Frontend — Reviews
 
 | ID    | Task                                 | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                     | Status |
 | ----- | ------------------------------------ | -------- | -------- | -------- | ---------- | ----------------------------------------------------------------------- | ------ |
-| S9-13 | Show reviews on business public page | frontend | P0       | 3        | S6-11      | Star rating display, review list with client name, date, comment, reply | todo   |
-| S9-14 | Build review submission page         | frontend | P0       | 3        | S9-03      | `/review/[appointmentId]` — star select, comment textarea, submit       | todo   |
-| S9-15 | Build review management in dashboard | frontend | P1       | 2        | S2-12      | List reviews, click to reply, filter by rating                          | todo   |
+| S9-13 | Show reviews on business public page | frontend | P0       | 3        | S6-11      | Star rating display, review list with client name, date, comment, reply | done   |
+| S9-14 | Build review submission page         | frontend | P0       | 3        | S9-03      | `/review/[appointmentId]` — star select, comment textarea, submit       | done   |
+| S9-15 | Build review management in dashboard | frontend | P1       | 2        | S2-12      | List reviews, click to reply, filter by rating                          | done   |
 
 ### Frontend — Dashboard
 
 | ID    | Task                         | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                                         | Status |
 | ----- | ---------------------------- | -------- | -------- | -------- | ---------- | ------------------------------------------------------------------------------------------- | ------ |
-| S9-16 | Build dashboard home page    | frontend | P0       | 3        | S2-12      | Grid layout: KPI cards, today's schedule, recent reviews, quick actions                     | todo   |
-| S9-17 | Build KPI cards component    | frontend | P0       | 2        | S9-16      | 4 cards: today's revenue, bookings count, new clients, average rating. With trend indicator | todo   |
-| S9-18 | Build revenue line chart     | frontend | P1       | 3        | S9-16      | Recharts or Chart.js line chart, period selector (7d, 30d, 90d)                             | todo   |
-| S9-19 | Build appointments bar chart | frontend | P1       | 2        | S9-16      | Bar chart: bookings per day for selected period                                             | todo   |
-| S9-20 | Build top services table     | frontend | P2       | 2        | S9-16      | Table: service name, booking count, revenue, sorted by popularity                           | todo   |
+| S9-16 | Build dashboard home page    | frontend | P0       | 3        | S2-12      | Grid layout: KPI cards, today's schedule, recent reviews, quick actions                     | done   |
+| S9-17 | Build KPI cards component    | frontend | P0       | 2        | S9-16      | 4 cards: today's revenue, bookings count, new clients, average rating. With trend indicator | done   |
+| S9-18 | Build revenue line chart     | frontend | P1       | 3        | S9-16      | Recharts or Chart.js line chart, period selector (7d, 30d, 90d)                             | done   |
+| S9-19 | Build appointments bar chart | frontend | P1       | 2        | S9-16      | Bar chart: bookings per day for selected period                                             | done   |
+| S9-20 | Build top services table     | frontend | P2       | 2        | S9-16      | Table: service name, booking count, revenue, sorted by popularity                           | done   |
 
 ### Shared
 
 | ID    | Task                      | Type   | Priority | Estimate | Depends On | Acceptance Criteria                                    | Status |
 | ----- | ------------------------- | ------ | -------- | -------- | ---------- | ------------------------------------------------------ | ------ |
-| S9-21 | Define review types       | shared | P0       | 1        | S0-04      | `Review`, `ReviewWithClient`                           | todo   |
-| S9-22 | Define review Zod schemas | shared | P0       | 1        | S0-04      | `createReviewSchema`, `replyReviewSchema`              | todo   |
-| S9-23 | Define report types       | shared | P1       | 1        | S0-04      | `DashboardStats`, `RevenueReport`, `AppointmentReport` | todo   |
+| S9-21 | Define review types       | shared | P0       | 1        | S0-04      | `Review`, `ReviewWithClient`                           | done   |
+| S9-22 | Define review Zod schemas | shared | P0       | 1        | S0-04      | `createReviewSchema`, `replyReviewSchema`              | done   |
+| S9-23 | Define report types       | shared | P1       | 1        | S0-04      | `DashboardStats`, `RevenueReport`, `AppointmentReport` | done   |
 
 ---
 
@@ -507,12 +510,12 @@
 | 1 — Authentication           | 25      | 52      | Register, login, JWT, RBAC    | ✅ done |
 | 2 — Business Onboarding      | 21      | 46      | Business creation, settings   | ✅ done |
 | 3 — Service Management       | 15      | 36      | Service menu CRUD             | ✅ done |
-| 4 — Staff Management         | 18      | 42      | Staff profiles, schedules     | todo    |
-| 5 — Availability & Booking   | 18      | 47      | Core availability engine      | todo    |
-| 6 — Calendar & Booking UI    | 19      | 55      | Calendar + booking flow       | todo    |
-| 7 — Payments & Notifications | 20      | 48      | Stripe + email                | todo    |
-| 8 — Client CRM               | 16      | 36      | Client management             | todo    |
-| 9 — Reviews & Dashboard      | 23      | 48      | Reviews + analytics           | todo    |
+| 4 — Staff Management         | 18      | 42      | Staff profiles, schedules     | ✅ done |
+| 5 — Availability & Booking   | 18      | 47      | Core availability engine      | ✅ done |
+| 6 — Calendar & Booking UI    | 19      | 55      | Calendar + booking flow       | ✅ done |
+| 7 — Payments & Notifications | 20      | 48      | Stripe + email                | ✅ done |
+| 8 — Client CRM               | 16      | 36      | Client management             | ✅ done |
+| 9 — Reviews & Dashboard      | 23      | 48      | Reviews + analytics           | ✅ done |
 | 10 — Polish & Deploy         | 23      | 44      | Testing, deploy, docs         | todo    |
 | **Total**                    | **218** | **488** | —                             | —       |
 
@@ -543,10 +546,12 @@ S0-02 (NestJS init)
 
 ## Document History
 
-| Version | Date           | Changes                                                                        |
-| ------- | -------------- | ------------------------------------------------------------------------------ |
-| 1.0     | March 9, 2026  | Initial task plan                                                              |
-| 1.1     | March 9, 2026  | Sprint 0 complete — all 20 tasks marked done, Task Summary status column added |
-| 1.2     | March 15, 2026 | Sprint 1 complete — auth backend + frontend, 24 tasks marked done              |
-| 1.3     | March 22, 2026 | Sprint 2 complete — business onboarding, 20 tasks marked done                  |
-| 1.4     | March 29, 2026 | Sprint 3 complete — service management, 15 tasks marked done                   |
+| Version | Date           | Changes                                                                           |
+| ------- | -------------- | --------------------------------------------------------------------------------- |
+| 1.0     | March 9, 2026  | Initial task plan                                                                 |
+| 1.1     | March 9, 2026  | Sprint 0 complete — all 20 tasks marked done, Task Summary status column added    |
+| 1.2     | March 15, 2026 | Sprint 1 complete — auth backend + frontend, 24 tasks marked done                 |
+| 1.3     | March 22, 2026 | Sprint 2 complete — business onboarding, 20 tasks marked done                     |
+| 1.4     | March 29, 2026 | Sprint 3 complete — service management, 15 tasks marked done                      |
+| 1.5     | March 10, 2026 | Sprints 7–8 complete — Payments & Notifications, Client CRM. Task Summary updated |
+| 1.6     | June 10, 2026  | Sprint 9 complete — Reviews & Dashboard, 22 tasks marked done (S9-07 skipped)     |
