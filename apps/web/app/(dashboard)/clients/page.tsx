@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, UserCircle, ChevronRight, Search, X } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
+import { ClientsListSkeleton } from '@/components/skeletons';
 
 export default function ClientsPage() {
   const { user, isLoading, getToken } = useAuth();
@@ -100,12 +102,14 @@ export default function ClientsPage() {
       setTotal(res.total);
       setForm({ firstName: '', lastName: '', email: '', phone: '', dateOfBirth: '' });
       setFormOpen(false);
+      toast.success('Client added successfully');
     } catch (err: unknown) {
-      setError(
+      const msg =
         err && typeof err === 'object' && 'body' in err
           ? ((err as { body?: { message?: string } }).body?.message as string)
-          : 'Failed to add client'
-      );
+          : 'Failed to add client';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -117,11 +121,7 @@ export default function ClientsPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
+    return <ClientsListSkeleton />;
   }
 
   if (businesses.length === 0) {

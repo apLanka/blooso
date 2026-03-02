@@ -34,6 +34,8 @@ import {
   CreditCard,
   Banknote,
 } from 'lucide-react';
+import { toast } from 'sonner';
+import { CalendarSkeleton } from '@/components/skeletons';
 
 const ROW_HEIGHT = 48;
 const SLOT_MINUTES = 15;
@@ -286,12 +288,14 @@ export default function CalendarPage() {
       });
       setCreateOpen(false);
       loadData();
+      toast.success('Appointment created');
     } catch (err: unknown) {
-      setError(
+      const msg =
         err && typeof err === 'object' && 'body' in err
           ? ((err as { body?: { message?: string } }).body?.message as string)
-          : 'Failed to create appointment'
-      );
+          : 'Failed to create appointment';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
@@ -303,8 +307,10 @@ export default function CalendarPage() {
       await appointmentsClient.updateAppointment(token, currentBusinessId, aptId, { status });
       setDetailAppointment(null);
       loadData();
+      toast.success('Appointment updated');
     } catch {
       setError('Failed to update');
+      toast.error('Failed to update appointment');
     }
   };
 
@@ -314,8 +320,10 @@ export default function CalendarPage() {
       await appointmentsClient.cancelAppointment(token, currentBusinessId, aptId);
       setDetailAppointment(null);
       loadData();
+      toast.success('Appointment cancelled');
     } catch {
       setError('Failed to cancel');
+      toast.error('Failed to cancel appointment');
     }
   };
 
@@ -324,6 +332,10 @@ export default function CalendarPage() {
     const m = (i * SLOT_MINUTES) % 60;
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   });
+
+  if (loading) {
+    return <CalendarSkeleton />;
+  }
 
   if (businesses.length === 0) {
     return (

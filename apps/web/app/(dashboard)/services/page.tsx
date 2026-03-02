@@ -19,6 +19,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Plus, Pencil, Trash2, Scissors } from 'lucide-react';
+import { toast } from 'sonner';
+import { ServicesListSkeleton } from '@/components/skeletons';
 
 export default function ServicesPage() {
   const { user, isLoading, getToken } = useAuth();
@@ -87,12 +89,14 @@ export default function ServicesPage() {
       setCategories(data);
       setNewCategoryName('');
       setShowCategoryForm(false);
+      toast.success('Category created');
     } catch (err: unknown) {
-      setError(
+      const msg =
         err && typeof err === 'object' && 'body' in err
           ? ((err as { body?: { message?: string } }).body?.message as string)
-          : 'Failed to create category'
-      );
+          : 'Failed to create category';
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -103,8 +107,10 @@ export default function ServicesPage() {
       await serviceClient.deleteCategory(token, currentBusinessId, categoryId);
       const data = await serviceClient.getCategories(token, currentBusinessId);
       setCategories(data);
+      toast.success('Category deleted');
     } catch {
       setError('Failed to delete category');
+      toast.error('Failed to delete category');
     }
   };
 
@@ -130,12 +136,14 @@ export default function ServicesPage() {
         isActive: true,
       });
       setShowServiceForm(false);
+      toast.success('Service created');
     } catch (err: unknown) {
-      setError(
+      const msg =
         err && typeof err === 'object' && 'body' in err
           ? ((err as { body?: { message?: string } }).body?.message as string)
-          : 'Failed to create service'
-      );
+          : 'Failed to create service';
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -158,12 +166,14 @@ export default function ServicesPage() {
       setCategories(data);
       setEditingService(null);
       setShowServiceForm(false);
+      toast.success('Service updated');
     } catch (err: unknown) {
-      setError(
+      const msg =
         err && typeof err === 'object' && 'body' in err
           ? ((err as { body?: { message?: string } }).body?.message as string)
-          : 'Failed to update service'
-      );
+          : 'Failed to update service';
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -175,8 +185,10 @@ export default function ServicesPage() {
       });
       const data = await serviceClient.getCategories(token, currentBusinessId);
       setCategories(data);
+      toast.success('Service updated');
     } catch {
       setError('Failed to update service');
+      toast.error('Failed to update service');
     }
   };
 
@@ -186,8 +198,10 @@ export default function ServicesPage() {
       await serviceClient.deleteService(token, currentBusinessId, serviceId);
       const data = await serviceClient.getCategories(token, currentBusinessId);
       setCategories(data);
+      toast.success('Service deleted');
     } catch {
       setError('Failed to delete service');
+      toast.error('Failed to delete service');
     }
   };
 
@@ -209,11 +223,7 @@ export default function ServicesPage() {
   const totalServices = categories.reduce((sum, c) => sum + c.services.length, 0);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
+    return <ServicesListSkeleton />;
   }
 
   if (businesses.length === 0) {

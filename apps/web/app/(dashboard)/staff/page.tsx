@@ -18,6 +18,8 @@ import {
 } from '@/components/ui/select';
 import { Plus, Users, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
+import { StaffListSkeleton } from '@/components/skeletons';
 
 export default function StaffPage() {
   const { user, isLoading, getToken } = useAuth();
@@ -83,21 +85,19 @@ export default function StaffPage() {
       setStaff(data);
       setForm({ name: '', email: '', role: 'staff', commissionRate: 0, bio: '' });
       setShowForm(false);
+      toast.success('Staff member added');
     } catch (err: unknown) {
-      setError(
+      const msg =
         err && typeof err === 'object' && 'body' in err
           ? ((err as { body?: { message?: string } }).body?.message as string)
-          : 'Failed to add staff'
-      );
+          : 'Failed to add staff';
+      setError(msg);
+      toast.error(msg);
     }
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
+    return <StaffListSkeleton />;
   }
 
   if (businesses.length === 0) {

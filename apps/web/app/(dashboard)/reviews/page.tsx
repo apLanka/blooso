@@ -10,6 +10,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Star, MessageSquare, X } from 'lucide-react';
+import { toast } from 'sonner';
+import { ReviewsListSkeleton } from '@/components/skeletons';
 
 export default function ReviewsPage() {
   const { user, isLoading, getToken } = useAuth();
@@ -72,23 +74,21 @@ export default function ReviewsPage() {
       );
       setReplyingId(null);
       setReplyText('');
+      toast.success('Reply sent');
     } catch (err: unknown) {
-      setError(
+      const msg =
         err && typeof err === 'object' && 'body' in err
           ? ((err as { body?: { message?: string } }).body?.message as string)
-          : 'Failed to add reply'
-      );
+          : 'Failed to add reply';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
+    return <ReviewsListSkeleton />;
   }
 
   if (businesses.length === 0) {
