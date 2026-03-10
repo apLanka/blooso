@@ -114,7 +114,7 @@ export class AuthService {
       expiresIn: ACCESS_TOKEN_EXPIRY,
     });
     const refreshToken = this.jwt.sign(
-      { sub: user.id, type: 'refresh' },
+      { sub: user.id, type: 'refresh', jti: crypto.randomUUID() },
       { expiresIn: REFRESH_TOKEN_EXPIRY },
     );
 

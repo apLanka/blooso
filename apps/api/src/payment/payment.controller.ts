@@ -6,7 +6,7 @@ import {
   Param,
   Req,
   UseGuards,
-  RawBodyRequest,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -71,11 +71,13 @@ export class PaymentController {
   ) {
     const signature = (req.headers['stripe-signature'] ?? '') as string;
     if (!signature) {
-      throw new Error('Missing stripe-signature header');
+      throw new BadRequestException('Missing stripe-signature header');
     }
     const rawBody = req.rawBody;
     if (!rawBody) {
-      throw new Error('Raw body required for webhook verification');
+      throw new BadRequestException(
+        'Raw body required for webhook verification',
+      );
     }
     const payload = Buffer.isBuffer(rawBody)
       ? rawBody
