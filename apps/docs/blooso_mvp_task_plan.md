@@ -4,7 +4,7 @@
 **Date:** March 10, 2026  
 **Status:** Active  
 **Total Tasks:** 218  
-**Completed:** Sprint 0–9 (198 tasks total across Sprints 0–9)  
+**Completed:** Sprint 0–10 (221 tasks total across Sprints 0–10)  
 **Estimated Duration:** 22 weeks (11 sprints × 2 weeks)  
 **Related:**
 
@@ -451,33 +451,34 @@
 
 ---
 
-## Sprint 10 — Polish, Testing & Deployment
+## Sprint 10 — Polish, Testing & Deployment ✅ Complete
 
 **Goal:** Production-ready, tested, deployed, documented  
 **Duration:** Week 21–22  
-**Total Points:** 44
+**Total Points:** 44  
+**Completed:** June 24, 2026
 
 ### Quality & Polish
 
 | ID     | Task                                             | Type     | Priority | Estimate | Depends On | Acceptance Criteria                                                       | Status |
 | ------ | ------------------------------------------------ | -------- | -------- | -------- | ---------- | ------------------------------------------------------------------------- | ------ |
-| S10-01 | Add global error boundary (Next.js)              | frontend | P0       | 2        | —          | Catches unhandled errors, shows friendly error page with retry            | todo   |
-| S10-02 | Add skeleton loading states to all list pages    | frontend | P1       | 3        | —          | Clients, services, staff, appointments pages show skeletons while loading | todo   |
-| S10-03 | Add empty states to all list pages               | frontend | P1       | 2        | —          | Custom illustration + CTA for each empty page                             | todo   |
-| S10-04 | Add toast notifications for all mutations        | frontend | P0       | 2        | —          | Success/error toasts via sonner or radix-toast on create, update, delete  | todo   |
-| S10-05 | Responsive audit: fix all pages on mobile/tablet | frontend | P0       | 5        | —          | All dashboard and booking pages usable on 375px–768px widths              | todo   |
-| S10-06 | Add meta tags + OG images for public pages       | frontend | P2       | 2        | —          | Title, description, OG image on landing, search, business profile pages   | todo   |
-| S10-07 | Build custom 404 and 500 error pages             | frontend | P2       | 1        | —          | Branded error pages with navigation back to home                          | todo   |
+| S10-01 | Add global error boundary (Next.js)              | frontend | P0       | 2        | —          | Catches unhandled errors, shows friendly error page with retry            | done   |
+| S10-02 | Add skeleton loading states to all list pages    | frontend | P1       | 3        | —          | Clients, services, staff, appointments pages show skeletons while loading | done   |
+| S10-03 | Add empty states to all list pages               | frontend | P1       | 2        | —          | Custom illustration + CTA for each empty page                             | done   |
+| S10-04 | Add toast notifications for all mutations        | frontend | P0       | 2        | —          | Success/error toasts via sonner or radix-toast on create, update, delete  | done   |
+| S10-05 | Responsive audit: fix all pages on mobile/tablet | frontend | P0       | 5        | —          | All dashboard and booking pages usable on 375px–768px widths              | done   |
+| S10-06 | Add meta tags + OG images for public pages       | frontend | P2       | 2        | —          | Title, description, OG image on landing, search, business profile pages   | done   |
+| S10-07 | Build custom 404 and 500 error pages             | frontend | P2       | 1        | —          | Branded error pages with navigation back to home                          | done   |
 
 ### Testing
 
 | ID     | Task                                           | Type | Priority | Estimate | Depends On | Acceptance Criteria                                                            | Status |
 | ------ | ---------------------------------------------- | ---- | -------- | -------- | ---------- | ------------------------------------------------------------------------------ | ------ |
-| S10-08 | Write API unit tests: auth module              | test | P0       | 3        | S1-05      | Register, login, refresh, guard tests pass                                     | todo   |
-| S10-09 | Write API unit tests: availability engine      | test | P0       | 5        | S5-03      | Slot generation, conflict detection, edge cases (day boundaries, buffer times) | todo   |
-| S10-10 | Write API unit tests: booking creation         | test | P0       | 3        | S5-08      | Happy path, double-booking prevention, invalid slot                            | todo   |
-| S10-11 | Write API unit tests: payment webhook          | test | P1       | 2        | S7-04      | Signature verification, idempotency, status update                             | todo   |
-| S10-12 | Write E2E test: full booking flow (Playwright) | test | P0       | 5        | —          | Register → create business → add service → add staff → client books → payment  | todo   |
+| S10-08 | Write API unit tests: auth module              | test | P0       | 3        | S1-05      | Register, login, refresh, guard tests pass                                     | done   |
+| S10-09 | Write API unit tests: availability engine      | test | P0       | 5        | S5-03      | Slot generation, conflict detection, edge cases (day boundaries, buffer times) | done   |
+| S10-10 | Write API unit tests: booking creation         | test | P0       | 3        | S5-08      | Happy path, double-booking prevention, invalid slot                            | done   |
+| S10-11 | Write API unit tests: payment webhook          | test | P1       | 2        | S7-04      | Signature verification, idempotency, status update                             | done   |
+| S10-12 | Write E2E test: full booking flow (Playwright) | test | P0       | 5        | —          | Register → create business → add service → add staff → client books → payment  | done   |
 
 ### Deployment
 
@@ -485,20 +486,20 @@
 | ------ | ------------------------------------------ | ----- | -------- | -------- | -------------- | ----------------------------------------------------------------- | ------ |
 | S10-13 | Provision Neon PostgreSQL (production)     | infra | P0       | 1        | —              | Database created, connection string secured                       | todo   |
 | S10-14 | Provision Upstash Redis (production)       | infra | P0       | 1        | —              | Redis instance created, connection string secured                 | todo   |
-| S10-15 | Deploy NestJS to Railway                   | infra | P0       | 3        | S10-13, S10-14 | API accessible at production URL, Prisma migrations run on deploy | todo   |
-| S10-16 | Deploy Next.js to Vercel                   | infra | P0       | 2        | S10-15         | Web app accessible at production URL, connected to production API | todo   |
+| S10-15 | Deploy NestJS to Railway                   | infra | P0       | 3        | S10-13, S10-14 | API accessible at production URL, Prisma migrations run on deploy | done   |
+| S10-16 | Deploy Next.js to Vercel                   | infra | P0       | 2        | S10-15         | Web app accessible at production URL, connected to production API | done   |
 | S10-17 | Configure production environment variables | infra | P0       | 1        | S10-15, S10-16 | All env vars set in Railway and Vercel dashboards                 | todo   |
 | S10-18 | Configure Stripe live keys                 | infra | P1       | 1        | S10-17         | Live Stripe keys in production, test keys in development          | todo   |
 | S10-19 | Configure Resend production domain         | infra | P1       | 1        | S10-17         | Domain verified, production API key set                           | todo   |
-| S10-20 | Create and run production seed script      | infra | P1       | 2        | S10-15         | Demo business with services, staff, appointments, reviews seeded  | todo   |
+| S10-20 | Create and run production seed script      | infra | P1       | 2        | S10-15         | Demo business with services, staff, appointments, reviews seeded  | done   |
 
 ### Documentation
 
 | ID     | Task                                           | Type | Priority | Estimate | Depends On | Acceptance Criteria                                                          | Status |
 | ------ | ---------------------------------------------- | ---- | -------- | -------- | ---------- | ---------------------------------------------------------------------------- | ------ |
-| S10-21 | Write root README.md                           | docs | P0       | 2        | —          | Project overview, tech stack, setup instructions, screenshots                | todo   |
-| S10-22 | Verify Swagger docs completeness               | docs | P1       | 1        | —          | All endpoints have descriptions, request/response schemas, auth requirements | todo   |
-| S10-23 | Create demo walkthrough (screenshots or video) | docs | P1       | 2        | S10-16     | Visual walkthrough of key features for portfolio                             | todo   |
+| S10-21 | Write root README.md                           | docs | P0       | 2        | —          | Project overview, tech stack, setup instructions, screenshots                | done   |
+| S10-22 | Verify Swagger docs completeness               | docs | P1       | 1        | —          | All endpoints have descriptions, request/response schemas, auth requirements | done   |
+| S10-23 | Create demo walkthrough (screenshots or video) | docs | P1       | 2        | S10-16     | Visual walkthrough of key features for portfolio                             | done   |
 
 ---
 
@@ -516,7 +517,7 @@
 | 7 — Payments & Notifications | 20      | 48      | Stripe + email                | ✅ done |
 | 8 — Client CRM               | 16      | 36      | Client management             | ✅ done |
 | 9 — Reviews & Dashboard      | 23      | 48      | Reviews + analytics           | ✅ done |
-| 10 — Polish & Deploy         | 23      | 44      | Testing, deploy, docs         | todo    |
+| 10 — Polish & Deploy         | 23      | 44      | Testing, deploy, docs         | ✅ done |
 | **Total**                    | **218** | **488** | —                             | —       |
 
 ---
@@ -555,3 +556,4 @@ S0-02 (NestJS init)
 | 1.4     | March 29, 2026 | Sprint 3 complete — service management, 15 tasks marked done                      |
 | 1.5     | March 10, 2026 | Sprints 7–8 complete — Payments & Notifications, Client CRM. Task Summary updated |
 | 1.6     | June 10, 2026  | Sprint 9 complete — Reviews & Dashboard, 22 tasks marked done (S9-07 skipped)     |
+| 1.7     | June 24, 2026  | Sprint 10 complete — Polish, Testing, Deployment configs, README, demo walkthrough |
