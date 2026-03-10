@@ -4,7 +4,9 @@
   "scripts": {
     "prepare": "npx husky || true",
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "npm run dev --workspace=web",
+    "dev:api": "npm run dev --workspace=api",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
@@ -14,6 +16,7 @@
     "db:studio": "turbo run db:studio --filter=api"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "prettier": "^3.6.2",
     "turbo": "^2.6.1",
     "typescript": "5.9.2"
@@ -21,7 +24,6 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "npm@10.9.2",
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md}": [
       "prettier --write"
