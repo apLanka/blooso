@@ -23,6 +23,9 @@
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
     --radius: 0.625rem;
+    --accent-pink: #ffafcc;
+    --accent-blue: #a2d2ff;
+    --accent-blue-light: #bde0fe;
   }
   .dark {
     --background: oklch(0.145 0 0);
@@ -43,11 +46,30 @@
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
+    --accent-pink: #ffafcc;
+    --accent-blue: #a2d2ff;
+    --accent-blue-light: #bde0fe;
   }
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-up {
+    animation: fade-up 600ms ease-out both;
   }
 }

@@ -43,6 +43,9 @@ const config: Config = {
           DEFAULT: 'var(--card)',
           foreground: 'var(--card-foreground)',
         },
+        'accent-pink': 'var(--accent-pink)',
+        'accent-blue': 'var(--accent-blue)',
+        'accent-blue-light': 'var(--accent-blue-light)',
       },
       borderRadius: {
         lg: 'var(--radius)',
