@@ -62,7 +62,7 @@ export function Hero() {
             )}
             style={{ animationDelay: '200ms' }}
           >
-            Discover top-rated salons, spas, and barbershops.
+            Discover top-rated salons and barbershops.
             <br className="hidden sm:block" />
             Book your next appointment in just a few clicks.
           </p>

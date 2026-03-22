@@ -21,8 +21,8 @@ export function LandingFooter() {
               Blooso
             </Link>
             <p className="mt-3 max-w-sm text-sm text-gray-500">
-              Premium booking platform for beauty & wellness. Find salons, spas, and barbershops.
-              Book in minutes.
+              Premium booking platform for beauty & wellness. Find salons and barbershops. Book in
+              minutes.
             </p>
           </div>
           <div>

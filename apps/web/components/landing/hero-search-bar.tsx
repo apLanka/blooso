@@ -39,7 +39,7 @@ export function HeroSearchBar() {
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search salons, spas, barbers..."
+        placeholder="Search salons, barbers..."
         className="min-w-0 flex-1 bg-transparent px-3 text-base text-gray-900 outline-none placeholder:text-gray-400"
         aria-label="Search for businesses"
       />

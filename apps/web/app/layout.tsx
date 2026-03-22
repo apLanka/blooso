@@ -12,8 +12,7 @@ export const metadata: Metadata = {
     default: 'Blooso — Premium Booking for Beauty & Wellness',
     template: '%s | Blooso',
   },
-  description:
-    'Book beauty and wellness services 24/7. Find salons, spas, barbershops, and more.',
+  description: 'Book beauty and wellness services 24/7. Find salons, barbershops, and more.',
   openGraph: {
     title: 'Blooso — Premium Booking for Beauty & Wellness',
     description: 'Book beauty and wellness services 24/7',

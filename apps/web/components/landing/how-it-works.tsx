@@ -5,8 +5,7 @@ const STEPS = [
   {
     icon: Search,
     title: 'Search & discover',
-    description:
-      'Find salons, spas, and barbershops by name or category. Browse reviews and ratings.',
+    description: 'Find salons and barbershops by name or category. Browse reviews and ratings.',
   },
   {
     icon: Calendar,

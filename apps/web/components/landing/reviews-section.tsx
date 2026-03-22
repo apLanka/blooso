@@ -25,7 +25,7 @@ const REVIEWS = [
     name: 'Emma L.',
     location: 'Birmingham, UK',
     rating: 5,
-    title: 'Perfect for spas',
+    title: 'Perfect for massages',
     comment:
       'Booked a massage in minutes. The reminders are helpful and I never miss an appointment anymore. Such a time-saver!',
   },
