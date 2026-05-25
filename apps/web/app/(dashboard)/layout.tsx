@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
@@ -38,8 +37,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#F9F7F5]">
+        <div
+          className="size-8 animate-spin rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }}
+        />
       </div>
     );
   }
@@ -49,113 +51,147 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return null;
   }
 
-  return (
-    <div className="flex min-h-screen bg-background">
-      {/* Sidebar - desktop */}
-      <aside className="hidden w-64 flex-col border-r bg-card md:flex">
-        <div className="flex h-16 items-center border-b px-6">
-          <Link href="/dashboard" className="font-semibold">
-            Blooso
-          </Link>
-        </div>
-        <nav className="flex-1 space-y-1 p-4">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
+  const SidebarContent = () => (
+    <>
+      <div className="flex h-20 items-center px-8">
+        <Link
+          href="/dashboard"
+          className="font-serif text-2xl font-bold tracking-tight"
+          style={{ color: 'var(--blooso-text)' }}
+        >
+          Blooso<span style={{ color: 'var(--blooso-rose)' }}>.</span>
+        </Link>
+      </div>
+      <nav className="flex-1 space-y-1.5 px-4 pt-4">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setSidebarOpen(false)}
+              className={cn(
+                'group flex items-center gap-3.5 rounded-[12px] px-4 py-3 text-sm font-semibold transition-all',
+                isActive ? 'shadow-sm' : 'hover:bg-black/5'
+              )}
+              style={{
+                backgroundColor: isActive ? 'var(--blooso-rose)' : 'transparent',
+                color: isActive ? '#fff' : 'var(--blooso-text-muted)',
+              }}
+            >
+              <Icon
                 className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  'size-4 transition-transform group-hover:scale-110',
+                  isActive ? 'text-white' : 'text-current'
                 )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+              />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="p-6">
+        <div
+          className="rounded-[16px] p-5 shadow-sm"
+          style={{ backgroundColor: '#fff', border: '1px solid var(--blooso-border-light)' }}
+        >
+          <p
+            className="text-xs font-bold uppercase tracking-wider"
+            style={{ color: 'var(--blooso-text-subtle)' }}
+          >
+            Logged in as
+          </p>
+          <p
+            className="mt-1 truncate text-sm font-semibold"
+            style={{ color: 'var(--blooso-text)' }}
+          >
+            {user.name}
+          </p>
+          <button
+            onClick={async () => {
+              await logout();
+              router.push('/login');
+            }}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-[8px] py-2 text-xs font-semibold transition-colors hover:bg-black/5"
+            style={{ color: 'var(--blooso-text-muted)', border: '1px solid var(--blooso-border)' }}
+          >
+            <LogOut className="size-3.5" />
+            Sign out
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: '#F9F7F5' }}>
+      {/* ── Desktop Sidebar ── */}
+      <aside
+        className="hidden w-72 flex-col border-r md:flex"
+        style={{
+          backgroundColor: 'var(--blooso-bg-warm)',
+          borderColor: 'var(--blooso-border-light)',
+        }}
+      >
+        <SidebarContent />
       </aside>
 
-      {/* Mobile sidebar overlay */}
+      {/* ── Mobile Sidebar Overlay ── */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden transition-opacity animate-in fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar - mobile */}
+      {/* ── Mobile Sidebar ── */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-64 flex-col border-r bg-card transition-transform md:hidden',
-          sidebarOpen ? 'flex' : 'hidden -translate-x-full'
+          'fixed inset-y-0 left-0 z-50 flex w-72 flex-col shadow-2xl transition-transform duration-300 md:hidden',
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
+        style={{ backgroundColor: 'var(--blooso-bg-warm)' }}
       >
-        <div className="flex h-16 items-center justify-between border-b px-6">
-          <Link href="/dashboard" className="font-semibold">
-            Blooso
-          </Link>
-          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
-        <nav className="flex-1 space-y-1 p-4">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <SidebarContent />
+        <button
+          onClick={() => setSidebarOpen(false)}
+          className="absolute right-4 top-6 flex size-8 items-center justify-center rounded-full bg-black/5 text-black/60 transition-colors hover:bg-black/10 hover:text-black"
+        >
+          <X className="size-4" />
+        </button>
       </aside>
 
-      {/* Main content */}
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b bg-card px-4 md:px-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
+      {/* ── Main Content Area ── */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Mobile Header */}
+        <header
+          className="flex h-16 shrink-0 items-center justify-between border-b px-6 md:hidden backdrop-blur-md sticky top-0 z-30"
+          style={{
+            backgroundColor: 'rgba(249, 247, 245, 0.8)',
+            borderColor: 'var(--blooso-border-light)',
+          }}
+        >
+          <Link
+            href="/dashboard"
+            className="font-serif text-xl font-bold tracking-tight"
+            style={{ color: 'var(--blooso-text)' }}
+          >
+            Blooso<span style={{ color: 'var(--blooso-rose)' }}>.</span>
+          </Link>
+          <button
+            className="flex size-10 items-center justify-center rounded-full transition-colors hover:bg-black/5"
+            style={{ color: 'var(--blooso-text)' }}
             onClick={() => setSidebarOpen(true)}
           >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <div className="flex-1 md:flex-none" />
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user.name}</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={async () => {
-                await logout();
-                router.push('/login');
-              }}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign out
-            </Button>
-          </div>
+            <Menu className="size-5" />
+          </button>
         </header>
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-10 lg:p-12">
+          <div className="mx-auto max-w-6xl">{children}</div>
+        </main>
       </div>
     </div>
   );

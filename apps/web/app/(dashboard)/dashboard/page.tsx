@@ -10,10 +10,18 @@ import {
   getTopServices,
   getAppointmentsReport,
 } from '@/lib/report-client';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-import { DollarSign, Calendar, Users, Star, ChevronRight, TrendingUp } from 'lucide-react';
+import {
+  DollarSign,
+  Calendar,
+  Users,
+  Star,
+  ChevronRight,
+  TrendingUp,
+  BarChart3,
+  Clock,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   LineChart,
   Line,
@@ -83,21 +91,44 @@ export default function DashboardPage() {
 
   if (loading && !stats) {
     return (
-      <div className="flex items-center justify-center p-12">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div
+          className="size-8 animate-spin rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }}
+        />
       </div>
     );
   }
 
   if (!businesses || businesses.length === 0) {
     return (
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold">Welcome, {user.name}</h2>
-          <p className="text-muted-foreground">Get started by creating your first business.</p>
+      <div
+        className="animate-fade-in flex flex-col items-center justify-center rounded-[32px] px-6 py-24 text-center bg-white shadow-sm"
+        style={{ border: '1px solid var(--blooso-border-light)' }}
+      >
+        <div
+          className="mb-6 flex size-20 items-center justify-center rounded-full"
+          style={{ backgroundColor: 'var(--blooso-sand-light)' }}
+        >
+          <span className="font-serif text-3xl font-bold" style={{ color: 'var(--blooso-text)' }}>
+            B
+          </span>
         </div>
-        <Link href="/onboarding">
-          <Button>Create your business</Button>
+        <h2
+          className="mb-3 text-3xl font-bold"
+          style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+        >
+          Welcome to Blooso
+        </h2>
+        <p className="mb-8 max-w-sm text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
+          Get started managing your salon or spa by setting up your business profile.
+        </p>
+        <Link
+          href="/onboarding"
+          className="rounded-[10px] px-8 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
+          style={{ backgroundColor: 'var(--blooso-rose)' }}
+        >
+          Create your business
         </Link>
       </div>
     );
@@ -105,22 +136,22 @@ export default function DashboardPage() {
 
   const kpiCards = [
     {
-      title: "Today's revenue",
+      title: "Today's Revenue",
       value: `$${(stats?.todayRevenue ?? 0).toFixed(2)}`,
       icon: DollarSign,
     },
     {
-      title: "Today's bookings",
+      title: "Today's Bookings",
       value: stats?.todayAppointments ?? 0,
       icon: Calendar,
     },
     {
-      title: 'Total clients',
+      title: 'Total Clients',
       value: stats?.totalClients ?? 0,
       icon: Users,
     },
     {
-      title: 'Average rating',
+      title: 'Average Rating',
       value: (stats?.avgRating ?? 0).toFixed(1),
       sub: `${stats?.reviewCount ?? 0} reviews`,
       icon: Star,
@@ -128,200 +159,347 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="animate-fade-up space-y-10 pb-12">
+      {/* Header */}
+      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Dashboard</h2>
-          <p className="text-muted-foreground">Overview of your business performance</p>
+          <h1
+            className="text-3xl font-bold tracking-tight md:text-4xl"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
+            Overview
+          </h1>
+          <p className="mt-2 text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
+            Here's what's happening at your business today.
+          </p>
         </div>
+
         {businesses.length > 1 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex shrink-0 flex-wrap gap-2">
             {businesses.map((b) => (
-              <Button
+              <button
                 key={b.id}
-                variant={b.id === currentBusinessId ? 'default' : 'outline'}
-                size="sm"
                 onClick={() => router.push(`/dashboard?business=${b.id}`)}
+                className={cn(
+                  'rounded-full px-5 py-2 text-sm font-semibold transition-all',
+                  b.id === currentBusinessId ? 'shadow-md' : 'hover:bg-black/5'
+                )}
+                style={{
+                  backgroundColor:
+                    b.id === currentBusinessId ? 'var(--blooso-text)' : 'transparent',
+                  color: b.id === currentBusinessId ? '#fff' : 'var(--blooso-text)',
+                  border: b.id === currentBusinessId ? 'none' : '1px solid var(--blooso-border)',
+                }}
               >
                 {b.name}
-              </Button>
+              </button>
             ))}
           </div>
         )}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
         {kpiCards.map((kpi) => {
           const Icon = kpi.icon;
           return (
-            <Card key={kpi.title}>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-muted-foreground">{kpi.title}</p>
-                  <Icon className="h-4 w-4 text-muted-foreground" />
+            <div
+              key={kpi.title}
+              className="flex flex-col rounded-[24px] bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+              style={{ border: '1px solid var(--blooso-border-light)' }}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div
+                  className="flex size-10 items-center justify-center rounded-full"
+                  style={{ backgroundColor: 'var(--blooso-bg-warm)' }}
+                >
+                  <Icon className="size-5" style={{ color: 'var(--blooso-rose)' }} />
                 </div>
-                <p className="mt-2 text-2xl font-bold">{kpi.value}</p>
-                {kpi.sub && <p className="text-xs text-muted-foreground">{kpi.sub}</p>}
-              </CardContent>
-            </Card>
+              </div>
+              <p
+                className="font-serif text-3xl font-bold tracking-tight"
+                style={{ color: 'var(--blooso-text)' }}
+              >
+                {kpi.value}
+              </p>
+              <p
+                className="mt-1 text-xs font-semibold uppercase tracking-wider"
+                style={{ color: 'var(--blooso-text-subtle)' }}
+              >
+                {kpi.title}
+              </p>
+              {kpi.sub && (
+                <p
+                  className="mt-1.5 text-xs font-medium"
+                  style={{ color: 'var(--blooso-text-muted)' }}
+                >
+                  {kpi.sub}
+                </p>
+              )}
+            </div>
           );
         })}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
+      {/* Charts & Schedule */}
+      <div className="grid gap-6 lg:grid-cols-12">
+        {/* Revenue Chart */}
+        <div
+          className="lg:col-span-8 flex flex-col rounded-[24px] bg-white p-6 shadow-sm lg:p-8"
+          style={{ border: '1px solid var(--blooso-border-light)' }}
+        >
+          <div className="mb-8 flex items-center gap-3">
+            <TrendingUp className="size-5" style={{ color: 'var(--blooso-text-subtle)' }} />
+            <h2
+              className="text-xl font-bold"
+              style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+            >
               Revenue (7 days)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h2>
+          </div>
+
+          <div className="h-[300px] w-full">
             {revenueData.length > 0 ? (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={revenueData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={(v) =>
-                        new Date(v).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                        })
-                      }
-                    />
-                    <YAxis tickFormatter={(v) => `$${v}`} />
-                    <Tooltip labelFormatter={(v) => new Date(v).toLocaleDateString()} />
-                    <Line
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={2}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6B7280' }}
+                    dy={10}
+                    tickFormatter={(v) =>
+                      new Date(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+                    }
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6B7280' }}
+                    tickFormatter={(v) => `$${v}`}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: '12px',
+                      border: 'none',
+                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                    }}
+                    labelFormatter={(v) =>
+                      new Date(v).toLocaleDateString(undefined, {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                      })
+                    }
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="var(--blooso-rose)"
+                    strokeWidth={4}
+                    dot={{ fill: 'var(--blooso-rose)', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, strokeWidth: 0 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             ) : (
-              <p className="py-12 text-center text-muted-foreground">No revenue data yet</p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Bookings (7 days)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {appointmentsData.length > 0 ? (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={appointmentsData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={(v) =>
-                        new Date(v).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                        })
-                      }
-                    />
-                    <YAxis />
-                    <Tooltip labelFormatter={(v) => new Date(v).toLocaleDateString()} />
-                    <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+              <div
+                className="flex h-full items-center justify-center text-sm font-medium"
+                style={{ color: 'var(--blooso-text-muted)' }}
+              >
+                No revenue data yet
               </div>
-            ) : (
-              <p className="py-12 text-center text-muted-foreground">No booking data yet</p>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Today&apos;s schedule</CardTitle>
-            <p className="text-sm text-muted-foreground">Upcoming appointments</p>
-          </CardHeader>
-          <CardContent>
+        {/* Today's Schedule */}
+        <div
+          className="lg:col-span-4 flex flex-col rounded-[24px] p-6 shadow-sm lg:p-8"
+          style={{
+            backgroundColor: 'var(--blooso-bg-warm)',
+            border: '1px solid var(--blooso-border-light)',
+          }}
+        >
+          <div className="mb-6 flex items-center justify-between">
+            <h2
+              className="text-xl font-bold"
+              style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+            >
+              Today's Schedule
+            </h2>
+            <Link
+              href={`/calendar?business=${currentBusinessId}`}
+              className="flex size-8 items-center justify-center rounded-full bg-white shadow-sm transition-transform hover:scale-110"
+              style={{ color: 'var(--blooso-text)' }}
+            >
+              <ChevronRight className="size-4" />
+            </Link>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pr-2">
             {stats?.todaySchedule && stats.todaySchedule.length > 0 ? (
-              <div className="space-y-3">
-                {stats.todaySchedule.slice(0, 5).map((apt) => (
+              <div className="flex flex-col gap-4">
+                {stats.todaySchedule.map((apt) => (
                   <div
                     key={apt.id}
-                    className="flex items-center justify-between rounded-lg border p-3"
+                    className="group flex flex-col rounded-[16px] bg-white p-4 shadow-sm transition-all hover:shadow-md"
+                    style={{ border: '1px solid var(--blooso-border-light)' }}
                   >
-                    <div>
-                      <p className="font-medium">
-                        {apt.appointmentServices
-                          ?.map((as) => as.service?.name)
-                          .filter(Boolean)
-                          .join(', ')}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Clock className="size-3.5" style={{ color: 'var(--blooso-rose)' }} />
+                      <span
+                        className="text-xs font-bold uppercase tracking-wider"
+                        style={{ color: 'var(--blooso-rose)' }}
+                      >
                         {new Date(apt.startTime).toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit',
-                        })}{' '}
-                        · {apt.staff?.user.name}
-                      </p>
+                        })}
+                      </span>
                     </div>
-                    <Link
-                      href={`/calendar?business=${currentBusinessId}&date=${apt.startTime.slice(0, 10)}`}
+                    <p className="font-semibold" style={{ color: 'var(--blooso-text)' }}>
+                      {apt.appointmentServices
+                        ?.map((as) => as.service?.name)
+                        .filter(Boolean)
+                        .join(', ')}
+                    </p>
+                    <p
+                      className="mt-1 text-xs font-medium"
+                      style={{ color: 'var(--blooso-text-muted)' }}
                     >
-                      <Button variant="ghost" size="sm">
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </Link>
+                      with {apt.staff?.user.name}
+                    </p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="py-12 text-center text-muted-foreground">No appointments today</p>
+              <div className="flex h-full min-h-[200px] flex-col items-center justify-center text-center">
+                <Calendar
+                  className="mb-3 size-8 opacity-20"
+                  style={{ color: 'var(--blooso-text)' }}
+                />
+                <p className="text-sm font-medium" style={{ color: 'var(--blooso-text-muted)' }}>
+                  No appointments scheduled for today.
+                </p>
+              </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      {topServices.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Top services</CardTitle>
-            <p className="text-sm text-muted-foreground">Most popular services by bookings</p>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="pb-2 text-left font-medium">Service</th>
-                    <th className="pb-2 text-right font-medium">Bookings</th>
-                    <th className="pb-2 text-right font-medium">Revenue</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topServices.map((s) => (
-                    <tr key={s.serviceId} className="border-b last:border-0">
-                      <td className="py-2">{s.serviceName}</td>
-                      <td className="py-2 text-right">{s.count}</td>
-                      <td className="py-2 text-right">${s.revenue.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Bookings Chart */}
+        <div
+          className="flex flex-col rounded-[24px] bg-white p-6 shadow-sm lg:p-8"
+          style={{ border: '1px solid var(--blooso-border-light)' }}
+        >
+          <div className="mb-8 flex items-center gap-3">
+            <BarChart3 className="size-5" style={{ color: 'var(--blooso-text-subtle)' }} />
+            <h2
+              className="text-xl font-bold"
+              style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+            >
+              Bookings (7 days)
+            </h2>
+          </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Link href={`/calendar?business=${currentBusinessId}`}>
-          <Button variant="outline">View calendar</Button>
-        </Link>
-        <Link href={`/reviews?business=${currentBusinessId}`}>
-          <Button variant="outline">Manage reviews</Button>
-        </Link>
+          <div className="h-[260px] w-full">
+            {appointmentsData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={appointmentsData}
+                  margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
+                  barSize={32}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6B7280' }}
+                    dy={10}
+                    tickFormatter={(v) =>
+                      new Date(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+                    }
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6B7280' }}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(0,0,0,0.02)' }}
+                    contentStyle={{
+                      borderRadius: '12px',
+                      border: 'none',
+                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                    }}
+                  />
+                  <Bar dataKey="total" fill="var(--blooso-sand)" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div
+                className="flex h-full items-center justify-center text-sm font-medium"
+                style={{ color: 'var(--blooso-text-muted)' }}
+              >
+                No booking data yet
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Top Services */}
+        {topServices.length > 0 && (
+          <div
+            className="flex flex-col rounded-[24px] bg-white p-6 shadow-sm lg:p-8"
+            style={{ border: '1px solid var(--blooso-border-light)' }}
+          >
+            <div className="mb-6">
+              <h2
+                className="text-xl font-bold"
+                style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+              >
+                Top Services
+              </h2>
+              <p className="mt-1 text-sm font-medium" style={{ color: 'var(--blooso-text-muted)' }}>
+                Most popular services by booking volume.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              {topServices.map((s) => (
+                <div
+                  key={s.serviceId}
+                  className="flex items-center justify-between rounded-[12px] p-4 transition-colors hover:bg-black/[0.02]"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex size-8 items-center justify-center rounded-full"
+                      style={{
+                        backgroundColor: 'var(--blooso-sand-light)',
+                        color: 'var(--blooso-text)',
+                      }}
+                    >
+                      <span className="text-xs font-bold">{s.count}</span>
+                    </div>
+                    <span className="font-semibold" style={{ color: 'var(--blooso-text)' }}>
+                      {s.serviceName}
+                    </span>
+                  </div>
+                  <span
+                    className="font-serif text-lg font-bold"
+                    style={{ color: 'var(--blooso-text)' }}
+                  >
+                    ${s.revenue.toFixed(2)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
