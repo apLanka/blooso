@@ -51,3 +51,31 @@ export async function createBooking(
     body: JSON.stringify(data),
   });
 }
+
+export interface CustomerAppointment extends Appointment {
+  business: {
+    id: string;
+    name: string;
+    slug: string;
+    logoUrl: string | null;
+  };
+  location: {
+    address: string;
+    city: string;
+    state: string | null;
+  } | null;
+  staff: {
+    id: string;
+    user: {
+      name: string;
+      email: string;
+      avatarUrl: string | null;
+    };
+  };
+}
+
+export async function getMyAppointments(token: string): Promise<CustomerAppointment[]> {
+  return apiClient<CustomerAppointment[]>('/v1/bookings/my-appointments', {
+    token,
+  });
+}

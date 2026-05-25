@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -31,5 +31,12 @@ export class BookingController {
   @ApiResponse({ status: 409, description: 'Slot no longer available' })
   create(@CurrentUser() user: JwtUser, @Body() dto: CreateBookingDto) {
     return this.bookingService.createBooking(dto, user);
+  }
+
+  @Get('my-appointments')
+  @ApiOperation({ summary: 'Get current user appointments' })
+  @ApiResponse({ status: 200, description: 'List of user appointments' })
+  getMyAppointments(@CurrentUser() user: JwtUser) {
+    return this.bookingService.getMyBookings(user);
   }
 }

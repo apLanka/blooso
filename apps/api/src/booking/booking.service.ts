@@ -91,14 +91,11 @@ export class BookingService {
 
     let clientId = dto.clientId ?? null;
     if (!clientId && dto.guestEmail) {
-      clientId = await this.clientService.findOrCreateByEmail(
-        dto.businessId,
-        {
-          email: dto.guestEmail,
-          guestName: dto.guestName,
-          phone: dto.guestPhone,
-        },
-      );
+      clientId = await this.clientService.findOrCreateByEmail(dto.businessId, {
+        email: dto.guestEmail,
+        guestName: dto.guestName,
+        phone: dto.guestPhone,
+      });
     }
 
     const result = await this.prisma.$transaction(async (tx) => {
@@ -320,5 +317,30 @@ export class BookingService {
         .catch(() => {});
     }
     return updated;
+  }
+
+  async getMyBookings(user: JwtUser) {
+    return this.prisma.appointment.findMany({
+      where: {
+        guestEmail: user.email,
+      },
+      orderBy: { startTime: 'desc' },
+      include: {
+        business: {
+          select: { name: true, logoUrl: true, id: true, slug: true },
+        },
+        location: {
+          select: { address: true, city: true, state: true },
+        },
+        staff: {
+          include: { user: { select: { name: true, avatarUrl: true } } },
+        },
+        appointmentServices: {
+          include: {
+            service: { select: { name: true, durationMinutes: true } },
+          },
+        },
+      },
+    });
   }
 }
