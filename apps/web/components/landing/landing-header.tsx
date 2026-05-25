@@ -10,11 +10,12 @@ const NAV_LINKS = [
   { href: '/register', label: 'For Businesses' },
 ];
 
-export function LandingHeader() {
+export function LandingHeader({ alwaysSolid = false }: { alwaysSolid?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(alwaysSolid);
 
   useEffect(() => {
+    if (alwaysSolid) return;
     const onScroll = () => setScrolled(window.scrollY > 16);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
