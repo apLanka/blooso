@@ -1,111 +1,144 @@
 import Link from 'next/link';
-import { Calendar, Users, Star, CreditCard, Clock, ArrowRight, Check } from 'lucide-react';
+import Image from 'next/image';
+import { Check, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const FEATURES = [
-  {
-    icon: Clock,
-    title: '24/7 online booking',
-    description: "Let customers book anytime, even when you're closed.",
-  },
-  {
-    icon: Calendar,
-    title: 'Smart calendar',
-    description: 'Manage staff schedules and avoid double-bookings.',
-  },
-  {
-    icon: Users,
-    title: 'Client database',
-    description: 'Keep track of clients, preferences, and history.',
-  },
-  {
-    icon: Star,
-    title: 'Reviews & ratings',
-    description: 'Build trust with verified reviews from real customers.',
-  },
-  {
-    icon: CreditCard,
-    title: 'Secure payments',
-    description: 'Accept payments online with Stripe integration.',
-  },
+  'Online booking calendar — 24/7',
+  'Automated appointment reminders',
+  'Client management & history',
+  'Stripe payments built-in',
 ];
 
 export function ForBusinesses() {
   return (
-    <section className="relative overflow-hidden bg-gray-50 py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+    <section
+      className="blooso-section-pad"
+      style={{ backgroundColor: 'var(--blooso-bg-business)' }}
+      aria-labelledby="for-businesses-heading"
+    >
+      <div className="blooso-container">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          {/* ── Left: Text ── */}
           <div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-              Everything you need to run your business
+            {/* Badge label */}
+            <div
+              className="mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest"
+              style={{
+                backgroundColor: 'var(--blooso-rose-muted)',
+                color: 'var(--blooso-rose)',
+              }}
+            >
+              <span
+                className="inline-block size-1.5 rounded-full"
+                style={{ backgroundColor: 'var(--blooso-rose)' }}
+              />
+              For Business Owners
+            </div>
+
+            <h2
+              id="for-businesses-heading"
+              className="text-3xl font-bold tracking-tight md:text-4xl"
+              style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+            >
+              Grow Your Bookings.
+              <br />
+              Effortlessly.
             </h2>
-            <p className="mt-4 text-lg text-gray-500">
-              Supercharge your salon, spa, or barbershop with the booking platform built for beauty
-              & wellness professionals.
+
+            <p
+              className="mt-5 max-w-md text-base leading-relaxed"
+              style={{ color: 'var(--blooso-text-muted)' }}
+            >
+              Join hundreds of salons and spas using Blooso to manage appointments, reduce no-shows,
+              and attract new clients 24/7.
             </p>
-            <ul className="mt-8 space-y-4">
-              {FEATURES.map((feature) => {
-                const Icon = feature.icon;
-                return (
-                  <li key={feature.title} className="flex gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-pink/10 text-accent-pink">
-                      <Icon className="size-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{feature.title}</h3>
-                      <p className="mt-1 text-sm text-gray-500">{feature.description}</p>
-                    </div>
-                  </li>
-                );
-              })}
+
+            {/* Feature list */}
+            <ul className="mt-8 space-y-3.5">
+              {FEATURES.map((feature) => (
+                <li key={feature} className="flex items-center gap-3">
+                  <div
+                    className="flex size-5 shrink-0 items-center justify-center rounded-full"
+                    style={{ backgroundColor: 'var(--blooso-rose)', color: '#fff' }}
+                  >
+                    <Check className="size-3" strokeWidth={3} />
+                  </div>
+                  <span className="text-sm font-medium" style={{ color: 'var(--blooso-text)' }}>
+                    {feature}
+                  </span>
+                </li>
+              ))}
             </ul>
+
+            {/* CTA */}
             <Link
+              id="business-list-cta-btn"
               href="/register"
               className={cn(
-                'mt-10 inline-flex h-12 items-center justify-center gap-2 rounded-full px-8 text-base font-semibold',
-                'bg-gray-900 text-white',
-                'transition-all hover:bg-gray-800 hover:shadow-lg hover:shadow-gray-900/20 active:scale-[0.98]'
+                'mt-10 inline-flex h-12 items-center justify-center gap-2 rounded-[10px] px-8 text-sm font-semibold',
+                'transition-all hover:opacity-90 active:scale-[0.98]'
               )}
+              style={{ backgroundColor: 'var(--blooso-rose)', color: '#fff' }}
             >
-              Start free
-              <ArrowRight className="size-5" />
+              List Your Business
+              <ArrowRight className="size-4" />
             </Link>
+
+            {/* Sub-note */}
+            <p className="mt-4 text-xs" style={{ color: 'var(--blooso-text-subtle)' }}>
+              Free to get started · No credit card required
+            </p>
           </div>
 
+          {/* ── Right: Dashboard mockup ── */}
           <div className="relative">
-            <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-accent-blue-light/30">
-                    <Check className="size-5 text-accent-blue" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">No credit card required</p>
-                    <p className="text-sm text-gray-500">Get started in minutes</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-accent-blue-light/30">
-                    <Check className="size-5 text-accent-blue" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Free to start</p>
-                    <p className="text-sm text-gray-500">Scale as you grow</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-accent-blue-light/30">
-                    <Check className="size-5 text-accent-blue" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Trusted by 500+ businesses</p>
-                    <p className="text-sm text-gray-500">Join the community</p>
-                  </div>
-                </div>
-              </div>
+            {/* Decorative warm blob */}
+            <div
+              className="absolute -left-6 -top-6 h-40 w-40 rounded-full blur-3xl"
+              style={{ backgroundColor: 'var(--blooso-sand-light)', opacity: 0.5 }}
+              aria-hidden
+            />
+
+            <div
+              className="relative overflow-hidden rounded-[24px] shadow-2xl shadow-black/10"
+              style={{ border: '1px solid var(--blooso-border-light)' }}
+            >
+              <Image
+                src="/landing/business_dashboard_mockup_1779629171266.png"
+                alt="Blooso business dashboard showing appointment calendar with bookings"
+                width={640}
+                height={520}
+                className="w-full object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
             </div>
-            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-accent-pink/20 blur-2xl" />
-            <div className="absolute -bottom-4 -left-4 h-32 w-32 rounded-full bg-accent-blue/20 blur-2xl" />
+
+            {/* Floating stat */}
+            <div
+              className="absolute -right-4 bottom-8 z-10 rounded-2xl px-5 py-4"
+              style={{
+                backgroundColor: 'var(--blooso-bg)',
+                border: '1px solid var(--blooso-border-light)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+              }}
+            >
+              <p
+                className="text-xs font-medium uppercase tracking-wide"
+                style={{ color: 'var(--blooso-text-subtle)' }}
+              >
+                Monthly bookings
+              </p>
+              <p
+                className="mt-1 text-2xl font-bold"
+                style={{ color: 'var(--blooso-rose)', fontFamily: 'var(--font-serif)' }}
+              >
+                +42%
+              </p>
+              <p className="text-xs" style={{ color: 'var(--blooso-text-subtle)' }}>
+                avg. business growth
+              </p>
+            </div>
           </div>
         </div>
       </div>

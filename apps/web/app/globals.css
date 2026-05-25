@@ -23,10 +23,30 @@
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
     --radius: 0.625rem;
+
+    /* Legacy accent vars (kept for compatibility) */
     --accent-pink: #ffafcc;
     --accent-blue: #a2d2ff;
     --accent-blue-light: #bde0fe;
+
+    /* === Blooso Brand Tokens === */
+    --blooso-rose: #8B3A52;
+    --blooso-rose-light: #a8475f;
+    --blooso-rose-muted: rgba(139, 58, 82, 0.08);
+    --blooso-rose-muted-hover: rgba(139, 58, 82, 0.14);
+    --blooso-sand: #C9A87C;
+    --blooso-sand-light: #dfc4a0;
+    --blooso-bg: #FFFFFF;
+    --blooso-bg-warm: #F9F7F5;
+    --blooso-bg-warmer: #F2EFEC;
+    --blooso-bg-business: #F5F0EB;
+    --blooso-text: #1C1917;
+    --blooso-text-muted: #6B6460;
+    --blooso-text-subtle: #9C9490;
+    --blooso-border: #E8E3DE;
+    --blooso-border-light: #F0ECE8;
   }
+
   .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -50,33 +70,75 @@
     --accent-blue: #a2d2ff;
     --accent-blue-light: #bde0fe;
   }
+
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
 @layer utilities {
+  /* Fade up animation */
   @keyframes fade-up {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(24px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-  .animate-fade-up {
-    animation: fade-up 600ms ease-out both;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
+
+  @keyframes slide-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-fade-up {
+    animation: fade-up 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 600ms ease both;
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Blooso utility classes */
+  .blooso-section-pad {
+    @apply py-20 md:py-28;
+  }
+
+  .blooso-container {
+    @apply mx-auto max-w-6xl px-6;
+  }
+
+  .font-serif {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
   }
 }

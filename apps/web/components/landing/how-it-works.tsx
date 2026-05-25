@@ -1,61 +1,115 @@
-import { Search, Calendar, CreditCard, CheckCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Search, CalendarCheck, Smile } from 'lucide-react';
 
 const STEPS = [
   {
     icon: Search,
-    title: 'Search & discover',
-    description: 'Find salons and barbershops by name or category. Browse reviews and ratings.',
-  },
-  {
-    icon: Calendar,
-    title: 'Choose your time',
+    step: '01',
+    title: 'Search',
     description:
-      'Pick your preferred date and time. See real-time availability and select your staff.',
+      'Find salons, spas, and studios near you — filtered by service, rating, and availability.',
   },
   {
-    icon: CreditCard,
-    title: 'Book & pay',
-    description: 'Confirm your appointment and pay securely online. Get instant confirmation.',
+    icon: CalendarCheck,
+    step: '02',
+    title: 'Book',
+    description:
+      'Pick your service, stylist, and time slot. Instant confirmation, no phone calls needed.',
   },
   {
-    icon: CheckCircle,
-    title: 'Enjoy your visit',
-    description: 'Receive reminders and show up for your appointment. Leave a review after.',
+    icon: Smile,
+    step: '03',
+    title: 'Relax',
+    description:
+      'Show up and enjoy your experience. We handle reminders, payments, and everything else.',
   },
 ];
 
 export function HowItWorks() {
   return (
-    <section className="relative overflow-hidden bg-white py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-            How it works
+    <section
+      id="how-it-works"
+      className="blooso-section-pad"
+      style={{ backgroundColor: 'var(--blooso-bg)' }}
+      aria-labelledby="how-it-works-heading"
+    >
+      <div className="blooso-container">
+        {/* Section header */}
+        <div className="mx-auto max-w-xl text-center">
+          <p
+            className="mb-3 text-xs font-semibold uppercase tracking-widest"
+            style={{ color: 'var(--blooso-rose)' }}
+          >
+            Simple &amp; Fast
+          </p>
+          <h2
+            id="how-it-works-heading"
+            className="text-3xl font-bold tracking-tight md:text-4xl"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
+            How It Works
           </h2>
-          <p className="mt-4 max-w-xl mx-auto text-lg text-gray-500">
-            Book your next appointment in four simple steps
+          <p
+            className="mt-4 text-base leading-relaxed"
+            style={{ color: 'var(--blooso-text-muted)' }}
+          >
+            Book your next appointment in three effortless steps.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        {/* Steps grid */}
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
           {STEPS.map((step, index) => {
             const Icon = step.icon;
             return (
-              <div key={step.title} className="relative flex flex-col items-center text-center">
-                <div className="flex size-12 items-center justify-center rounded-full bg-gray-900 text-white font-bold text-sm">
-                  {index + 1}
-                </div>
+              <div
+                key={step.title}
+                className="group relative rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                style={{
+                  backgroundColor: 'var(--blooso-bg-warm)',
+                  border: '1px solid var(--blooso-border-light)',
+                }}
+              >
+                {/* Step number */}
+                <span
+                  className="block text-xs font-bold uppercase tracking-widest"
+                  style={{ color: 'var(--blooso-sand)' }}
+                >
+                  {step.step}
+                </span>
+
+                {/* Icon */}
                 <div
-                  className={cn(
-                    'mt-4 flex size-14 items-center justify-center rounded-xl',
-                    'bg-accent-blue-light/30 text-accent-blue'
-                  )}
+                  className="mt-4 flex size-14 items-center justify-center rounded-xl transition-colors group-hover:scale-105"
+                  style={{
+                    backgroundColor: 'var(--blooso-rose-muted)',
+                    color: 'var(--blooso-rose)',
+                    transition: 'transform 250ms ease',
+                  }}
                 >
                   <Icon className="size-7" />
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-gray-900">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-500">{step.description}</p>
+
+                {/* Text */}
+                <h3 className="mt-5 text-lg font-semibold" style={{ color: 'var(--blooso-text)' }}>
+                  {step.title}
+                </h3>
+                <p
+                  className="mt-2 text-sm leading-relaxed"
+                  style={{ color: 'var(--blooso-text-muted)' }}
+                >
+                  {step.description}
+                </p>
+
+                {/* Connector arrow (hidden on last item) */}
+                {index < STEPS.length - 1 && (
+                  <div
+                    className="absolute -right-3 top-1/2 hidden -translate-y-1/2 text-lg font-light md:block"
+                    style={{ color: 'var(--blooso-border)' }}
+                    aria-hidden
+                  >
+                    →
+                  </div>
+                )}
               </div>
             );
           })}

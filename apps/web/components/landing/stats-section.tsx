@@ -1,21 +1,36 @@
 const STATS = [
-  { value: '500+', label: 'Partner businesses' },
-  { value: '10,000+', label: 'Bookings made' },
-  { value: '4.9', label: 'Average rating' },
-  { value: '50+', label: 'Cities covered' },
+  { value: '500+', label: 'Partner Businesses' },
+  { value: '10,000+', label: 'Appointments Booked' },
+  { value: '4.9', label: 'Average Rating' },
+  { value: '50+', label: 'Cities Covered' },
 ];
 
 export function StatsSection() {
   return (
-    <section className="relative overflow-hidden bg-gray-50 py-16 md:py-20">
-      <div className="mx-auto max-w-6xl px-6">
+    <section
+      className="py-16 md:py-20"
+      style={{ backgroundColor: 'var(--blooso-bg-warmer)' }}
+      aria-label="Platform statistics"
+    >
+      <div className="blooso-container">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          {STATS.map((stat) => (
+          {STATS.map((stat, i) => (
             <div key={stat.label} className="text-center">
-              <p className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+              <p
+                className="text-3xl font-bold tracking-tight md:text-4xl"
+                style={{
+                  color: i === 0 || i === 1 ? 'var(--blooso-rose)' : 'var(--blooso-text)',
+                  fontFamily: 'var(--font-serif)',
+                }}
+              >
                 {stat.value}
               </p>
-              <p className="mt-1 text-sm font-medium text-gray-500">{stat.label}</p>
+              <p
+                className="mt-1.5 text-sm font-medium"
+                style={{ color: 'var(--blooso-text-muted)' }}
+              >
+                {stat.label}
+              </p>
             </div>
           ))}
         </div>
