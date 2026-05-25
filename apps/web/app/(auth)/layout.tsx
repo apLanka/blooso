@@ -1,15 +1,28 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-const QUOTES = [
-  {
+const QUOTES = {
+  login: {
     text: 'Self-care is not self-indulgence, it is self-preservation.',
     author: 'Audre Lorde',
   },
-];
+  register: {
+    text: 'Invest in your hair, it is the crown you never take off.',
+    author: 'Unknown',
+  },
+};
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  const quote = QUOTES[0];
+  const pathname = usePathname();
+  const isRegister = pathname?.includes('/register');
+
+  const quote = isRegister ? QUOTES.register : QUOTES.login;
+  const imageSrc = isRegister
+    ? '/auth/auth_register_side_1779700133558.png'
+    : '/auth/auth_side_lifestyle_1779698627684.png';
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: 'var(--blooso-bg)' }}>
@@ -17,8 +30,13 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="relative hidden w-[46%] shrink-0 lg:block">
         {/* Full-bleed photo */}
         <Image
-          src="/auth/auth_side_lifestyle_1779698627684.png"
-          alt="A woman relaxing in a luxury spa lounge"
+          key={imageSrc} // Force re-render of image when src changes to prevent cross-fade bugs
+          src={imageSrc}
+          alt={
+            isRegister
+              ? 'A calm, luxurious salon interior'
+              : 'A woman relaxing in a luxury spa lounge'
+          }
           fill
           className="object-cover"
           priority
