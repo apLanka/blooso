@@ -9,23 +9,10 @@ import * as serviceClient from '@/lib/service-client';
 import * as appointmentsClient from '@/lib/appointments-client';
 import { recordInPersonPayment, getAppointmentPayments, type Payment } from '@/lib/payment-client';
 import * as clientClient from '@/lib/client-client';
-import { getAvailability } from '@/lib/availability-client';
 import type { Appointment } from '@/lib/booking-client';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   ChevronLeft,
   ChevronRight,
-  Plus,
   X,
   User,
   Clock,
@@ -33,15 +20,20 @@ import {
   XCircle,
   CreditCard,
   Banknote,
+  Search,
+  Calendar as CalendarIcon,
+  MapPin,
+  ClipboardList
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { CalendarSkeleton } from '@/components/skeletons';
+import { cn } from '@/lib/utils';
 
-const ROW_HEIGHT = 48;
+const ROW_HEIGHT = 56;
 const SLOT_MINUTES = 15;
 const START_HOUR = 8;
 const END_HOUR = 20;
-const HEADER_HEIGHT = 49;
+const HEADER_HEIGHT = 56;
 
 function formatDate(d: Date) {
   return d.toISOString().slice(0, 10);
@@ -67,12 +59,12 @@ function slotHeight(startTime: string, endTime: string) {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-amber-100 border-amber-300',
-  confirmed: 'bg-blue-100 border-blue-300',
-  in_progress: 'bg-green-100 border-green-300',
-  completed: 'bg-slate-100 border-slate-300',
-  cancelled: 'bg-red-50 border-red-200 opacity-60',
-  no_show: 'bg-slate-50 border-slate-200 opacity-60',
+  pending: 'bg-[#fdf8f6] border-[#f0e3de] text-[#8B3A52]', // Soft Rose Tint
+  confirmed: 'bg-[#8B3A52] border-[#70293f] text-white', // Blooso Rose
+  in_progress: 'bg-[#C9A87C] border-[#a3835b] text-white', // Warm Sand
+  completed: 'bg-white border-[#e6e2de] text-black shadow-sm', // Muted White
+  cancelled: 'bg-red-50 border-red-100 text-red-600 opacity-70',
+  no_show: 'bg-slate-50 border-slate-200 text-slate-500 opacity-70',
 };
 
 export default function CalendarPage() {
@@ -95,6 +87,7 @@ export default function CalendarPage() {
     }
     return new Date();
   });
+  
   const [createOpen, setCreateOpen] = useState(false);
   const [detailAppointment, setDetailAppointment] = useState<Appointment | null>(null);
   const [createForm, setCreateForm] = useState({
@@ -107,15 +100,15 @@ export default function CalendarPage() {
     guestPhone: '',
     notes: '',
   });
+  
   const [clientSearch, setClientSearch] = useState('');
   const [clientSearchResults, setClientSearchResults] = useState<clientClient.Client[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
   const [detailPayments, setDetailPayments] = useState<Payment[]>([]);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [checkoutMethod, setCheckoutMethod] = useState<'cash' | 'card' | 'transfer' | 'other'>(
-    'card'
-  );
+  const [checkoutMethod, setCheckoutMethod] = useState<'cash' | 'card' | 'transfer' | 'other'>('card');
   const [checkoutSubmitting, setCheckoutSubmitting] = useState(false);
 
   const token = getToken();
@@ -178,6 +171,7 @@ export default function CalendarPage() {
       detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ??
       0;
     if (amount <= 0) return;
+    
     setCheckoutSubmitting(true);
     setError(null);
     try {
@@ -188,10 +182,11 @@ export default function CalendarPage() {
       setCheckoutOpen(false);
       setDetailAppointment(null);
       loadData();
+      toast.success('Payment recorded successfully');
     } catch (err: unknown) {
       setError(
         err && typeof err === 'object' && 'body' in err
-          ? ((err as { body?: { message?: string } }).body?.message as string)
+          ? ((err as any).body?.message as string)
           : 'Failed to record payment'
       );
     } finally {
@@ -200,8 +195,11 @@ export default function CalendarPage() {
   };
 
   if (isLoading || !user) {
-    router.replace('/login');
-    return null;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F9F7F5]">
+        <div className="size-8 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }} />
+      </div>
+    );
   }
 
   const displayStaff =
@@ -252,10 +250,7 @@ export default function CalendarPage() {
     }
     const t = setTimeout(() => {
       clientClient
-        .getClients(token, currentBusinessId, {
-          search: clientSearch.trim(),
-          limit: 8,
-        })
+        .getClients(token, currentBusinessId, { search: clientSearch.trim(), limit: 8 })
         .then((res) => setClientSearchResults(res.data))
         .catch(() => setClientSearchResults([]));
     }, 200);
@@ -270,8 +265,8 @@ export default function CalendarPage() {
       !locationId ||
       !createForm.staffId ||
       createForm.serviceIds.length === 0
-    )
-      return;
+    ) return;
+
     setSaving(true);
     setError(null);
     try {
@@ -288,12 +283,9 @@ export default function CalendarPage() {
       });
       setCreateOpen(false);
       loadData();
-      toast.success('Appointment created');
+      toast.success('Appointment created successfully');
     } catch (err: unknown) {
-      const msg =
-        err && typeof err === 'object' && 'body' in err
-          ? ((err as { body?: { message?: string } }).body?.message as string)
-          : 'Failed to create appointment';
+      const msg = err && typeof err === 'object' && 'body' in err ? (err as any).body?.message : 'Failed to create appointment';
       setError(msg);
       toast.error(msg);
     } finally {
@@ -309,7 +301,6 @@ export default function CalendarPage() {
       loadData();
       toast.success('Appointment updated');
     } catch {
-      setError('Failed to update');
       toast.error('Failed to update appointment');
     }
   };
@@ -322,7 +313,6 @@ export default function CalendarPage() {
       loadData();
       toast.success('Appointment cancelled');
     } catch {
-      setError('Failed to cancel');
       toast.error('Failed to cancel appointment');
     }
   };
@@ -333,555 +323,505 @@ export default function CalendarPage() {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   });
 
-  if (loading) {
+  if (loading && !appointments.length && !staff.length) {
     return <CalendarSkeleton />;
   }
 
   if (businesses.length === 0) {
     return (
-      <div className="space-y-4">
-        <p className="text-muted-foreground">Create a business first.</p>
-        <Button onClick={() => router.push('/onboarding')}>Create business</Button>
+      <div className="flex h-[60vh] flex-col items-center justify-center text-center">
+        <Store className="mb-4 size-12 opacity-20" />
+        <h2 className="mb-2 text-2xl font-bold font-serif">Welcome to Blooso</h2>
+        <p className="mb-6 text-muted-foreground">You need to set up a business to use the calendar.</p>
+        <button
+          onClick={() => router.push('/onboarding')}
+          className="rounded-full px-8 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+          style={{ backgroundColor: 'var(--blooso-rose)' }}
+        >
+          Create Business
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold">Calendar</h2>
-        <div className="flex flex-wrap items-center gap-2">
-          {businesses.length > 1 &&
-            businesses.map((b) => (
-              <Button
-                key={b.id}
-                variant={b.id === currentBusinessId ? 'default' : 'outline'}
-                size="sm"
-                onClick={() =>
-                  router.push(`/calendar?business=${b.id}&date=${formatDate(viewDate)}`)
-                }
-              >
-                {b.name}
-              </Button>
-            ))}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-1">
-          <Button variant="outline" size="icon" onClick={handlePrevDay}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" onClick={handleToday}>
-            Today
-          </Button>
-          <Button variant="outline" size="icon" onClick={handleNextDay}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-        <span className="font-medium">
-          {viewDate.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </span>
-        <div className="w-48">
-          <Select value={selectedStaffId} onValueChange={(v) => setSelectedStaffId(v as string)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Staff" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All staff</SelectItem>
-              {staff
-                .filter((s) => s.isActive)
-                .map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.user.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {error && <p className="text-sm text-destructive">{error}</p>}
-
-      <Card>
-        <CardContent className="relative p-0">
-          <div className="overflow-x-auto">
-            <div
-              className="relative grid min-w-[600px]"
-              style={{
-                gridTemplateColumns: `80px repeat(${displayStaff.length || 1}, minmax(120px, 1fr))`,
-              }}
-            >
-              <div className="border-b border-r bg-muted/30 p-2 font-medium">Time</div>
-              {displayStaff.map((s) => (
-                <div
-                  key={s.id}
-                  className="border-b border-r bg-muted/30 p-2 text-center font-medium"
-                >
-                  {s.user.name}
-                </div>
-              ))}
-              {displayStaff.length === 0 && (
-                <div className="border-b border-r bg-muted/30 p-2 text-center text-muted-foreground">
-                  No staff
-                </div>
-              )}
-
-              {timeRows.map((time, rowIdx) => (
-                <>
-                  <div
-                    key={`time-${rowIdx}`}
-                    className="border-b border-r p-1 text-xs text-muted-foreground"
-                    style={{ height: ROW_HEIGHT }}
-                  >
-                    {time}
-                  </div>
-                  {displayStaff.map((s) => {
-                    const dateStr = formatDate(viewDate);
-                    const startTime = `${dateStr}T${time}:00`;
-                    return (
-                      <div
-                        key={`${s.id}-${rowIdx}`}
-                        className="cursor-pointer border-b border-r hover:bg-muted/50"
-                        style={{ height: ROW_HEIGHT }}
-                        onClick={() => handleSlotClick(s.id, startTime)}
-                      />
-                    );
-                  })}
-                  {displayStaff.length === 0 && (
-                    <div className="border-b border-r" style={{ height: ROW_HEIGHT }} />
-                  )}
-                </>
-              ))}
+    <div className="animate-fade-up space-y-8 pb-12">
+      
+      {/* ── HEADER ── */}
+      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-4">
+          <h1 className="text-3xl font-bold tracking-tight md:text-4xl" style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}>
+            {viewDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          </h1>
+          
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1 rounded-[12px] bg-white p-1 shadow-sm border" style={{ borderColor: 'var(--blooso-border-light)' }}>
+              <button onClick={handlePrevDay} className="flex size-8 items-center justify-center rounded-[8px] transition-colors hover:bg-black/5">
+                <ChevronLeft className="size-4" />
+              </button>
+              <button onClick={handleToday} className="px-4 py-1.5 text-sm font-semibold transition-colors hover:bg-black/5 rounded-[8px]">
+                Today
+              </button>
+              <button onClick={handleNextDay} className="flex size-8 items-center justify-center rounded-[8px] transition-colors hover:bg-black/5">
+                <ChevronRight className="size-4" />
+              </button>
             </div>
 
-            <div
-              className="absolute left-0 right-0 top-0 min-w-[600px]"
-              style={{ paddingTop: HEADER_HEIGHT }}
-            >
-              <div className="relative w-full" style={{ height: timeRows.length * ROW_HEIGHT }}>
-                {appointments
-                  .filter((a) => a.status !== 'cancelled' && a.status !== 'no_show')
-                  .map((apt) => {
-                    const staffIdx = displayStaff.findIndex((s) => s.id === apt.staffId);
-                    if (staffIdx < 0) return null;
-                    const colWidth = 100 / (displayStaff.length || 1);
-                    return (
-                      <button
-                        key={apt.id}
-                        type="button"
-                        className={`absolute rounded border px-2 py-1 text-left text-xs transition-colors hover:ring-2 pointer-events-auto ${
-                          STATUS_COLORS[apt.status] ?? 'bg-slate-100 border-slate-300'
-                        }`}
-                        style={{
-                          top: slotTop(apt.startTime) - HEADER_HEIGHT + 2,
-                          height: slotHeight(apt.startTime, apt.endTime) - 4,
-                          left: `calc(80px + ${staffIdx * colWidth}%)`,
-                          width: `calc(${colWidth}% - 24px)`,
-                          marginLeft: 8,
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDetailAppointment(apt);
-                        }}
-                      >
-                        <p className="truncate font-medium">
-                          {apt.guestName || apt.guestEmail || 'Walk-in'}
-                        </p>
-                        <p className="truncate text-muted-foreground">
-                          {apt.appointmentServices
-                            ?.map((as) => as.service?.name)
-                            .filter(Boolean)
-                            .join(', ')}
-                        </p>
-                      </button>
-                    );
-                  })}
-              </div>
+            <div className="relative">
+              <select
+                value={selectedStaffId}
+                onChange={(e) => setSelectedStaffId(e.target.value)}
+                className="appearance-none rounded-[12px] bg-white pl-4 pr-10 py-2.5 text-sm font-semibold shadow-sm border outline-none"
+                style={{ borderColor: 'var(--blooso-border-light)' }}
+              >
+                <option value="all">All Staff</option>
+                {staff.filter(s => s.isActive).map(s => (
+                  <option key={s.id} value={s.id}>{s.user.name}</option>
+                ))}
+              </select>
+              <User className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-black/40 pointer-events-none" />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {createOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <Card className="max-h-[90vh] w-full max-w-lg overflow-y-auto">
-            <CardContent className="pt-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold">New appointment</h3>
-                <Button variant="ghost" size="icon" onClick={() => setCreateOpen(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-              <form onSubmit={handleCreateSubmit} className="space-y-4">
-                <div>
-                  <Label>Staff</Label>
-                  <Select
-                    value={createForm.staffId}
-                    onValueChange={(v) => setCreateForm((f) => ({ ...f, staffId: v ?? '' }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {staff
-                        .filter((s) => s.isActive)
-                        .map((s) => (
-                          <SelectItem key={s.id} value={s.id}>
-                            {s.user.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Services</Label>
-                  <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
-                    {categories.map((cat) =>
-                      cat.services.map((svc) => (
-                        <label key={svc.id} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={createForm.serviceIds.includes(svc.id)}
-                            onChange={(e) =>
-                              setCreateForm((f) => ({
-                                ...f,
-                                serviceIds: e.target.checked
-                                  ? [...f.serviceIds, svc.id]
-                                  : f.serviceIds.filter((id) => id !== svc.id),
-                              }))
-                            }
-                          />
-                          {svc.name} ({svc.durationMinutes} min, ${svc.price})
-                        </label>
-                      ))
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <Label>Start time</Label>
-                  <Input
-                    type="datetime-local"
-                    value={createForm.startTime ? createForm.startTime.slice(0, 16) : ''}
-                    onChange={(e) =>
-                      setCreateForm((f) => ({
-                        ...f,
-                        startTime: e.target.value ? new Date(e.target.value).toISOString() : '',
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <Label>Client (optional)</Label>
-                  <Input
-                    placeholder="Search client by name, email..."
-                    value={clientSearch}
-                    onChange={(e) => {
-                      setClientSearch(e.target.value);
-                      if (!e.target.value) {
-                        setCreateForm((f) => ({
-                          ...f,
-                          clientId: '',
-                          guestName: '',
-                          guestEmail: '',
-                          guestPhone: '',
-                        }));
-                      }
-                    }}
-                  />
-                  {clientSearchResults.length > 0 && (
-                    <div className="mt-1 max-h-32 overflow-y-auto rounded border">
-                      {clientSearchResults.map((c) => (
-                        <button
-                          key={c.id}
-                          type="button"
-                          className="block w-full px-3 py-2 text-left text-sm hover:bg-muted"
-                          onClick={() => {
-                            setCreateForm((f) => ({
-                              ...f,
-                              clientId: c.id,
-                              guestName: `${c.firstName} ${c.lastName}`.trim(),
-                              guestEmail: c.email,
-                              guestPhone: c.phone || '',
-                            }));
-                            setClientSearch(`${c.firstName} ${c.lastName}`);
-                            setClientSearchResults([]);
-                          }}
-                        >
-                          {c.firstName} {c.lastName} · {c.email}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <Label>Guest name</Label>
-                  <Input
-                    value={createForm.guestName}
-                    onChange={(e) => setCreateForm((f) => ({ ...f, guestName: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label>Guest email</Label>
-                  <Input
-                    type="email"
-                    value={createForm.guestEmail}
-                    onChange={(e) => setCreateForm((f) => ({ ...f, guestEmail: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label>Guest phone</Label>
-                  <Input
-                    value={createForm.guestPhone}
-                    onChange={(e) => setCreateForm((f) => ({ ...f, guestPhone: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label>Notes</Label>
-                  <Input
-                    value={createForm.notes}
-                    onChange={(e) => setCreateForm((f) => ({ ...f, notes: e.target.value }))}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button type="submit" disabled={saving}>
-                    Create
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+        {businesses.length > 1 && (
+          <div className="flex shrink-0 flex-wrap gap-2">
+            {businesses.map((b) => (
+              <button
+                key={b.id}
+                onClick={() => router.push(`/calendar?business=${b.id}&date=${formatDate(viewDate)}`)}
+                className={cn(
+                  'rounded-full px-5 py-2 text-sm font-semibold transition-all',
+                  b.id === currentBusinessId ? 'shadow-md' : 'hover:bg-black/5'
+                )}
+                style={{
+                  backgroundColor: b.id === currentBusinessId ? 'var(--blooso-text)' : 'transparent',
+                  color: b.id === currentBusinessId ? '#fff' : 'var(--blooso-text)',
+                  border: b.id === currentBusinessId ? 'none' : '1px solid var(--blooso-border)',
+                }}
+              >
+                {b.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <div className="rounded-[12px] bg-red-50 p-4 text-sm font-semibold text-red-600 border border-red-100">
+          {error}
         </div>
       )}
 
-      {detailAppointment && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center">
-          <Card className="w-full max-w-md sm:max-w-lg">
-            <CardContent className="pt-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Appointment</h3>
-                <Button variant="ghost" size="icon" onClick={() => setDetailAppointment(null)}>
-                  <X className="h-5 w-5" />
-                </Button>
+      {/* ── CALENDAR GRID ── */}
+      <div className="rounded-[24px] bg-white shadow-sm overflow-hidden border" style={{ borderColor: 'var(--blooso-border-light)' }}>
+        <div className="relative overflow-x-auto">
+          <div
+            className="relative grid min-w-[800px]"
+            style={{ gridTemplateColumns: `80px repeat(${displayStaff.length || 1}, minmax(180px, 1fr))` }}
+          >
+            {/* Header Row */}
+            <div className="sticky top-0 z-20 border-b border-r bg-[#F9F7F5] p-3 text-center text-xs font-bold uppercase tracking-wider text-black/40" style={{ borderColor: 'var(--blooso-border-light)' }}>
+              Time
+            </div>
+            {displayStaff.map((s) => (
+              <div
+                key={s.id}
+                className="sticky top-0 z-20 border-b border-r bg-[#F9F7F5] p-3 text-center text-sm font-bold text-black"
+                style={{ borderColor: 'var(--blooso-border-light)' }}
+              >
+                {s.user.name}
               </div>
-              <div className="space-y-2">
-                <p className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
+            ))}
+            {displayStaff.length === 0 && (
+              <div className="sticky top-0 z-20 border-b border-r bg-[#F9F7F5] p-3 text-center text-sm font-bold text-black/40" style={{ borderColor: 'var(--blooso-border-light)' }}>
+                No staff available
+              </div>
+            )}
+
+            {/* Time Rows & Slots */}
+            {timeRows.map((time, rowIdx) => (
+              <div key={`row-${rowIdx}`} className="contents">
+                <div
+                  className="border-b border-r p-2 text-right text-xs font-medium text-black/40 bg-[#F9F7F5]"
+                  style={{ height: ROW_HEIGHT, borderColor: 'var(--blooso-border-light)' }}
+                >
+                  {rowIdx % 4 === 0 ? time : ''}
+                </div>
+                {displayStaff.map((s) => {
+                  const startTime = `${formatDate(viewDate)}T${time}:00`;
+                  return (
+                    <div
+                      key={`${s.id}-${rowIdx}`}
+                      className="cursor-pointer border-b border-r border-dashed transition-colors hover:bg-black/[0.02]"
+                      style={{ height: ROW_HEIGHT, borderColor: 'var(--blooso-border-light)' }}
+                      onClick={() => handleSlotClick(s.id, startTime)}
+                    />
+                  );
+                })}
+                {displayStaff.length === 0 && (
+                  <div className="border-b border-r border-dashed" style={{ height: ROW_HEIGHT, borderColor: 'var(--blooso-border-light)' }} />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* ── APPOINTMENT BLOCKS ── */}
+          <div className="absolute inset-0 pointer-events-none min-w-[800px]" style={{ paddingTop: HEADER_HEIGHT }}>
+            <div className="relative w-full" style={{ height: timeRows.length * ROW_HEIGHT }}>
+              {appointments
+                .filter((a) => a.status !== 'cancelled' && a.status !== 'no_show')
+                .map((apt) => {
+                  const staffIdx = displayStaff.findIndex((s) => s.id === apt.staffId);
+                  if (staffIdx < 0) return null;
+                  const colWidth = 100 / (displayStaff.length || 1);
+                  
+                  return (
+                    <button
+                      key={apt.id}
+                      type="button"
+                      className={cn(
+                        "absolute rounded-[12px] border px-3 py-2 text-left transition-all hover:scale-[1.02] hover:shadow-md pointer-events-auto flex flex-col justify-start overflow-hidden",
+                        STATUS_COLORS[apt.status] ?? 'bg-white border-[#e6e2de] text-black shadow-sm'
+                      )}
+                      style={{
+                        top: slotTop(apt.startTime) - HEADER_HEIGHT + 4,
+                        height: slotHeight(apt.startTime, apt.endTime) - 8,
+                        left: `calc(80px + ${staffIdx * colWidth}%)`,
+                        width: `calc(${colWidth}% - 16px)`,
+                        marginLeft: 8,
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDetailAppointment(apt);
+                      }}
+                    >
+                      <p className="truncate text-xs font-bold uppercase tracking-wider mb-0.5 opacity-80">
+                        {new Date(apt.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                      <p className="truncate text-sm font-bold leading-tight">
+                        {apt.guestName || apt.guestEmail || 'Walk-in'}
+                      </p>
+                      <p className="truncate text-xs opacity-90 mt-auto pt-1 font-medium">
+                        {apt.appointmentServices?.map((as) => as.service?.name).filter(Boolean).join(', ')}
+                      </p>
+                    </button>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── CREATE APPOINTMENT MODAL ── */}
+      {createOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 p-4">
+          <div className="w-full max-w-lg rounded-[24px] bg-white shadow-xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b p-6" style={{ borderColor: 'var(--blooso-border-light)' }}>
+              <h3 className="text-xl font-bold font-serif">New Appointment</h3>
+              <button onClick={() => setCreateOpen(false)} className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10">
+                <X className="size-4" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreateSubmit} className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+              {/* Form Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-2 block text-sm font-bold text-black">Staff</label>
+                  <select
+                    value={createForm.staffId}
+                    onChange={(e) => setCreateForm((f) => ({ ...f, staffId: e.target.value }))}
+                    className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all appearance-none"
+                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                  >
+                    <option value="" disabled>Select staff</option>
+                    {staff.filter((s) => s.isActive).map((s) => (
+                      <option key={s.id} value={s.id}>{s.user.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-bold text-black">Start time</label>
+                  <input
+                    type="datetime-local"
+                    value={createForm.startTime ? createForm.startTime.slice(0, 16) : ''}
+                    onChange={(e) => setCreateForm((f) => ({ ...f, startTime: e.target.value ? new Date(e.target.value).toISOString() : '' }))}
+                    className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all"
+                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-black">Services</label>
+                <div className="rounded-[16px] border p-4 max-h-48 overflow-y-auto bg-[#F9F7F5]" style={{ borderColor: 'var(--blooso-border-light)' }}>
+                  {categories.map((cat) =>
+                    cat.services.map((svc) => (
+                      <label key={svc.id} className="flex items-center gap-3 p-2 cursor-pointer hover:bg-black/5 rounded-[8px] transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={createForm.serviceIds.includes(svc.id)}
+                          onChange={(e) => setCreateForm((f) => ({
+                            ...f,
+                            serviceIds: e.target.checked ? [...f.serviceIds, svc.id] : f.serviceIds.filter((id) => id !== svc.id),
+                          }))}
+                          className="size-4 accent-[#8B3A52]"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-black">{svc.name}</span>
+                          <span className="text-xs text-black/60">{svc.durationMinutes} min • ${svc.price}</span>
+                        </div>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t" style={{ borderColor: 'var(--blooso-border-light)' }}>
+                <h4 className="text-sm font-bold text-black mb-4 uppercase tracking-wider">Client Details</h4>
+                <div className="space-y-4">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-black/40" />
+                    <input
+                      placeholder="Search existing client..."
+                      value={clientSearch}
+                      onChange={(e) => {
+                        setClientSearch(e.target.value);
+                        if (!e.target.value) setCreateForm(f => ({ ...f, clientId: '', guestName: '', guestEmail: '', guestPhone: '' }));
+                      }}
+                      className="w-full rounded-[12px] border pl-10 pr-4 py-3 text-sm outline-none transition-all"
+                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    />
+                    {clientSearchResults.length > 0 && (
+                      <div className="absolute z-10 mt-2 w-full rounded-[12px] border bg-white p-2 shadow-lg max-h-48 overflow-y-auto">
+                        {clientSearchResults.map((c) => (
+                          <button
+                            key={c.id}
+                            type="button"
+                            className="flex w-full flex-col items-start rounded-[8px] p-3 text-left transition-colors hover:bg-black/5"
+                            onClick={() => {
+                              setCreateForm((f) => ({ ...f, clientId: c.id, guestName: `${c.firstName} ${c.lastName}`.trim(), guestEmail: c.email, guestPhone: c.phone || '' }));
+                              setClientSearch(`${c.firstName} ${c.lastName}`);
+                              setClientSearchResults([]);
+                            }}
+                          >
+                            <span className="text-sm font-bold">{c.firstName} {c.lastName}</span>
+                            <span className="text-xs text-black/60">{c.email}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      placeholder="Name"
+                      value={createForm.guestName}
+                      onChange={(e) => setCreateForm((f) => ({ ...f, guestName: e.target.value }))}
+                      className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all"
+                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    />
+                    <input
+                      placeholder="Phone"
+                      value={createForm.guestPhone}
+                      onChange={(e) => setCreateForm((f) => ({ ...f, guestPhone: e.target.value }))}
+                      className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all"
+                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setCreateOpen(false)}
+                  className="rounded-[12px] px-6 py-3.5 text-sm font-bold transition-colors hover:bg-black/5"
+                  style={{ color: 'var(--blooso-text)', border: '1px solid var(--blooso-border)' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex flex-1 items-center justify-center rounded-[12px] py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+                  style={{ backgroundColor: 'var(--blooso-rose)' }}
+                >
+                  {saving ? 'Saving...' : 'Create Appointment'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── DETAIL MODAL ── */}
+      {detailAppointment && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 sm:items-center p-4">
+          <div className="w-full max-w-lg rounded-[24px] bg-white shadow-xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b p-6" style={{ borderColor: 'var(--blooso-border-light)' }}>
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-full bg-[#F9F7F5]">
+                  <ClipboardList className="size-5" style={{ color: 'var(--blooso-rose)' }} />
+                </div>
+                <h3 className="text-xl font-bold font-serif">Appointment</h3>
+              </div>
+              <button onClick={() => setDetailAppointment(null)} className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10">
+                <X className="size-4" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="rounded-[16px] bg-[#F9F7F5] p-5 mb-6">
+                <h4 className="text-2xl font-bold font-serif text-black mb-1">
                   {detailAppointment.guestName || detailAppointment.guestEmail || 'Walk-in'}
+                </h4>
+                <p className="text-sm font-medium text-black/60 flex items-center gap-2">
+                  <Clock className="size-3.5" />
+                  {new Date(detailAppointment.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} –{' '}
+                  {new Date(detailAppointment.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
-                <p className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  {new Date(detailAppointment.startTime).toLocaleTimeString()} –{' '}
-                  {new Date(detailAppointment.endTime).toLocaleTimeString()}
-                </p>
-                <p>
-                  {detailAppointment.appointmentServices
-                    ?.map((as) => as.service?.name)
-                    .filter(Boolean)
-                    .join(', ')}
-                </p>
-                <p className="text-sm text-muted-foreground">Status: {detailAppointment.status}</p>
+                <div className="mt-4 pt-4 border-t border-black/10">
+                  <p className="font-semibold text-black">
+                    {detailAppointment.appointmentServices?.map((as) => as.service?.name).filter(Boolean).join(', ')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Status and Payment Badges */}
+              <div className="flex flex-wrap items-center gap-3 mb-8">
+                <div className={cn("px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[detailAppointment.status] || 'bg-slate-100')}>
+                  {detailAppointment.status.replace('_', ' ')}
+                </div>
+                
                 {(() => {
-                  const total =
-                    detailAppointment.totalPrice ??
-                    detailAppointment.appointmentServices?.reduce(
-                      (s, as) => s + (as.priceCharged ?? 0),
-                      0
-                    ) ??
-                    0;
-                  const paid = detailPayments
-                    .filter((p) => p.status === 'completed')
-                    .reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
+                  const total = detailAppointment.totalPrice ?? detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ?? 0;
+                  const paid = detailPayments.filter((p) => p.status === 'completed').reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
                   const refunded = detailPayments.some((p) => p.status === 'refunded');
                   return (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                          refunded
-                            ? 'bg-amber-100 text-amber-800'
-                            : paid >= total && total > 0
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-slate-100 text-slate-600'
-                        }`}
-                      >
+                    <div className="flex items-center gap-2">
+                      <span className={cn(
+                        "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
+                        refunded ? 'bg-amber-100 text-amber-800' : paid >= total && total > 0 ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'
+                      )}>
                         {refunded ? 'Refunded' : paid >= total && total > 0 ? 'Paid' : 'Unpaid'}
                       </span>
                       {total > 0 && (
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-sm font-semibold text-black/60">
                           {paid > 0 ? `$${paid.toFixed(2)} paid` : ''}
                           {paid > 0 && paid < total ? ` of $${total.toFixed(2)}` : ''}
                           {paid === 0 && total > 0 ? `$${total.toFixed(2)} total` : ''}
-                          {detailPayments.length > 0 &&
-                            ` · ${detailPayments.map((p) => p.method).join(', ')}`}
                         </span>
                       )}
                     </div>
                   );
                 })()}
               </div>
-              <div className="mt-4 flex flex-wrap gap-2">
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3">
                 {detailAppointment.status === 'pending' && (
-                  <Button
-                    size="sm"
-                    onClick={() => handleStatusUpdate(detailAppointment.id, 'confirmed')}
-                  >
-                    <Check className="mr-1 h-4 w-4" />
-                    Confirm
-                  </Button>
+                  <button onClick={() => handleStatusUpdate(detailAppointment.id, 'confirmed')} className="flex items-center gap-2 rounded-[12px] bg-black px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90">
+                    <Check className="size-4" /> Confirm
+                  </button>
                 )}
-                {(detailAppointment.status === 'pending' ||
-                  detailAppointment.status === 'confirmed') && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleStatusUpdate(detailAppointment.id, 'in_progress')}
-                  >
+                {(detailAppointment.status === 'pending' || detailAppointment.status === 'confirmed') && (
+                  <button onClick={() => handleStatusUpdate(detailAppointment.id, 'in_progress')} className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5">
                     Check-in
-                  </Button>
+                  </button>
                 )}
                 {detailAppointment.status === 'in_progress' && (
-                  <Button
-                    size="sm"
-                    onClick={() => handleStatusUpdate(detailAppointment.id, 'completed')}
-                  >
+                  <button onClick={() => handleStatusUpdate(detailAppointment.id, 'completed')} className="flex items-center gap-2 rounded-[12px] bg-black px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90">
                     Complete
-                  </Button>
+                  </button>
                 )}
                 {detailAppointment.status === 'completed' && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/review/${detailAppointment.id}`;
-                      navigator.clipboard?.writeText(url);
-                    }}
-                  >
+                  <button onClick={() => { navigator.clipboard?.writeText(`${window.location.origin}/review/${detailAppointment.id}`); toast.success('Link copied'); }} className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5">
                     Copy review link
-                  </Button>
+                  </button>
                 )}
-                {(detailAppointment.status === 'pending' ||
-                  detailAppointment.status === 'confirmed') && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleStatusUpdate(detailAppointment.id, 'no_show')}
-                  >
+                {(detailAppointment.status === 'pending' || detailAppointment.status === 'confirmed') && (
+                  <button onClick={() => handleStatusUpdate(detailAppointment.id, 'no_show')} className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5">
                     No-show
-                  </Button>
+                  </button>
                 )}
                 {(() => {
-                  const total =
-                    detailAppointment.totalPrice ??
-                    detailAppointment.appointmentServices?.reduce(
-                      (s, as) => s + (as.priceCharged ?? 0),
-                      0
-                    ) ??
-                    0;
-                  const paid = detailPayments
-                    .filter((p) => p.status === 'completed')
-                    .reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
-                  const needsPayment = total > 0 && paid < total;
-                  return (
-                    needsPayment && (
-                      <Button size="sm" variant="outline" onClick={() => setCheckoutOpen(true)}>
-                        <Banknote className="mr-1 h-4 w-4" />
-                        Checkout
-                      </Button>
-                    )
-                  );
+                  const total = detailAppointment.totalPrice ?? detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ?? 0;
+                  const paid = detailPayments.filter((p) => p.status === 'completed').reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
+                  if (total > 0 && paid < total) {
+                    return (
+                      <button onClick={() => setCheckoutOpen(true)} className="flex items-center gap-2 rounded-[12px] px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90" style={{ backgroundColor: 'var(--blooso-rose)' }}>
+                        <Banknote className="size-4" /> Checkout
+                      </button>
+                    );
+                  }
+                  return null;
                 })()}
                 {detailAppointment.status !== 'cancelled' && (
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleCancel(detailAppointment.id)}
-                  >
-                    <XCircle className="mr-1 h-4 w-4" />
-                    Cancel
-                  </Button>
+                  <button onClick={() => handleCancel(detailAppointment.id)} className="flex items-center gap-2 rounded-[12px] bg-red-50 text-red-600 px-4 py-2.5 text-sm font-bold transition-colors hover:bg-red-100 ml-auto">
+                    <XCircle className="size-4" /> Cancel
+                  </button>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
 
+      {/* ── CHECKOUT MODAL ── */}
       {checkoutOpen && detailAppointment && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50">
-          <Card className="w-full max-w-sm">
-            <CardContent className="pt-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold">In-person checkout</h3>
-                <Button variant="ghost" size="icon" onClick={() => setCheckoutOpen(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="w-full max-w-sm rounded-[24px] bg-white shadow-xl animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b p-6" style={{ borderColor: 'var(--blooso-border-light)' }}>
+              <h3 className="text-xl font-bold font-serif">Checkout</h3>
+              <button onClick={() => setCheckoutOpen(false)} className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10">
+                <X className="size-4" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="mb-6 rounded-[16px] bg-[#F9F7F5] p-5 text-center">
+                <p className="text-sm font-bold uppercase tracking-wider text-black/40 mb-1">Total Due</p>
+                <p className="font-serif text-4xl font-bold" style={{ color: 'var(--blooso-rose)' }}>
+                  ${(detailAppointment.totalPrice ?? detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ?? 0).toFixed(2)}
+                </p>
               </div>
-              <p className="mb-4 text-sm text-muted-foreground">
-                Amount: $
-                {(
-                  detailAppointment.totalPrice ??
-                  detailAppointment.appointmentServices?.reduce(
-                    (s, as) => s + (as.priceCharged ?? 0),
-                    0
-                  ) ??
-                  0
-                ).toFixed(2)}
-              </p>
-              <div className="mb-4">
-                <Label>Payment method</Label>
-                <Select
-                  value={checkoutMethod}
-                  onValueChange={(v) =>
-                    setCheckoutMethod(v as 'cash' | 'card' | 'transfer' | 'other')
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="card">
-                      <CreditCard className="mr-2 inline h-4 w-4" />
-                      Card
-                    </SelectItem>
-                    <SelectItem value="cash">
-                      <Banknote className="mr-2 inline h-4 w-4" />
-                      Cash
-                    </SelectItem>
-                    <SelectItem value="transfer">Transfer</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+
+              <div className="space-y-4 mb-8">
+                <label className="block text-sm font-bold text-black">Payment Method</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {(['card', 'cash', 'transfer', 'other'] as const).map(method => (
+                    <button
+                      key={method}
+                      onClick={() => setCheckoutMethod(method)}
+                      className={cn(
+                        "flex items-center justify-center gap-2 rounded-[12px] border p-3 text-sm font-bold transition-all capitalize",
+                        checkoutMethod === method ? 'border-black bg-black text-white' : 'hover:bg-black/5 text-black'
+                      )}
+                    >
+                      {method === 'card' && <CreditCard className="size-4" />}
+                      {method === 'cash' && <Banknote className="size-4" />}
+                      {method}
+                    </button>
+                  ))}
+                </div>
               </div>
-              {error && <p className="mb-2 text-sm text-destructive">{error}</p>}
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setCheckoutOpen(false)}
-                  disabled={checkoutSubmitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="flex-1"
-                  onClick={handleInPersonCheckout}
-                  disabled={checkoutSubmitting}
-                >
-                  {checkoutSubmitting ? 'Recording...' : 'Record payment'}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+
+              {error && <p className="mb-4 text-sm font-semibold text-red-600 bg-red-50 p-3 rounded-[8px]">{error}</p>}
+              
+              <button
+                onClick={handleInPersonCheckout}
+                disabled={checkoutSubmitting}
+                className="w-full rounded-[12px] py-4 text-sm font-bold text-white transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+                style={{ backgroundColor: 'var(--blooso-rose)' }}
+              >
+                {checkoutSubmitting ? 'Recording...' : 'Record Payment'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
+
     </div>
   );
 }
