@@ -2,6 +2,8 @@
 
 Premium booking platform for beauty & wellness businesses. Book appointments 24/7.
 
+![Blooso Hero Section](apps/docs/images/hero-section-screenshot.png)
+
 ## Tech Stack
 
 - **Monorepo**: Turborepo
@@ -63,14 +65,14 @@ npm run dev
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start both apps in dev mode |
-| `npm run build` | Build all apps |
-| `npm run db:migrate` | Run Prisma migrations |
-| `npm run db:push` | Push schema (dev) |
-| `npm run db:seed` | Seed database |
-| `npm run db:studio` | Open Prisma Studio |
+| Command              | Description                 |
+| -------------------- | --------------------------- |
+| `npm run dev`        | Start both apps in dev mode |
+| `npm run build`      | Build all apps              |
+| `npm run db:migrate` | Run Prisma migrations       |
+| `npm run db:push`    | Push schema (dev)           |
+| `npm run db:seed`    | Seed database               |
+| `npm run db:studio`  | Open Prisma Studio          |
 
 ## Project Structure
 
