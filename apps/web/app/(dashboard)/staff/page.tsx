@@ -13,16 +13,16 @@ import { cn } from '@/lib/utils';
 
 // Helper to generate consistent colors based on a string (name)
 function getAvatarColor(name: string) {
-  const colors = [
-    { bg: 'bg-[#fdf8f6]', text: 'text-[#8B3A52]' }, // Rose Tint
-    { bg: 'bg-[#fdf6f0]', text: 'text-[#C9A87C]' }, // Sand Tint
+  const colors: { bg: string; text: string }[] = [
+    { bg: 'bg-[#fdf8f6]', text: 'text-[#8B3A52]' },
+    { bg: 'bg-[#fdf6f0]', text: 'text-[#C9A87C]' },
     { bg: 'bg-blue-50', text: 'text-blue-700' },
     { bg: 'bg-emerald-50', text: 'text-emerald-700' },
     { bg: 'bg-purple-50', text: 'text-purple-700' },
     { bg: 'bg-indigo-50', text: 'text-indigo-700' },
   ];
   const charCode = name.charCodeAt(0) || 0;
-  return colors[charCode % colors.length];
+  return colors[charCode % colors.length]!;
 }
 
 export default function StaffPage() {

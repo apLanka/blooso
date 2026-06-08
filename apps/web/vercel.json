@@ -1,3 +1,5 @@
 {
-  "installCommand": "npm install"
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "regions": ["iad1"]
 }
