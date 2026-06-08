@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { BullModule } from '@nestjs/bullmq';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
@@ -22,14 +21,6 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    BullModule.forRootAsync({
-      useFactory: () => ({
-        connection: process.env.REDIS_URL
-          ? { url: process.env.REDIS_URL }
-          : { host: 'localhost', port: 6379 },
-      }),
-    }),
-    BullModule.registerQueue({ name: 'notifications' }, { name: 'reminders' }),
     PrismaModule,
     AuthModule,
     BusinessModule,
