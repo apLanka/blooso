@@ -23,7 +23,8 @@ import {
   Search,
   Calendar as CalendarIcon,
   MapPin,
-  ClipboardList
+  ClipboardList,
+  Store,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { CalendarSkeleton } from '@/components/skeletons';
@@ -87,7 +88,7 @@ export default function CalendarPage() {
     }
     return new Date();
   });
-  
+
   const [createOpen, setCreateOpen] = useState(false);
   const [detailAppointment, setDetailAppointment] = useState<Appointment | null>(null);
   const [createForm, setCreateForm] = useState({
@@ -100,15 +101,17 @@ export default function CalendarPage() {
     guestPhone: '',
     notes: '',
   });
-  
+
   const [clientSearch, setClientSearch] = useState('');
   const [clientSearchResults, setClientSearchResults] = useState<clientClient.Client[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [detailPayments, setDetailPayments] = useState<Payment[]>([]);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [checkoutMethod, setCheckoutMethod] = useState<'cash' | 'card' | 'transfer' | 'other'>('card');
+  const [checkoutMethod, setCheckoutMethod] = useState<'cash' | 'card' | 'transfer' | 'other'>(
+    'card'
+  );
   const [checkoutSubmitting, setCheckoutSubmitting] = useState(false);
 
   const token = getToken();
@@ -171,7 +174,7 @@ export default function CalendarPage() {
       detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ??
       0;
     if (amount <= 0) return;
-    
+
     setCheckoutSubmitting(true);
     setError(null);
     try {
@@ -197,7 +200,10 @@ export default function CalendarPage() {
   if (isLoading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F9F7F5]">
-        <div className="size-8 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }} />
+        <div
+          className="size-8 animate-spin rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }}
+        />
       </div>
     );
   }
@@ -265,7 +271,8 @@ export default function CalendarPage() {
       !locationId ||
       !createForm.staffId ||
       createForm.serviceIds.length === 0
-    ) return;
+    )
+      return;
 
     setSaving(true);
     setError(null);
@@ -285,7 +292,10 @@ export default function CalendarPage() {
       loadData();
       toast.success('Appointment created successfully');
     } catch (err: unknown) {
-      const msg = err && typeof err === 'object' && 'body' in err ? (err as any).body?.message : 'Failed to create appointment';
+      const msg =
+        err && typeof err === 'object' && 'body' in err
+          ? (err as any).body?.message
+          : 'Failed to create appointment';
       setError(msg);
       toast.error(msg);
     } finally {
@@ -332,7 +342,9 @@ export default function CalendarPage() {
       <div className="flex h-[60vh] flex-col items-center justify-center text-center">
         <Store className="mb-4 size-12 opacity-20" />
         <h2 className="mb-2 text-2xl font-bold font-serif">Welcome to Blooso</h2>
-        <p className="mb-6 text-muted-foreground">You need to set up a business to use the calendar.</p>
+        <p className="mb-6 text-muted-foreground">
+          You need to set up a business to use the calendar.
+        </p>
         <button
           onClick={() => router.push('/onboarding')}
           className="rounded-full px-8 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
@@ -346,23 +358,42 @@ export default function CalendarPage() {
 
   return (
     <div className="animate-fade-up space-y-8 pb-12">
-      
       {/* ── HEADER ── */}
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-4">
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl" style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}>
-            {viewDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          <h1
+            className="text-3xl font-bold tracking-tight md:text-4xl"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
+            {viewDate.toLocaleDateString('en-US', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })}
           </h1>
-          
+
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1 rounded-[12px] bg-white p-1 shadow-sm border" style={{ borderColor: 'var(--blooso-border-light)' }}>
-              <button onClick={handlePrevDay} className="flex size-8 items-center justify-center rounded-[8px] transition-colors hover:bg-black/5">
+            <div
+              className="flex items-center gap-1 rounded-[12px] bg-white p-1 shadow-sm border"
+              style={{ borderColor: 'var(--blooso-border-light)' }}
+            >
+              <button
+                onClick={handlePrevDay}
+                className="flex size-8 items-center justify-center rounded-[8px] transition-colors hover:bg-black/5"
+              >
                 <ChevronLeft className="size-4" />
               </button>
-              <button onClick={handleToday} className="px-4 py-1.5 text-sm font-semibold transition-colors hover:bg-black/5 rounded-[8px]">
+              <button
+                onClick={handleToday}
+                className="px-4 py-1.5 text-sm font-semibold transition-colors hover:bg-black/5 rounded-[8px]"
+              >
                 Today
               </button>
-              <button onClick={handleNextDay} className="flex size-8 items-center justify-center rounded-[8px] transition-colors hover:bg-black/5">
+              <button
+                onClick={handleNextDay}
+                className="flex size-8 items-center justify-center rounded-[8px] transition-colors hover:bg-black/5"
+              >
                 <ChevronRight className="size-4" />
               </button>
             </div>
@@ -375,9 +406,13 @@ export default function CalendarPage() {
                 style={{ borderColor: 'var(--blooso-border-light)' }}
               >
                 <option value="all">All Staff</option>
-                {staff.filter(s => s.isActive).map(s => (
-                  <option key={s.id} value={s.id}>{s.user.name}</option>
-                ))}
+                {staff
+                  .filter((s) => s.isActive)
+                  .map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.user.name}
+                    </option>
+                  ))}
               </select>
               <User className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-black/40 pointer-events-none" />
             </div>
@@ -389,13 +424,16 @@ export default function CalendarPage() {
             {businesses.map((b) => (
               <button
                 key={b.id}
-                onClick={() => router.push(`/calendar?business=${b.id}&date=${formatDate(viewDate)}`)}
+                onClick={() =>
+                  router.push(`/calendar?business=${b.id}&date=${formatDate(viewDate)}`)
+                }
                 className={cn(
                   'rounded-full px-5 py-2 text-sm font-semibold transition-all',
                   b.id === currentBusinessId ? 'shadow-md' : 'hover:bg-black/5'
                 )}
                 style={{
-                  backgroundColor: b.id === currentBusinessId ? 'var(--blooso-text)' : 'transparent',
+                  backgroundColor:
+                    b.id === currentBusinessId ? 'var(--blooso-text)' : 'transparent',
                   color: b.id === currentBusinessId ? '#fff' : 'var(--blooso-text)',
                   border: b.id === currentBusinessId ? 'none' : '1px solid var(--blooso-border)',
                 }}
@@ -414,14 +452,22 @@ export default function CalendarPage() {
       )}
 
       {/* ── CALENDAR GRID ── */}
-      <div className="rounded-[24px] bg-white shadow-sm overflow-hidden border" style={{ borderColor: 'var(--blooso-border-light)' }}>
+      <div
+        className="rounded-[24px] bg-white shadow-sm overflow-hidden border"
+        style={{ borderColor: 'var(--blooso-border-light)' }}
+      >
         <div className="relative overflow-x-auto">
           <div
             className="relative grid min-w-[800px]"
-            style={{ gridTemplateColumns: `80px repeat(${displayStaff.length || 1}, minmax(180px, 1fr))` }}
+            style={{
+              gridTemplateColumns: `80px repeat(${displayStaff.length || 1}, minmax(180px, 1fr))`,
+            }}
           >
             {/* Header Row */}
-            <div className="sticky top-0 z-20 border-b border-r bg-[#F9F7F5] p-3 text-center text-xs font-bold uppercase tracking-wider text-black/40" style={{ borderColor: 'var(--blooso-border-light)' }}>
+            <div
+              className="sticky top-0 z-20 border-b border-r bg-[#F9F7F5] p-3 text-center text-xs font-bold uppercase tracking-wider text-black/40"
+              style={{ borderColor: 'var(--blooso-border-light)' }}
+            >
               Time
             </div>
             {displayStaff.map((s) => (
@@ -434,7 +480,10 @@ export default function CalendarPage() {
               </div>
             ))}
             {displayStaff.length === 0 && (
-              <div className="sticky top-0 z-20 border-b border-r bg-[#F9F7F5] p-3 text-center text-sm font-bold text-black/40" style={{ borderColor: 'var(--blooso-border-light)' }}>
+              <div
+                className="sticky top-0 z-20 border-b border-r bg-[#F9F7F5] p-3 text-center text-sm font-bold text-black/40"
+                style={{ borderColor: 'var(--blooso-border-light)' }}
+              >
                 No staff available
               </div>
             )}
@@ -460,14 +509,20 @@ export default function CalendarPage() {
                   );
                 })}
                 {displayStaff.length === 0 && (
-                  <div className="border-b border-r border-dashed" style={{ height: ROW_HEIGHT, borderColor: 'var(--blooso-border-light)' }} />
+                  <div
+                    className="border-b border-r border-dashed"
+                    style={{ height: ROW_HEIGHT, borderColor: 'var(--blooso-border-light)' }}
+                  />
                 )}
               </div>
             ))}
           </div>
 
           {/* ── APPOINTMENT BLOCKS ── */}
-          <div className="absolute inset-0 pointer-events-none min-w-[800px]" style={{ paddingTop: HEADER_HEIGHT }}>
+          <div
+            className="absolute inset-0 pointer-events-none min-w-[800px]"
+            style={{ paddingTop: HEADER_HEIGHT }}
+          >
             <div className="relative w-full" style={{ height: timeRows.length * ROW_HEIGHT }}>
               {appointments
                 .filter((a) => a.status !== 'cancelled' && a.status !== 'no_show')
@@ -475,14 +530,15 @@ export default function CalendarPage() {
                   const staffIdx = displayStaff.findIndex((s) => s.id === apt.staffId);
                   if (staffIdx < 0) return null;
                   const colWidth = 100 / (displayStaff.length || 1);
-                  
+
                   return (
                     <button
                       key={apt.id}
                       type="button"
                       className={cn(
-                        "absolute rounded-[12px] border px-3 py-2 text-left transition-all hover:scale-[1.02] hover:shadow-md pointer-events-auto flex flex-col justify-start overflow-hidden",
-                        STATUS_COLORS[apt.status] ?? 'bg-white border-[#e6e2de] text-black shadow-sm'
+                        'absolute rounded-[12px] border px-3 py-2 text-left transition-all hover:scale-[1.02] hover:shadow-md pointer-events-auto flex flex-col justify-start overflow-hidden',
+                        STATUS_COLORS[apt.status] ??
+                          'bg-white border-[#e6e2de] text-black shadow-sm'
                       )}
                       style={{
                         top: slotTop(apt.startTime) - HEADER_HEIGHT + 4,
@@ -497,13 +553,19 @@ export default function CalendarPage() {
                       }}
                     >
                       <p className="truncate text-xs font-bold uppercase tracking-wider mb-0.5 opacity-80">
-                        {new Date(apt.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(apt.startTime).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </p>
                       <p className="truncate text-sm font-bold leading-tight">
                         {apt.guestName || apt.guestEmail || 'Walk-in'}
                       </p>
                       <p className="truncate text-xs opacity-90 mt-auto pt-1 font-medium">
-                        {apt.appointmentServices?.map((as) => as.service?.name).filter(Boolean).join(', ')}
+                        {apt.appointmentServices
+                          ?.map((as) => as.service?.name)
+                          .filter(Boolean)
+                          .join(', ')}
                       </p>
                     </button>
                   );
@@ -517,14 +579,23 @@ export default function CalendarPage() {
       {createOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 p-4">
           <div className="w-full max-w-lg rounded-[24px] bg-white shadow-xl animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b p-6" style={{ borderColor: 'var(--blooso-border-light)' }}>
+            <div
+              className="flex items-center justify-between border-b p-6"
+              style={{ borderColor: 'var(--blooso-border-light)' }}
+            >
               <h3 className="text-xl font-bold font-serif">New Appointment</h3>
-              <button onClick={() => setCreateOpen(false)} className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10">
+              <button
+                onClick={() => setCreateOpen(false)}
+                className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10"
+              >
                 <X className="size-4" />
               </button>
             </div>
-            
-            <form onSubmit={handleCreateSubmit} className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+
+            <form
+              onSubmit={handleCreateSubmit}
+              className="p-6 space-y-6 max-h-[75vh] overflow-y-auto"
+            >
               {/* Form Grid */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -533,12 +604,21 @@ export default function CalendarPage() {
                     value={createForm.staffId}
                     onChange={(e) => setCreateForm((f) => ({ ...f, staffId: e.target.value }))}
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all appearance-none"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                   >
-                    <option value="" disabled>Select staff</option>
-                    {staff.filter((s) => s.isActive).map((s) => (
-                      <option key={s.id} value={s.id}>{s.user.name}</option>
-                    ))}
+                    <option value="" disabled>
+                      Select staff
+                    </option>
+                    {staff
+                      .filter((s) => s.isActive)
+                      .map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.user.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
                 <div>
@@ -546,31 +626,51 @@ export default function CalendarPage() {
                   <input
                     type="datetime-local"
                     value={createForm.startTime ? createForm.startTime.slice(0, 16) : ''}
-                    onChange={(e) => setCreateForm((f) => ({ ...f, startTime: e.target.value ? new Date(e.target.value).toISOString() : '' }))}
+                    onChange={(e) =>
+                      setCreateForm((f) => ({
+                        ...f,
+                        startTime: e.target.value ? new Date(e.target.value).toISOString() : '',
+                      }))
+                    }
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                   />
                 </div>
               </div>
 
               <div>
                 <label className="mb-2 block text-sm font-bold text-black">Services</label>
-                <div className="rounded-[16px] border p-4 max-h-48 overflow-y-auto bg-[#F9F7F5]" style={{ borderColor: 'var(--blooso-border-light)' }}>
+                <div
+                  className="rounded-[16px] border p-4 max-h-48 overflow-y-auto bg-[#F9F7F5]"
+                  style={{ borderColor: 'var(--blooso-border-light)' }}
+                >
                   {categories.map((cat) =>
                     cat.services.map((svc) => (
-                      <label key={svc.id} className="flex items-center gap-3 p-2 cursor-pointer hover:bg-black/5 rounded-[8px] transition-colors">
+                      <label
+                        key={svc.id}
+                        className="flex items-center gap-3 p-2 cursor-pointer hover:bg-black/5 rounded-[8px] transition-colors"
+                      >
                         <input
                           type="checkbox"
                           checked={createForm.serviceIds.includes(svc.id)}
-                          onChange={(e) => setCreateForm((f) => ({
-                            ...f,
-                            serviceIds: e.target.checked ? [...f.serviceIds, svc.id] : f.serviceIds.filter((id) => id !== svc.id),
-                          }))}
+                          onChange={(e) =>
+                            setCreateForm((f) => ({
+                              ...f,
+                              serviceIds: e.target.checked
+                                ? [...f.serviceIds, svc.id]
+                                : f.serviceIds.filter((id) => id !== svc.id),
+                            }))
+                          }
                           className="size-4 accent-[#8B3A52]"
                         />
                         <div className="flex flex-col">
                           <span className="text-sm font-bold text-black">{svc.name}</span>
-                          <span className="text-xs text-black/60">{svc.durationMinutes} min • ${svc.price}</span>
+                          <span className="text-xs text-black/60">
+                            {svc.durationMinutes} min • ${svc.price}
+                          </span>
                         </div>
                       </label>
                     ))
@@ -579,7 +679,9 @@ export default function CalendarPage() {
               </div>
 
               <div className="pt-4 border-t" style={{ borderColor: 'var(--blooso-border-light)' }}>
-                <h4 className="text-sm font-bold text-black mb-4 uppercase tracking-wider">Client Details</h4>
+                <h4 className="text-sm font-bold text-black mb-4 uppercase tracking-wider">
+                  Client Details
+                </h4>
                 <div className="space-y-4">
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-black/40" />
@@ -588,10 +690,20 @@ export default function CalendarPage() {
                       value={clientSearch}
                       onChange={(e) => {
                         setClientSearch(e.target.value);
-                        if (!e.target.value) setCreateForm(f => ({ ...f, clientId: '', guestName: '', guestEmail: '', guestPhone: '' }));
+                        if (!e.target.value)
+                          setCreateForm((f) => ({
+                            ...f,
+                            clientId: '',
+                            guestName: '',
+                            guestEmail: '',
+                            guestPhone: '',
+                          }));
                       }}
                       className="w-full rounded-[12px] border pl-10 pr-4 py-3 text-sm outline-none transition-all"
-                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                      style={{
+                        borderColor: 'var(--blooso-border)',
+                        outlineColor: 'var(--blooso-rose)',
+                      }}
                     />
                     {clientSearchResults.length > 0 && (
                       <div className="absolute z-10 mt-2 w-full rounded-[12px] border bg-white p-2 shadow-lg max-h-48 overflow-y-auto">
@@ -601,33 +713,47 @@ export default function CalendarPage() {
                             type="button"
                             className="flex w-full flex-col items-start rounded-[8px] p-3 text-left transition-colors hover:bg-black/5"
                             onClick={() => {
-                              setCreateForm((f) => ({ ...f, clientId: c.id, guestName: `${c.firstName} ${c.lastName}`.trim(), guestEmail: c.email, guestPhone: c.phone || '' }));
+                              setCreateForm((f) => ({
+                                ...f,
+                                clientId: c.id,
+                                guestName: `${c.firstName} ${c.lastName}`.trim(),
+                                guestEmail: c.email,
+                                guestPhone: c.phone || '',
+                              }));
                               setClientSearch(`${c.firstName} ${c.lastName}`);
                               setClientSearchResults([]);
                             }}
                           >
-                            <span className="text-sm font-bold">{c.firstName} {c.lastName}</span>
+                            <span className="text-sm font-bold">
+                              {c.firstName} {c.lastName}
+                            </span>
                             <span className="text-xs text-black/60">{c.email}</span>
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <input
                       placeholder="Name"
                       value={createForm.guestName}
                       onChange={(e) => setCreateForm((f) => ({ ...f, guestName: e.target.value }))}
                       className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all"
-                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                      style={{
+                        borderColor: 'var(--blooso-border)',
+                        outlineColor: 'var(--blooso-rose)',
+                      }}
                     />
                     <input
                       placeholder="Phone"
                       value={createForm.guestPhone}
                       onChange={(e) => setCreateForm((f) => ({ ...f, guestPhone: e.target.value }))}
                       className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all"
-                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                      style={{
+                        borderColor: 'var(--blooso-border)',
+                        outlineColor: 'var(--blooso-rose)',
+                      }}
                     />
                   </div>
                 </div>
@@ -660,18 +786,24 @@ export default function CalendarPage() {
       {detailAppointment && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 sm:items-center p-4">
           <div className="w-full max-w-lg rounded-[24px] bg-white shadow-xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b p-6" style={{ borderColor: 'var(--blooso-border-light)' }}>
+            <div
+              className="flex items-center justify-between border-b p-6"
+              style={{ borderColor: 'var(--blooso-border-light)' }}
+            >
               <div className="flex items-center gap-3">
                 <div className="flex size-10 items-center justify-center rounded-full bg-[#F9F7F5]">
                   <ClipboardList className="size-5" style={{ color: 'var(--blooso-rose)' }} />
                 </div>
                 <h3 className="text-xl font-bold font-serif">Appointment</h3>
               </div>
-              <button onClick={() => setDetailAppointment(null)} className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10">
+              <button
+                onClick={() => setDetailAppointment(null)}
+                className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10"
+              >
                 <X className="size-4" />
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="rounded-[16px] bg-[#F9F7F5] p-5 mb-6">
                 <h4 className="text-2xl font-bold font-serif text-black mb-1">
@@ -679,32 +811,61 @@ export default function CalendarPage() {
                 </h4>
                 <p className="text-sm font-medium text-black/60 flex items-center gap-2">
                   <Clock className="size-3.5" />
-                  {new Date(detailAppointment.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} –{' '}
-                  {new Date(detailAppointment.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {new Date(detailAppointment.startTime).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}{' '}
+                  –{' '}
+                  {new Date(detailAppointment.endTime).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </p>
                 <div className="mt-4 pt-4 border-t border-black/10">
                   <p className="font-semibold text-black">
-                    {detailAppointment.appointmentServices?.map((as) => as.service?.name).filter(Boolean).join(', ')}
+                    {detailAppointment.appointmentServices
+                      ?.map((as) => as.service?.name)
+                      .filter(Boolean)
+                      .join(', ')}
                   </p>
                 </div>
               </div>
 
               {/* Status and Payment Badges */}
               <div className="flex flex-wrap items-center gap-3 mb-8">
-                <div className={cn("px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border", STATUS_COLORS[detailAppointment.status] || 'bg-slate-100')}>
+                <div
+                  className={cn(
+                    'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border',
+                    STATUS_COLORS[detailAppointment.status] || 'bg-slate-100'
+                  )}
+                >
                   {detailAppointment.status.replace('_', ' ')}
                 </div>
-                
+
                 {(() => {
-                  const total = detailAppointment.totalPrice ?? detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ?? 0;
-                  const paid = detailPayments.filter((p) => p.status === 'completed').reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
+                  const total =
+                    detailAppointment.totalPrice ??
+                    detailAppointment.appointmentServices?.reduce(
+                      (s, as) => s + (as.priceCharged ?? 0),
+                      0
+                    ) ??
+                    0;
+                  const paid = detailPayments
+                    .filter((p) => p.status === 'completed')
+                    .reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
                   const refunded = detailPayments.some((p) => p.status === 'refunded');
                   return (
                     <div className="flex items-center gap-2">
-                      <span className={cn(
-                        "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
-                        refunded ? 'bg-amber-100 text-amber-800' : paid >= total && total > 0 ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'
-                      )}>
+                      <span
+                        className={cn(
+                          'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider',
+                          refunded
+                            ? 'bg-amber-100 text-amber-800'
+                            : paid >= total && total > 0
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-slate-100 text-slate-600'
+                        )}
+                      >
                         {refunded ? 'Refunded' : paid >= total && total > 0 ? 'Paid' : 'Unpaid'}
                       </span>
                       {total > 0 && (
@@ -722,36 +883,70 @@ export default function CalendarPage() {
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
                 {detailAppointment.status === 'pending' && (
-                  <button onClick={() => handleStatusUpdate(detailAppointment.id, 'confirmed')} className="flex items-center gap-2 rounded-[12px] bg-black px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90">
+                  <button
+                    onClick={() => handleStatusUpdate(detailAppointment.id, 'confirmed')}
+                    className="flex items-center gap-2 rounded-[12px] bg-black px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
+                  >
                     <Check className="size-4" /> Confirm
                   </button>
                 )}
-                {(detailAppointment.status === 'pending' || detailAppointment.status === 'confirmed') && (
-                  <button onClick={() => handleStatusUpdate(detailAppointment.id, 'in_progress')} className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5">
+                {(detailAppointment.status === 'pending' ||
+                  detailAppointment.status === 'confirmed') && (
+                  <button
+                    onClick={() => handleStatusUpdate(detailAppointment.id, 'in_progress')}
+                    className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5"
+                  >
                     Check-in
                   </button>
                 )}
                 {detailAppointment.status === 'in_progress' && (
-                  <button onClick={() => handleStatusUpdate(detailAppointment.id, 'completed')} className="flex items-center gap-2 rounded-[12px] bg-black px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90">
+                  <button
+                    onClick={() => handleStatusUpdate(detailAppointment.id, 'completed')}
+                    className="flex items-center gap-2 rounded-[12px] bg-black px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
+                  >
                     Complete
                   </button>
                 )}
                 {detailAppointment.status === 'completed' && (
-                  <button onClick={() => { navigator.clipboard?.writeText(`${window.location.origin}/review/${detailAppointment.id}`); toast.success('Link copied'); }} className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard?.writeText(
+                        `${window.location.origin}/review/${detailAppointment.id}`
+                      );
+                      toast.success('Link copied');
+                    }}
+                    className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5"
+                  >
                     Copy review link
                   </button>
                 )}
-                {(detailAppointment.status === 'pending' || detailAppointment.status === 'confirmed') && (
-                  <button onClick={() => handleStatusUpdate(detailAppointment.id, 'no_show')} className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5">
+                {(detailAppointment.status === 'pending' ||
+                  detailAppointment.status === 'confirmed') && (
+                  <button
+                    onClick={() => handleStatusUpdate(detailAppointment.id, 'no_show')}
+                    className="flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-black/5"
+                  >
                     No-show
                   </button>
                 )}
                 {(() => {
-                  const total = detailAppointment.totalPrice ?? detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ?? 0;
-                  const paid = detailPayments.filter((p) => p.status === 'completed').reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
+                  const total =
+                    detailAppointment.totalPrice ??
+                    detailAppointment.appointmentServices?.reduce(
+                      (s, as) => s + (as.priceCharged ?? 0),
+                      0
+                    ) ??
+                    0;
+                  const paid = detailPayments
+                    .filter((p) => p.status === 'completed')
+                    .reduce((s, p) => s + p.amount + (p.tipAmount ?? 0), 0);
                   if (total > 0 && paid < total) {
                     return (
-                      <button onClick={() => setCheckoutOpen(true)} className="flex items-center gap-2 rounded-[12px] px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90" style={{ backgroundColor: 'var(--blooso-rose)' }}>
+                      <button
+                        onClick={() => setCheckoutOpen(true)}
+                        className="flex items-center gap-2 rounded-[12px] px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
+                        style={{ backgroundColor: 'var(--blooso-rose)' }}
+                      >
                         <Banknote className="size-4" /> Checkout
                       </button>
                     );
@@ -759,7 +954,10 @@ export default function CalendarPage() {
                   return null;
                 })()}
                 {detailAppointment.status !== 'cancelled' && (
-                  <button onClick={() => handleCancel(detailAppointment.id)} className="flex items-center gap-2 rounded-[12px] bg-red-50 text-red-600 px-4 py-2.5 text-sm font-bold transition-colors hover:bg-red-100 ml-auto">
+                  <button
+                    onClick={() => handleCancel(detailAppointment.id)}
+                    className="flex items-center gap-2 rounded-[12px] bg-red-50 text-red-600 px-4 py-2.5 text-sm font-bold transition-colors hover:bg-red-100 ml-auto"
+                  >
                     <XCircle className="size-4" /> Cancel
                   </button>
                 )}
@@ -773,30 +971,51 @@ export default function CalendarPage() {
       {checkoutOpen && detailAppointment && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in">
           <div className="w-full max-w-sm rounded-[24px] bg-white shadow-xl animate-in zoom-in-95">
-            <div className="flex items-center justify-between border-b p-6" style={{ borderColor: 'var(--blooso-border-light)' }}>
+            <div
+              className="flex items-center justify-between border-b p-6"
+              style={{ borderColor: 'var(--blooso-border-light)' }}
+            >
               <h3 className="text-xl font-bold font-serif">Checkout</h3>
-              <button onClick={() => setCheckoutOpen(false)} className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10">
+              <button
+                onClick={() => setCheckoutOpen(false)}
+                className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10"
+              >
                 <X className="size-4" />
               </button>
             </div>
             <div className="p-6">
               <div className="mb-6 rounded-[16px] bg-[#F9F7F5] p-5 text-center">
-                <p className="text-sm font-bold uppercase tracking-wider text-black/40 mb-1">Total Due</p>
-                <p className="font-serif text-4xl font-bold" style={{ color: 'var(--blooso-rose)' }}>
-                  ${(detailAppointment.totalPrice ?? detailAppointment.appointmentServices?.reduce((s, as) => s + (as.priceCharged ?? 0), 0) ?? 0).toFixed(2)}
+                <p className="text-sm font-bold uppercase tracking-wider text-black/40 mb-1">
+                  Total Due
+                </p>
+                <p
+                  className="font-serif text-4xl font-bold"
+                  style={{ color: 'var(--blooso-rose)' }}
+                >
+                  $
+                  {(
+                    detailAppointment.totalPrice ??
+                    detailAppointment.appointmentServices?.reduce(
+                      (s, as) => s + (as.priceCharged ?? 0),
+                      0
+                    ) ??
+                    0
+                  ).toFixed(2)}
                 </p>
               </div>
 
               <div className="space-y-4 mb-8">
                 <label className="block text-sm font-bold text-black">Payment Method</label>
                 <div className="grid grid-cols-2 gap-3">
-                  {(['card', 'cash', 'transfer', 'other'] as const).map(method => (
+                  {(['card', 'cash', 'transfer', 'other'] as const).map((method) => (
                     <button
                       key={method}
                       onClick={() => setCheckoutMethod(method)}
                       className={cn(
-                        "flex items-center justify-center gap-2 rounded-[12px] border p-3 text-sm font-bold transition-all capitalize",
-                        checkoutMethod === method ? 'border-black bg-black text-white' : 'hover:bg-black/5 text-black'
+                        'flex items-center justify-center gap-2 rounded-[12px] border p-3 text-sm font-bold transition-all capitalize',
+                        checkoutMethod === method
+                          ? 'border-black bg-black text-white'
+                          : 'hover:bg-black/5 text-black'
                       )}
                     >
                       {method === 'card' && <CreditCard className="size-4" />}
@@ -807,8 +1026,12 @@ export default function CalendarPage() {
                 </div>
               </div>
 
-              {error && <p className="mb-4 text-sm font-semibold text-red-600 bg-red-50 p-3 rounded-[8px]">{error}</p>}
-              
+              {error && (
+                <p className="mb-4 text-sm font-semibold text-red-600 bg-red-50 p-3 rounded-[8px]">
+                  {error}
+                </p>
+              )}
+
               <button
                 onClick={handleInPersonCheckout}
                 disabled={checkoutSubmitting}
@@ -821,7 +1044,6 @@ export default function CalendarPage() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

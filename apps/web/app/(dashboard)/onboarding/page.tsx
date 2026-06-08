@@ -59,7 +59,10 @@ export default function OnboardingPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F9F7F5]">
-        <div className="size-8 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }} />
+        <div
+          className="size-8 animate-spin rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }}
+        />
       </div>
     );
   }
@@ -110,7 +113,10 @@ export default function OnboardingPage() {
 
       setStep(4);
     } catch (err: unknown) {
-      const msg = err && typeof err === 'object' && 'body' in err ? (err as any).body?.message : 'Something went wrong';
+      const msg =
+        err && typeof err === 'object' && 'body' in err
+          ? (err as any).body?.message
+          : 'Something went wrong';
       setError(typeof msg === 'string' ? msg : 'Failed to create business');
     } finally {
       setLoading(false);
@@ -118,7 +124,7 @@ export default function OnboardingPage() {
   };
 
   const updateHours = (dayIndex: number, field: string, value: string | boolean) => {
-    setHours((prev) => prev.map((h, i) => i === dayIndex ? { ...h, [field]: value } : h));
+    setHours((prev) => prev.map((h, i) => (i === dayIndex ? { ...h, [field]: value } : h)));
   };
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -130,11 +136,15 @@ export default function OnboardingPage() {
         <div className="mb-8 flex size-24 items-center justify-center rounded-full bg-green-100 shadow-sm">
           <Check className="size-10 text-green-600" />
         </div>
-        <h1 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl" style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}>
+        <h1
+          className="mb-4 text-4xl font-bold tracking-tight md:text-5xl"
+          style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+        >
           Welcome to Blooso
         </h1>
         <p className="mb-10 max-w-md text-lg" style={{ color: 'var(--blooso-text-muted)' }}>
-          Your business <strong>{name}</strong> has been created successfully. You're ready to start managing your schedule and growing your clientele.
+          Your business <strong>{name}</strong> has been created successfully. You're ready to start
+          managing your schedule and growing your clientele.
         </p>
         <button
           onClick={() => router.push('/dashboard')}
@@ -153,9 +163,11 @@ export default function OnboardingPage() {
   // ─────────────────────────────────────────────────────────────────────────────
   return (
     <div className="flex min-h-screen">
-      
       {/* ── Left Side: Imagery ── */}
-      <div className="hidden w-1/2 flex-col justify-between p-12 lg:flex relative overflow-hidden" style={{ backgroundColor: 'var(--blooso-bg-warm)' }}>
+      <div
+        className="hidden w-1/2 flex-col justify-between p-12 lg:flex relative overflow-hidden"
+        style={{ backgroundColor: 'var(--blooso-bg-warm)' }}
+      >
         <Image
           src="/onboarding/lifestyle.png"
           alt="Salon lifestyle"
@@ -164,7 +176,7 @@ export default function OnboardingPage() {
           priority
         />
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        
+
         <div className="relative z-20">
           <Link href="/" className="font-serif text-3xl font-bold tracking-tight text-white">
             Blooso<span style={{ color: 'var(--blooso-rose)' }}>.</span>
@@ -183,39 +195,53 @@ export default function OnboardingPage() {
 
       {/* ── Right Side: Form Wizard ── */}
       <div className="flex flex-1 flex-col overflow-y-auto bg-white">
-        
         {/* Mobile Header */}
-        <div className="flex items-center justify-between border-b p-6 lg:hidden" style={{ borderColor: 'var(--blooso-border-light)' }}>
-          <Link href="/" className="font-serif text-xl font-bold tracking-tight" style={{ color: 'var(--blooso-text)' }}>
+        <div
+          className="flex items-center justify-between border-b p-6 lg:hidden"
+          style={{ borderColor: 'var(--blooso-border-light)' }}
+        >
+          <Link
+            href="/"
+            className="font-serif text-xl font-bold tracking-tight"
+            style={{ color: 'var(--blooso-text)' }}
+          >
             Blooso<span style={{ color: 'var(--blooso-rose)' }}>.</span>
           </Link>
         </div>
 
         <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center p-8 py-12 md:p-12">
-          
           {/* Progress Indicators */}
           <div className="mb-12 flex items-center justify-between">
             {[1, 2, 3].map((num) => (
               <div key={num} className="flex flex-col items-center gap-2">
-                <div 
+                <div
                   className={cn(
-                    "flex size-10 items-center justify-center rounded-full text-sm font-bold transition-colors",
-                    step >= num ? "text-white" : "text-black/30"
+                    'flex size-10 items-center justify-center rounded-full text-sm font-bold transition-colors',
+                    step >= num ? 'text-white' : 'text-black/30'
                   )}
                   style={{
-                    backgroundColor: step >= num ? 'var(--blooso-rose)' : 'var(--blooso-border-light)',
-                    boxShadow: step === num ? '0 0 0 4px var(--blooso-sand-light)' : 'none'
+                    backgroundColor:
+                      step >= num ? 'var(--blooso-rose)' : 'var(--blooso-border-light)',
+                    boxShadow: step === num ? '0 0 0 4px var(--blooso-sand-light)' : 'none',
                   }}
                 >
                   {step > num ? <Check className="size-5" /> : num}
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:block" style={{ color: step >= num ? 'var(--blooso-text)' : 'var(--blooso-text-subtle)' }}>
+                <span
+                  className="text-[10px] font-bold uppercase tracking-wider hidden sm:block"
+                  style={{
+                    color: step >= num ? 'var(--blooso-text)' : 'var(--blooso-text-subtle)',
+                  }}
+                >
                   {num === 1 ? 'Details' : num === 2 ? 'Location' : 'Hours'}
                 </span>
               </div>
             ))}
             {/* Connecting Lines */}
-            <div className="absolute left-[30%] right-[30%] top-[4.2rem] h-[2px] -z-10 hidden sm:block" style={{ backgroundColor: 'var(--blooso-border-light)' }} />
+            <div
+              className="absolute left-[30%] right-[30%] top-[4.2rem] h-[2px] -z-10 hidden sm:block"
+              style={{ backgroundColor: 'var(--blooso-border-light)' }}
+            />
           </div>
 
           {error && (
@@ -226,52 +252,97 @@ export default function OnboardingPage() {
 
           {/* STEP 1 */}
           {step === 1 && (
-            <form onSubmit={handleStep1} className="animate-in slide-in-from-right-4 fade-in duration-300">
+            <form
+              onSubmit={handleStep1}
+              className="animate-in slide-in-from-right-4 fade-in duration-300"
+            >
               <div className="mb-8 flex items-center gap-3">
-                <div className="flex size-12 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--blooso-bg-warm)' }}>
+                <div
+                  className="flex size-12 items-center justify-center rounded-full"
+                  style={{ backgroundColor: 'var(--blooso-bg-warm)' }}
+                >
                   <Store className="size-5" style={{ color: 'var(--blooso-rose)' }} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold" style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}>Business details</h2>
-                  <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>What's the name of your salon or spa?</p>
+                  <h2
+                    className="text-2xl font-bold"
+                    style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+                  >
+                    Business details
+                  </h2>
+                  <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
+                    What's the name of your salon or spa?
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="mb-2 block text-sm font-bold" style={{ color: 'var(--blooso-text)' }}>Business Name</label>
+                  <label
+                    className="mb-2 block text-sm font-bold"
+                    style={{ color: 'var(--blooso-text)' }}
+                  >
+                    Business Name
+                  </label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
-                    style={{ borderColor: 'var(--blooso-border)', backgroundColor: '#fff', outlineColor: 'var(--blooso-rose)', ringColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      backgroundColor: '#fff',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                     placeholder="e.g. Avenir Studio"
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-bold" style={{ color: 'var(--blooso-text)' }}>Primary Category</label>
+                  <label
+                    className="mb-2 block text-sm font-bold"
+                    style={{ color: 'var(--blooso-text)' }}
+                  >
+                    Primary Category
+                  </label>
                   <select
                     required
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all focus:ring-2 appearance-none bg-white"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                   >
-                    <option value="" disabled>Select a category</option>
+                    <option value="" disabled>
+                      Select a category
+                    </option>
                     {BUSINESS_CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
+                      <option key={c} value={c}>
+                        {c.charAt(0).toUpperCase() + c.slice(1)}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-bold" style={{ color: 'var(--blooso-text)' }}>Description <span className="text-normal font-normal text-muted-foreground">(Optional)</span></label>
+                  <label
+                    className="mb-2 block text-sm font-bold"
+                    style={{ color: 'var(--blooso-text)' }}
+                  >
+                    Description{' '}
+                    <span className="text-normal font-normal text-muted-foreground">
+                      (Optional)
+                    </span>
+                  </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="w-full resize-none rounded-[12px] border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                     placeholder="Brief description of your business and services"
                     rows={4}
                   />
@@ -291,66 +362,114 @@ export default function OnboardingPage() {
 
           {/* STEP 2 */}
           {step === 2 && (
-            <form onSubmit={handleStep2} className="animate-in slide-in-from-right-4 fade-in duration-300">
+            <form
+              onSubmit={handleStep2}
+              className="animate-in slide-in-from-right-4 fade-in duration-300"
+            >
               <div className="mb-8 flex items-center gap-3">
-                <div className="flex size-12 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--blooso-bg-warm)' }}>
+                <div
+                  className="flex size-12 items-center justify-center rounded-full"
+                  style={{ backgroundColor: 'var(--blooso-bg-warm)' }}
+                >
                   <MapPin className="size-5" style={{ color: 'var(--blooso-rose)' }} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold" style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}>Primary location</h2>
-                  <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>Where can clients find you?</p>
+                  <h2
+                    className="text-2xl font-bold"
+                    style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+                  >
+                    Primary location
+                  </h2>
+                  <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
+                    Where can clients find you?
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="mb-2 block text-sm font-bold" style={{ color: 'var(--blooso-text)' }}>Street Address</label>
+                  <label
+                    className="mb-2 block text-sm font-bold"
+                    style={{ color: 'var(--blooso-text)' }}
+                  >
+                    Street Address
+                  </label>
                   <input
                     type="text"
                     required
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                     placeholder="123 Salon Street, Suite 100"
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-bold" style={{ color: 'var(--blooso-text)' }}>City</label>
+                    <label
+                      className="mb-2 block text-sm font-bold"
+                      style={{ color: 'var(--blooso-text)' }}
+                    >
+                      City
+                    </label>
                     <input
                       type="text"
                       required
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
-                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                      style={{
+                        borderColor: 'var(--blooso-border)',
+                        outlineColor: 'var(--blooso-rose)',
+                      }}
                       placeholder="City name"
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-bold" style={{ color: 'var(--blooso-text)' }}>Country</label>
+                    <label
+                      className="mb-2 block text-sm font-bold"
+                      style={{ color: 'var(--blooso-text)' }}
+                    >
+                      Country
+                    </label>
                     <input
                       type="text"
                       required
                       value={country}
                       onChange={(e) => setCountry(e.target.value)}
                       className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
-                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                      style={{
+                        borderColor: 'var(--blooso-border)',
+                        outlineColor: 'var(--blooso-rose)',
+                      }}
                       placeholder="e.g. USA"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-bold" style={{ color: 'var(--blooso-text)' }}>Contact Phone <span className="text-normal font-normal text-muted-foreground">(Optional)</span></label>
+                  <label
+                    className="mb-2 block text-sm font-bold"
+                    style={{ color: 'var(--blooso-text)' }}
+                  >
+                    Contact Phone{' '}
+                    <span className="text-normal font-normal text-muted-foreground">
+                      (Optional)
+                    </span>
+                  </label>
                   <input
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                     placeholder="(555) 123-4567"
                   />
                 </div>
@@ -379,14 +498,27 @@ export default function OnboardingPage() {
 
           {/* STEP 3 */}
           {step === 3 && (
-            <form onSubmit={handleStep3} className="animate-in slide-in-from-right-4 fade-in duration-300">
+            <form
+              onSubmit={handleStep3}
+              className="animate-in slide-in-from-right-4 fade-in duration-300"
+            >
               <div className="mb-8 flex items-center gap-3">
-                <div className="flex size-12 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--blooso-bg-warm)' }}>
+                <div
+                  className="flex size-12 items-center justify-center rounded-full"
+                  style={{ backgroundColor: 'var(--blooso-bg-warm)' }}
+                >
                   <Clock className="size-5" style={{ color: 'var(--blooso-rose)' }} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold" style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}>Business hours</h2>
-                  <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>When are you open for bookings?</p>
+                  <h2
+                    className="text-2xl font-bold"
+                    style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+                  >
+                    Business hours
+                  </h2>
+                  <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
+                    When are you open for bookings?
+                  </p>
                 </div>
               </div>
 
@@ -397,39 +529,54 @@ export default function OnboardingPage() {
                     <div
                       key={day.value}
                       className={cn(
-                        "flex flex-col sm:flex-row sm:items-center justify-between rounded-[16px] p-4 transition-colors",
+                        'flex flex-col sm:flex-row sm:items-center justify-between rounded-[16px] p-4 transition-colors',
                         h.isClosed ? 'bg-black/5' : 'bg-white'
                       )}
                       style={{ border: '1px solid var(--blooso-border-light)' }}
                     >
                       <div className="flex items-center justify-between mb-3 sm:mb-0 sm:w-32">
-                        <span className={cn("font-semibold", h.isClosed ? 'text-black/40' : 'text-black')}>
+                        <span
+                          className={cn(
+                            'font-semibold',
+                            h.isClosed ? 'text-black/40' : 'text-black'
+                          )}
+                        >
                           {day.label}
                         </span>
-                        
+
                         {/* Custom Toggle */}
                         <button
                           type="button"
                           onClick={() => updateHours(day.value, 'isClosed', !h.isClosed)}
                           className={cn(
-                            "relative inline-flex h-6 w-11 items-center rounded-full transition-colors sm:hidden",
+                            'relative inline-flex h-6 w-11 items-center rounded-full transition-colors sm:hidden',
                             h.isClosed ? 'bg-black/20' : 'bg-[#8B3A52]'
                           )}
                         >
-                          <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white transition-transform", h.isClosed ? 'translate-x-1' : 'translate-x-6')} />
+                          <span
+                            className={cn(
+                              'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                              h.isClosed ? 'translate-x-1' : 'translate-x-6'
+                            )}
+                          />
                         </button>
                       </div>
-                      
+
                       <div className="flex items-center gap-3">
-                         <button
+                        <button
                           type="button"
                           onClick={() => updateHours(day.value, 'isClosed', !h.isClosed)}
                           className={cn(
-                            "relative hidden sm:inline-flex h-6 w-11 items-center rounded-full transition-colors mr-2",
+                            'relative hidden sm:inline-flex h-6 w-11 items-center rounded-full transition-colors mr-2',
                             h.isClosed ? 'bg-black/20' : 'bg-[#8B3A52]'
                           )}
                         >
-                          <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white transition-transform", h.isClosed ? 'translate-x-1' : 'translate-x-6')} />
+                          <span
+                            className={cn(
+                              'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                              h.isClosed ? 'translate-x-1' : 'translate-x-6'
+                            )}
+                          />
                         </button>
 
                         {!h.isClosed ? (
@@ -437,19 +584,25 @@ export default function OnboardingPage() {
                             <input
                               type="time"
                               value={h.openTime}
-                              onChange={(e) => updateHours(day.value, 'openTime', e.target.value.slice(0, 5))}
+                              onChange={(e) =>
+                                updateHours(day.value, 'openTime', e.target.value.slice(0, 5))
+                              }
                               className="rounded-[8px] bg-black/5 px-3 py-1.5 text-sm font-semibold outline-none"
                             />
                             <span className="text-sm font-medium text-black/40">to</span>
                             <input
                               type="time"
                               value={h.closeTime}
-                              onChange={(e) => updateHours(day.value, 'closeTime', e.target.value.slice(0, 5))}
+                              onChange={(e) =>
+                                updateHours(day.value, 'closeTime', e.target.value.slice(0, 5))
+                              }
                               className="rounded-[8px] bg-black/5 px-3 py-1.5 text-sm font-semibold outline-none"
                             />
                           </>
                         ) : (
-                          <span className="text-sm font-bold uppercase tracking-wider text-black/40 flex-1 sm:text-right">Closed</span>
+                          <span className="text-sm font-bold uppercase tracking-wider text-black/40 flex-1 sm:text-right">
+                            Closed
+                          </span>
                         )}
                       </div>
                     </div>
@@ -481,7 +634,6 @@ export default function OnboardingPage() {
               </div>
             </form>
           )}
-
         </div>
       </div>
     </div>
