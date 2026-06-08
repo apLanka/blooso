@@ -35,7 +35,7 @@ export default function StaffPage() {
   const [staff, setStaff] = useState<staffClient.StaffMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -72,7 +72,10 @@ export default function StaffPage() {
   if (isLoading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F9F7F5]">
-        <div className="size-8 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }} />
+        <div
+          className="size-8 animate-spin rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--blooso-border)', borderTopColor: 'var(--blooso-rose)' }}
+        />
       </div>
     );
   }
@@ -80,7 +83,7 @@ export default function StaffPage() {
   const handleAddStaff = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token || !currentBusinessId || !form.name.trim() || !form.email.trim()) return;
-    
+
     setSaving(true);
     setError(null);
     try {
@@ -97,7 +100,10 @@ export default function StaffPage() {
       setShowForm(false);
       toast.success('Staff member added');
     } catch (err: unknown) {
-      const msg = err && typeof err === 'object' && 'body' in err ? ((err as any).body?.message) : 'Failed to add staff';
+      const msg =
+        err && typeof err === 'object' && 'body' in err
+          ? (err as any).body?.message
+          : 'Failed to add staff';
       setError(msg);
       toast.error(msg);
     } finally {
@@ -128,11 +134,13 @@ export default function StaffPage() {
 
   return (
     <div className="animate-fade-up space-y-10 pb-12">
-      
       {/* ── HEADER ── */}
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl" style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}>
+          <h1
+            className="text-3xl font-bold tracking-tight md:text-4xl"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
             Staff
           </h1>
           <p className="mt-2 text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
@@ -152,7 +160,8 @@ export default function StaffPage() {
                     b.id === currentBusinessId ? 'shadow-md' : 'hover:bg-black/5'
                   )}
                   style={{
-                    backgroundColor: b.id === currentBusinessId ? 'var(--blooso-text)' : 'transparent',
+                    backgroundColor:
+                      b.id === currentBusinessId ? 'var(--blooso-text)' : 'transparent',
                     color: b.id === currentBusinessId ? '#fff' : 'var(--blooso-text)',
                     border: b.id === currentBusinessId ? 'none' : '1px solid var(--blooso-border)',
                   }}
@@ -181,13 +190,22 @@ export default function StaffPage() {
 
       {/* ── EMPTY STATE ── */}
       {staff.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[32px] border border-dashed bg-[#F9F7F5] py-24 text-center transition-colors hover:bg-black/[0.02]" style={{ borderColor: 'var(--blooso-border-light)' }}>
+        <div
+          className="flex flex-col items-center justify-center rounded-[32px] border border-dashed bg-[#F9F7F5] py-24 text-center transition-colors hover:bg-black/[0.02]"
+          style={{ borderColor: 'var(--blooso-border-light)' }}
+        >
           <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-white shadow-sm">
             <Users className="size-8" style={{ color: 'var(--blooso-rose)' }} />
           </div>
-          <h3 className="mb-2 text-2xl font-bold font-serif" style={{ color: 'var(--blooso-text)' }}>No staff members yet</h3>
+          <h3
+            className="mb-2 text-2xl font-bold font-serif"
+            style={{ color: 'var(--blooso-text)' }}
+          >
+            No staff members yet
+          </h3>
           <p className="mb-8 max-w-sm text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
-            Start building your team by adding your first staff member. You can configure their schedule and services later.
+            Start building your team by adding your first staff member. You can configure their
+            schedule and services later.
           </p>
           <button
             onClick={() => setShowForm(true)}
@@ -203,24 +221,40 @@ export default function StaffPage() {
           {staff
             .filter((s) => s.isActive)
             .map((s) => {
-              const avatarColor = getAvatarColor(s.user.name);
+              const avatarColor = getAvatarColor(s.user.name) ?? {
+                bg: 'bg-gray-100',
+                text: 'text-gray-700',
+              };
               return (
                 <Link key={s.id} href={`/staff/${s.id}?business=${currentBusinessId}`}>
-                  <div 
+                  <div
                     className="group flex flex-col rounded-[24px] bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-md border"
                     style={{ borderColor: 'var(--blooso-border-light)' }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className={cn("flex size-14 items-center justify-center rounded-full font-serif text-xl font-bold", avatarColor.bg, avatarColor.text)}>
+                        <div
+                          className={cn(
+                            'flex size-14 items-center justify-center rounded-full font-serif text-xl font-bold',
+                            avatarColor.bg,
+                            avatarColor.text
+                          )}
+                        >
                           {s.user.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <p className="text-lg font-bold" style={{ color: 'var(--blooso-text)' }}>{s.user.name}</p>
-                          <p className="text-sm font-medium" style={{ color: 'var(--blooso-text-muted)' }}>{s.user.email}</p>
+                          <p className="text-lg font-bold" style={{ color: 'var(--blooso-text)' }}>
+                            {s.user.name}
+                          </p>
+                          <p
+                            className="text-sm font-medium"
+                            style={{ color: 'var(--blooso-text-muted)' }}
+                          >
+                            {s.user.email}
+                          </p>
                         </div>
                       </div>
-                      
+
                       <div className="flex size-10 items-center justify-center rounded-full bg-black/5 opacity-0 transition-all group-hover:opacity-100 group-hover:bg-black/10">
                         <ChevronRight className="size-5" style={{ color: 'var(--blooso-text)' }} />
                       </div>
@@ -245,15 +279,20 @@ export default function StaffPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 p-4">
           <div className="w-full max-w-lg rounded-[24px] bg-white shadow-xl animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b p-6" style={{ borderColor: 'var(--blooso-border-light)' }}>
+            <div
+              className="flex items-center justify-between border-b p-6"
+              style={{ borderColor: 'var(--blooso-border-light)' }}
+            >
               <h3 className="text-xl font-bold font-serif">New Staff Member</h3>
-              <button onClick={() => setShowForm(false)} className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10">
+              <button
+                onClick={() => setShowForm(false)}
+                className="flex size-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10"
+              >
                 <X className="size-4" />
               </button>
             </div>
-            
+
             <form onSubmit={handleAddStaff} className="p-6 max-h-[75vh] overflow-y-auto space-y-6">
-              
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="mb-2 block text-sm font-bold text-black">Name</label>
@@ -261,7 +300,10 @@ export default function StaffPage() {
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                     placeholder="Jane Doe"
                     required
                   />
@@ -273,7 +315,10 @@ export default function StaffPage() {
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                     placeholder="jane@example.com"
                     required
                   />
@@ -287,10 +332,15 @@ export default function StaffPage() {
                     value={form.role}
                     onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
                     className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all appearance-none capitalize"
-                    style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                    style={{
+                      borderColor: 'var(--blooso-border)',
+                      outlineColor: 'var(--blooso-rose)',
+                    }}
                   >
                     {staffClient.STAFF_ROLES.map((r) => (
-                      <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>
+                      <option key={r} value={r}>
+                        {r.replace(/_/g, ' ')}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -302,29 +352,44 @@ export default function StaffPage() {
                       min={0}
                       max={100}
                       value={form.commissionRate || ''}
-                      onChange={(e) => setForm((f) => ({ ...f, commissionRate: parseFloat(e.target.value) || 0 }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, commissionRate: parseFloat(e.target.value) || 0 }))
+                      }
                       className="w-full rounded-[12px] border pl-4 pr-10 py-3 text-sm outline-none transition-all"
-                      style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                      style={{
+                        borderColor: 'var(--blooso-border)',
+                        outlineColor: 'var(--blooso-rose)',
+                      }}
                       placeholder="0"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-black/40">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-black/40">
+                      %
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-bold text-black">Bio <span className="text-black/40 font-medium">(Optional)</span></label>
+                <label className="mb-2 block text-sm font-bold text-black">
+                  Bio <span className="text-black/40 font-medium">(Optional)</span>
+                </label>
                 <textarea
                   value={form.bio}
                   onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
                   className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all resize-none"
-                  style={{ borderColor: 'var(--blooso-border)', outlineColor: 'var(--blooso-rose)' }}
+                  style={{
+                    borderColor: 'var(--blooso-border)',
+                    outlineColor: 'var(--blooso-rose)',
+                  }}
                   placeholder="Tell us a bit about this staff member..."
                   rows={3}
                 />
               </div>
 
-              <div className="flex gap-3 pt-4 border-t" style={{ borderColor: 'var(--blooso-border-light)' }}>
+              <div
+                className="flex gap-3 pt-4 border-t"
+                style={{ borderColor: 'var(--blooso-border-light)' }}
+              >
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
@@ -342,12 +407,10 @@ export default function StaffPage() {
                   {saving ? 'Adding...' : 'Add Staff Member'}
                 </button>
               </div>
-
             </form>
           </div>
         </div>
       )}
-
     </div>
   );
 }
