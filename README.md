@@ -2,7 +2,15 @@
 
 Premium booking platform for beauty & wellness businesses. Book appointments 24/7.
 
+**[Live Demo →](https://blooso.pasindulanka.me/)**
+
 ![Blooso Hero Section](apps/docs/images/hero-section-screenshot.png)
+
+### For Businesses
+
+![Business Dashboard](apps/docs/images/business-section-screenshot.png)
+
+> **Note:** This is a demo deployment for portfolio and resume purposes only.
 
 ## Tech Stack
 
