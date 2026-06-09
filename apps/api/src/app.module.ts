@@ -14,6 +14,8 @@ import { ClientModule } from './client/client.module';
 import { ReviewModule } from './review/review.module';
 import { ReportModule } from './report/report.module';
 import { BusinessApplicationModule } from './business-application/business-application.module';
+import { MeModule } from './me/me.module';
+import { FavoriteModule } from './favorite/favorite.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
@@ -34,6 +36,8 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     ReviewModule,
     ReportModule,
     BusinessApplicationModule,
+    MeModule,
+    FavoriteModule,
   ],
   controllers: [AppController],
   providers: [

@@ -85,4 +85,13 @@ export class ReviewController {
   ) {
     return this.reviewService.findByBusinessForDashboard(businessId, user);
   }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user reviews' })
+  @ApiResponse({ status: 200, description: 'List of user reviews' })
+  findMyReviews(@CurrentUser() user: JwtUser) {
+    return this.reviewService.findMyReviews(user);
+  }
 }

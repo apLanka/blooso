@@ -27,12 +27,9 @@ export default function RegisterPage() {
   console.log('[RegisterPage] render - isAuthenticated:', isAuthenticated, 'user:', user?.role);
 
   if (isAuthenticated && user) {
-    const isClient = user.role === 'client';
-    console.log(
-      '[RegisterPage] already authenticated, redirecting to:',
-      isClient ? '/my-bookings' : '/dashboard'
-    );
-    router.replace(isClient ? '/my-bookings' : '/dashboard');
+    const href = user.role === 'client' ? '/account' : '/dashboard';
+    console.log('[RegisterPage] already authenticated, redirecting to:', href);
+    router.replace(href);
     return null;
   }
 
@@ -42,9 +39,9 @@ export default function RegisterPage() {
       console.log('[RegisterPage] onSubmit - calling registerUser()');
       const newUser = await registerUser(data.email, data.password, data.name);
       console.log('[RegisterPage] registerUser() returned - role:', newUser.role);
-      const isClient = newUser.role === 'client';
-      console.log('[RegisterPage] pushing to:', isClient ? '/my-bookings' : '/dashboard');
-      router.push(isClient ? '/my-bookings' : '/dashboard');
+      const href = newUser.role === 'client' ? '/account' : '/dashboard';
+      console.log('[RegisterPage] pushing to:', href);
+      router.push(href);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Registration failed. Please try again.');
     }

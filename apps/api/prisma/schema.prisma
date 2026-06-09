@@ -41,6 +41,7 @@ model User {
   password  String
   name      String
   avatarUrl String?
+  phone     String?
   role      UserRole @default(client)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -50,6 +51,7 @@ model User {
   businesses    Business[]
   staffMembers  StaffMember[]
   applications  BusinessApplication[]
+  favorites     Favorite[]
 
   @@map("users")
 }
@@ -130,6 +132,7 @@ model Business {
   appointments      Appointment[]
   clients           Client[]
   reviews           Review[]
+  favorites         Favorite[]
 
   @@index([ownerId])
   @@index([slug])
@@ -460,4 +463,19 @@ model Review {
   @@index([businessId])
   @@index([appointmentId])
   @@map("reviews")
+}
+
+model Favorite {
+  id         String   @id @default(uuid())
+  userId     String
+  businessId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, businessId])
+  @@index([userId])
+  @@index([businessId])
+  @@map("favorites")
 }

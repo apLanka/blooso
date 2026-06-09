@@ -154,4 +154,48 @@ export class ReviewService {
     await this.ensureBusinessAccess(businessId, user);
     return this.findByBusiness(businessId, { limit: 50 });
   }
+
+  async findMyReviews(user: JwtUser) {
+    const reviews = await this.prisma.review.findMany({
+      where: {
+        appointment: {
+          guestEmail: user.email,
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        business: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logoUrl: true,
+          },
+        },
+        appointment: {
+          select: {
+            startTime: true,
+            appointmentServices: {
+              include: {
+                service: { select: { name: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return reviews.map((r) => ({
+      id: r.id,
+      rating: r.rating,
+      comment: r.comment,
+      businessReply: r.businessReply,
+      createdAt: r.createdAt,
+      business: r.business,
+      appointmentDate: r.appointment.startTime,
+      services: r.appointment.appointmentServices
+        .map((as) => as.service?.name)
+        .filter(Boolean),
+    }));
+  }
 }

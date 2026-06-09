@@ -27,12 +27,9 @@ export default function LoginPage() {
   console.log('[LoginPage] render - isAuthenticated:', isAuthenticated, 'user:', user?.role);
 
   if (isAuthenticated && user) {
-    const isClient = user.role === 'client';
-    console.log(
-      '[LoginPage] already authenticated, redirecting to:',
-      isClient ? '/my-bookings' : '/dashboard'
-    );
-    router.replace(isClient ? '/my-bookings' : '/dashboard');
+    const href = user.role === 'client' ? '/account' : '/dashboard';
+    console.log('[LoginPage] already authenticated, redirecting to:', href);
+    router.replace(href);
     return null;
   }
 
@@ -42,9 +39,9 @@ export default function LoginPage() {
       console.log('[LoginPage] onSubmit - calling login()');
       const loggedInUser = await login(data.email, data.password);
       console.log('[LoginPage] login() returned - role:', loggedInUser.role);
-      const isClient = loggedInUser.role === 'client';
-      console.log('[LoginPage] pushing to:', isClient ? '/my-bookings' : '/dashboard');
-      router.push(isClient ? '/my-bookings' : '/dashboard');
+      const href = loggedInUser.role === 'client' ? '/account' : '/dashboard';
+      console.log('[LoginPage] pushing to:', href);
+      router.push(href);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Invalid email or password. Please try again.');
     }

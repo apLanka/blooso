@@ -13,7 +13,7 @@ const PUBLIC_LINKS = [
 
 const CLIENT_LINKS = [
   { href: '/search', label: 'Services' },
-  { href: '/my-bookings', label: 'My Bookings' },
+  { href: '/account', label: 'Account' },
 ];
 
 const OWNER_LINKS = [
@@ -85,7 +85,7 @@ export function Navbar({ alwaysSolid = false }: NavbarProps) {
 
   const extraLinks = user?.role === 'admin' ? ADMIN_EXTRA_LINKS : [];
 
-  const dashboardHref = user?.role === 'client' ? '/my-bookings' : '/dashboard';
+  const dashboardHref = user?.role === 'client' ? '/account' : '/dashboard';
 
   return (
     <header

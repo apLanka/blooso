@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -38,5 +38,15 @@ export class BookingController {
   @ApiResponse({ status: 200, description: 'List of user appointments' })
   getMyAppointments(@CurrentUser() user: JwtUser) {
     return this.bookingService.getMyBookings(user);
+  }
+
+  @Post('my-appointments/:id/cancel')
+  @ApiOperation({ summary: 'Cancel own appointment' })
+  @ApiResponse({ status: 200, description: 'Appointment cancelled' })
+  cancelMyAppointment(
+    @Param('id') appointmentId: string,
+    @CurrentUser() user: JwtUser,
+  ) {
+    return this.bookingService.cancelMyAppointment(appointmentId, user);
   }
 }

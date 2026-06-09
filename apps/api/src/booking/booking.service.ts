@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AvailabilityService } from '../availability/availability.service';
@@ -342,5 +343,45 @@ export class BookingService {
         },
       },
     });
+  }
+
+  async cancelMyAppointment(appointmentId: string, user: JwtUser) {
+    const apt = await this.prisma.appointment.findFirst({
+      where: { id: appointmentId, guestEmail: user.email },
+      include: {
+        business: true,
+        appointmentServices: { include: { service: true } },
+      },
+    });
+    if (!apt) throw new NotFoundException('Appointment not found');
+    if (apt.status === 'cancelled')
+      throw new BadRequestException('Appointment already cancelled');
+
+    const updated = await this.prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { status: 'cancelled' },
+      include: {
+        staff: { include: { user: { select: { name: true, email: true } } } },
+        appointmentServices: {
+          include: { service: { select: { name: true } } },
+        },
+      },
+    });
+
+    if (apt.guestEmail) {
+      this.notificationService
+        .sendCancellationNotice({
+          to: apt.guestEmail,
+          guestName: apt.guestName ?? 'Guest',
+          businessName: apt.business.name,
+          serviceNames: apt.appointmentServices
+            .map((as) => as.service?.name)
+            .filter(Boolean)
+            .join(', '),
+          originalStartTime: apt.startTime.toISOString(),
+        })
+        .catch(() => {});
+    }
+    return updated;
   }
 }
