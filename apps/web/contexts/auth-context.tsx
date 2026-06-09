@@ -115,7 +115,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [loadUser, tryRefresh]);
 
   const login = useCallback(async (email: string, password: string) => {
+    console.log('[AuthProvider] login() called');
     const data = await authClient.login(email, password);
+    console.log('[AuthProvider] login() API success, role:', data.user.role);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.accessToken, data.accessToken);
       localStorage.setItem(STORAGE_KEYS.refreshToken, data.refreshToken);
@@ -127,11 +129,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading: false,
       isAuthenticated: true,
     });
+    console.log('[AuthProvider] login() state updated');
     return data.user;
   }, []);
 
   const register = useCallback(async (email: string, password: string, name: string) => {
+    console.log('[AuthProvider] register() called');
     const data = await authClient.register(email, password, name);
+    console.log('[AuthProvider] register() API success, role:', data.user.role);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.accessToken, data.accessToken);
       localStorage.setItem(STORAGE_KEYS.refreshToken, data.refreshToken);
@@ -143,6 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading: false,
       isAuthenticated: true,
     });
+    console.log('[AuthProvider] register() state updated');
     return data.user;
   }, []);
 

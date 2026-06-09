@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -24,17 +24,26 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.replace('/dashboard');
-    }
-  }, [isAuthenticated, router]);
+  console.log('[LoginPage] render - isAuthenticated:', isAuthenticated, 'user:', user?.role);
+
+  if (isAuthenticated && user) {
+    const isClient = user.role === 'client';
+    console.log(
+      '[LoginPage] already authenticated, redirecting to:',
+      isClient ? '/my-bookings' : '/dashboard'
+    );
+    router.replace(isClient ? '/my-bookings' : '/dashboard');
+    return null;
+  }
 
   const onSubmit = async (data: LoginInput) => {
     setError(null);
     try {
-      const user = await login(data.email, data.password);
-      const isClient = user.role === 'client';
+      console.log('[LoginPage] onSubmit - calling login()');
+      const loggedInUser = await login(data.email, data.password);
+      console.log('[LoginPage] login() returned - role:', loggedInUser.role);
+      const isClient = loggedInUser.role === 'client';
+      console.log('[LoginPage] pushing to:', isClient ? '/my-bookings' : '/dashboard');
       router.push(isClient ? '/my-bookings' : '/dashboard');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Invalid email or password. Please try again.');

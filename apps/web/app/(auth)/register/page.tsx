@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register: registerUser, isAuthenticated } = useAuth();
+  const { register: registerUser, isAuthenticated, user } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -24,17 +24,26 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   });
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.replace('/dashboard');
-    }
-  }, [isAuthenticated, router]);
+  console.log('[RegisterPage] render - isAuthenticated:', isAuthenticated, 'user:', user?.role);
+
+  if (isAuthenticated && user) {
+    const isClient = user.role === 'client';
+    console.log(
+      '[RegisterPage] already authenticated, redirecting to:',
+      isClient ? '/my-bookings' : '/dashboard'
+    );
+    router.replace(isClient ? '/my-bookings' : '/dashboard');
+    return null;
+  }
 
   const onSubmit = async (data: RegisterInput) => {
     setError(null);
     try {
-      const user = await registerUser(data.email, data.password, data.name);
-      const isClient = user.role === 'client';
+      console.log('[RegisterPage] onSubmit - calling registerUser()');
+      const newUser = await registerUser(data.email, data.password, data.name);
+      console.log('[RegisterPage] registerUser() returned - role:', newUser.role);
+      const isClient = newUser.role === 'client';
+      console.log('[RegisterPage] pushing to:', isClient ? '/my-bookings' : '/dashboard');
       router.push(isClient ? '/my-bookings' : '/dashboard');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Registration failed. Please try again.');
