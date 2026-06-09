@@ -1,28 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
-import {
-  createBusiness,
-  createLocation,
-  setBusinessHours,
-  BUSINESS_CATEGORIES,
-} from '@/lib/business-client';
+import { submitApplication, getMyApplication } from '@/lib/application-client';
+import { BUSINESS_CATEGORIES } from '@/lib/business-client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Check, ChevronRight, MapPin, Clock, Store } from 'lucide-react';
+import { Check, ChevronRight, MapPin, Store, Clock, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const DAYS = [
-  { value: 0, label: 'Sunday' },
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
-];
 
 export default function OnboardingPage() {
   const { user, isLoading, getToken } = useAuth();
@@ -30,33 +16,36 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [existingApplication, setExistingApplication] = useState<{
+    status: string;
+    rejectReason?: string | null;
+  } | null>(null);
+  const [checkingApplication, setCheckingApplication] = useState(true);
 
-  // Step 1: Business info
+  // Form state
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-
-  // Step 2: Location
-  const [locName, setLocName] = useState('Main Location');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
-  const [timezone, setTimezone] = useState('UTC');
   const [phone, setPhone] = useState('');
-
-  // Step 3: Hours
-  const [hours, setHours] = useState(
-    DAYS.map((d) => ({
-      dayOfWeek: d.value,
-      openTime: '09:00',
-      closeTime: '17:00',
-      isClosed: d.value === 0,
-    }))
-  );
 
   const token = getToken();
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!token || !user) return;
+    getMyApplication(token)
+      .then((app) => {
+        if (app) {
+          setExistingApplication({ status: app.status, rejectReason: app.rejectReason });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setCheckingApplication(false));
+  }, [token, user]);
+
+  if (isLoading || checkingApplication) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F9F7F5]">
         <div
@@ -72,6 +61,107 @@ export default function OnboardingPage() {
     return null;
   }
 
+  // Show existing application status
+  if (existingApplication) {
+    if (existingApplication.status === 'approved') {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center bg-[#F9F7F5] p-6 text-center animate-in fade-in zoom-in duration-500">
+          <div className="mb-8 flex size-24 items-center justify-center rounded-full bg-green-100 shadow-sm">
+            <Check className="size-10 text-green-600" />
+          </div>
+          <h1
+            className="mb-4 text-4xl font-bold tracking-tight md:text-5xl"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
+            Application Approved!
+          </h1>
+          <p className="mb-10 max-w-md text-lg" style={{ color: 'var(--blooso-text-muted)' }}>
+            Your business application has been approved. You now have access to the business
+            dashboard.
+          </p>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="flex items-center gap-2 rounded-full px-8 py-4 text-sm font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+            style={{ backgroundColor: 'var(--blooso-rose)' }}
+          >
+            Go to Dashboard
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+      );
+    }
+
+    if (existingApplication.status === 'pending') {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center bg-[#F9F7F5] p-6 text-center animate-in fade-in zoom-in duration-500">
+          <div className="mb-8 flex size-24 items-center justify-center rounded-full bg-yellow-100 shadow-sm">
+            <Clock className="size-10 text-yellow-600" />
+          </div>
+          <h1
+            className="mb-4 text-4xl font-bold tracking-tight md:text-5xl"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
+            Application Pending
+          </h1>
+          <p className="mb-10 max-w-md text-lg" style={{ color: 'var(--blooso-text-muted)' }}>
+            Your business application is being reviewed by our team. We'll notify you once it's
+            approved.
+          </p>
+          <button
+            onClick={() => router.push('/my-bookings')}
+            className="flex items-center gap-2 rounded-full px-8 py-4 text-sm font-bold transition-all hover:scale-105 active:scale-95"
+            style={{
+              color: 'var(--blooso-text)',
+              border: '1px solid var(--blooso-border)',
+              backgroundColor: '#fff',
+            }}
+          >
+            Go to Client Dashboard
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+      );
+    }
+
+    if (existingApplication.status === 'rejected') {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center bg-[#F9F7F5] p-6 text-center animate-in fade-in zoom-in duration-500">
+          <div className="mb-8 flex size-24 items-center justify-center rounded-full bg-red-100 shadow-sm">
+            <FileText className="size-10 text-red-600" />
+          </div>
+          <h1
+            className="mb-4 text-4xl font-bold tracking-tight md:text-5xl"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
+            Application Rejected
+          </h1>
+          <p className="mb-4 max-w-md text-lg" style={{ color: 'var(--blooso-text-muted)' }}>
+            Your previous business application was not approved.
+          </p>
+          {existingApplication.rejectReason && (
+            <p
+              className="mb-8 max-w-md text-sm rounded-[12px] bg-red-50 p-4 border border-red-100"
+              style={{ color: '#b91c1c' }}
+            >
+              Reason: {existingApplication.rejectReason}
+            </p>
+          )}
+          <button
+            onClick={() => {
+              setExistingApplication(null);
+              setStep(1);
+            }}
+            className="flex items-center gap-2 rounded-full px-8 py-4 text-sm font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+            style={{ backgroundColor: 'var(--blooso-rose)' }}
+          >
+            Apply Again
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+      );
+    }
+  }
+
   const handleStep1 = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -80,57 +170,39 @@ export default function OnboardingPage() {
     setStep(2);
   };
 
-  const handleStep2 = (e: React.FormEvent) => {
+  const handleStep2 = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!address.trim()) return setError('Address is required');
     if (!country.trim()) return setError('Country is required');
-    setStep(3);
-  };
-
-  const handleStep3 = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
-      const business = await createBusiness(token, {
+      await submitApplication(token, {
         name: name.trim(),
         category,
         description: description.trim() || undefined,
-      });
-
-      const location = await createLocation(token, business.id, {
-        name: locName.trim(),
         address: address.trim(),
         city: city.trim() || undefined,
         country: country.trim(),
-        timezone: timezone || 'UTC',
         phone: phone.trim() || undefined,
       });
-
-      await setBusinessHours(token, business.id, location.id, hours);
-
-      setStep(4);
+      setStep(3);
     } catch (err: unknown) {
       const msg =
         err && typeof err === 'object' && 'body' in err
           ? (err as any).body?.message
           : 'Something went wrong';
-      setError(typeof msg === 'string' ? msg : 'Failed to create business');
+      setError(typeof msg === 'string' ? msg : 'Failed to submit application');
     } finally {
       setLoading(false);
     }
   };
 
-  const updateHours = (dayIndex: number, field: string, value: string | boolean) => {
-    setHours((prev) => prev.map((h, i) => (i === dayIndex ? { ...h, [field]: value } : h)));
-  };
-
   // ─────────────────────────────────────────────────────────────────────────────
-  // SUCCESS STATE (Step 4)
+  // SUCCESS STATE (Step 3)
   // ─────────────────────────────────────────────────────────────────────────────
-  if (step === 4) {
+  if (step === 3) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#F9F7F5] p-6 text-center animate-in fade-in zoom-in duration-500">
         <div className="mb-8 flex size-24 items-center justify-center rounded-full bg-green-100 shadow-sm">
@@ -140,18 +212,23 @@ export default function OnboardingPage() {
           className="mb-4 text-4xl font-bold tracking-tight md:text-5xl"
           style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
         >
-          Welcome to Blooso
+          Application Submitted!
         </h1>
         <p className="mb-10 max-w-md text-lg" style={{ color: 'var(--blooso-text-muted)' }}>
-          Your business <strong>{name}</strong> has been created successfully. You're ready to start
-          managing your schedule and growing your clientele.
+          Your business application for <strong>{name}</strong> has been submitted successfully. Our
+          team will review it shortly. You'll receive access to the business dashboard once
+          approved.
         </p>
         <button
-          onClick={() => router.push('/dashboard')}
-          className="flex items-center gap-2 rounded-full px-8 py-4 text-sm font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
-          style={{ backgroundColor: 'var(--blooso-rose)' }}
+          onClick={() => router.push('/my-bookings')}
+          className="flex items-center gap-2 rounded-full px-8 py-4 text-sm font-bold transition-all hover:scale-105 active:scale-95"
+          style={{
+            color: 'var(--blooso-text)',
+            border: '1px solid var(--blooso-border)',
+            backgroundColor: '#fff',
+          }}
         >
-          Go to my Dashboard
+          Go to Client Dashboard
           <ChevronRight className="size-4" />
         </button>
       </div>
@@ -159,7 +236,7 @@ export default function OnboardingPage() {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // ONBOARDING FORM LAYOUT
+  // APPLICATION FORM LAYOUT
   // ─────────────────────────────────────────────────────────────────────────────
   return (
     <div className="flex min-h-screen">
@@ -188,12 +265,12 @@ export default function OnboardingPage() {
             Build the business you've always envisioned.
           </h2>
           <p className="text-lg text-white/80">
-            Set up your profile, locations, and hours in less than three minutes.
+            Apply to list your business on Blooso and reach thousands of new clients.
           </p>
         </div>
       </div>
 
-      {/* ── Right Side: Form Wizard ── */}
+      {/* ── Right Side: Form ── */}
       <div className="flex flex-1 flex-col overflow-y-auto bg-white">
         {/* Mobile Header */}
         <div
@@ -212,7 +289,7 @@ export default function OnboardingPage() {
         <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center p-8 py-12 md:p-12">
           {/* Progress Indicators */}
           <div className="mb-12 flex items-center justify-between">
-            {[1, 2, 3].map((num) => (
+            {[1, 2].map((num) => (
               <div key={num} className="flex flex-col items-center gap-2">
                 <div
                   className={cn(
@@ -233,15 +310,10 @@ export default function OnboardingPage() {
                     color: step >= num ? 'var(--blooso-text)' : 'var(--blooso-text-subtle)',
                   }}
                 >
-                  {num === 1 ? 'Details' : num === 2 ? 'Location' : 'Hours'}
+                  {num === 1 ? 'Details' : 'Location'}
                 </span>
               </div>
             ))}
-            {/* Connecting Lines */}
-            <div
-              className="absolute left-[30%] right-[30%] top-[4.2rem] h-[2px] -z-10 hidden sm:block"
-              style={{ backgroundColor: 'var(--blooso-border-light)' }}
-            />
           </div>
 
           {error && (
@@ -271,7 +343,7 @@ export default function OnboardingPage() {
                     Business details
                   </h2>
                   <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
-                    What's the name of your salon or spa?
+                    Tell us about your salon or spa
                   </p>
                 </div>
               </div>
@@ -378,7 +450,7 @@ export default function OnboardingPage() {
                     className="text-2xl font-bold"
                     style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
                   >
-                    Primary location
+                    Business location
                   </h2>
                   <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
                     Where can clients find you?
@@ -418,7 +490,6 @@ export default function OnboardingPage() {
                     </label>
                     <input
                       type="text"
-                      required
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       className="w-full rounded-[12px] border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
@@ -486,141 +557,6 @@ export default function OnboardingPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex flex-1 items-center justify-center gap-2 rounded-[12px] py-4 text-sm font-bold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
-                  style={{ backgroundColor: 'var(--blooso-rose)' }}
-                >
-                  Continue to Hours
-                  <ChevronRight className="size-4" />
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* STEP 3 */}
-          {step === 3 && (
-            <form
-              onSubmit={handleStep3}
-              className="animate-in slide-in-from-right-4 fade-in duration-300"
-            >
-              <div className="mb-8 flex items-center gap-3">
-                <div
-                  className="flex size-12 items-center justify-center rounded-full"
-                  style={{ backgroundColor: 'var(--blooso-bg-warm)' }}
-                >
-                  <Clock className="size-5" style={{ color: 'var(--blooso-rose)' }} />
-                </div>
-                <div>
-                  <h2
-                    className="text-2xl font-bold"
-                    style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
-                  >
-                    Business hours
-                  </h2>
-                  <p className="text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
-                    When are you open for bookings?
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {DAYS.map((day) => {
-                  const h = hours.find((x) => x.dayOfWeek === day.value)!;
-                  return (
-                    <div
-                      key={day.value}
-                      className={cn(
-                        'flex flex-col sm:flex-row sm:items-center justify-between rounded-[16px] p-4 transition-colors',
-                        h.isClosed ? 'bg-black/5' : 'bg-white'
-                      )}
-                      style={{ border: '1px solid var(--blooso-border-light)' }}
-                    >
-                      <div className="flex items-center justify-between mb-3 sm:mb-0 sm:w-32">
-                        <span
-                          className={cn(
-                            'font-semibold',
-                            h.isClosed ? 'text-black/40' : 'text-black'
-                          )}
-                        >
-                          {day.label}
-                        </span>
-
-                        {/* Custom Toggle */}
-                        <button
-                          type="button"
-                          onClick={() => updateHours(day.value, 'isClosed', !h.isClosed)}
-                          className={cn(
-                            'relative inline-flex h-6 w-11 items-center rounded-full transition-colors sm:hidden',
-                            h.isClosed ? 'bg-black/20' : 'bg-[#8B3A52]'
-                          )}
-                        >
-                          <span
-                            className={cn(
-                              'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                              h.isClosed ? 'translate-x-1' : 'translate-x-6'
-                            )}
-                          />
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => updateHours(day.value, 'isClosed', !h.isClosed)}
-                          className={cn(
-                            'relative hidden sm:inline-flex h-6 w-11 items-center rounded-full transition-colors mr-2',
-                            h.isClosed ? 'bg-black/20' : 'bg-[#8B3A52]'
-                          )}
-                        >
-                          <span
-                            className={cn(
-                              'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                              h.isClosed ? 'translate-x-1' : 'translate-x-6'
-                            )}
-                          />
-                        </button>
-
-                        {!h.isClosed ? (
-                          <>
-                            <input
-                              type="time"
-                              value={h.openTime}
-                              onChange={(e) =>
-                                updateHours(day.value, 'openTime', e.target.value.slice(0, 5))
-                              }
-                              className="rounded-[8px] bg-black/5 px-3 py-1.5 text-sm font-semibold outline-none"
-                            />
-                            <span className="text-sm font-medium text-black/40">to</span>
-                            <input
-                              type="time"
-                              value={h.closeTime}
-                              onChange={(e) =>
-                                updateHours(day.value, 'closeTime', e.target.value.slice(0, 5))
-                              }
-                              className="rounded-[8px] bg-black/5 px-3 py-1.5 text-sm font-semibold outline-none"
-                            />
-                          </>
-                        ) : (
-                          <span className="text-sm font-bold uppercase tracking-wider text-black/40 flex-1 sm:text-right">
-                            Closed
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-10 flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="rounded-[12px] px-6 py-4 text-sm font-bold transition-colors hover:bg-black/5"
-                  style={{ color: 'var(--blooso-text)', border: '1px solid var(--blooso-border)' }}
-                >
-                  Back
-                </button>
-                <button
-                  type="submit"
                   disabled={loading}
                   className="flex flex-1 items-center justify-center gap-2 rounded-[12px] py-4 text-sm font-bold text-white transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
                   style={{ backgroundColor: 'var(--blooso-rose)' }}
@@ -628,7 +564,7 @@ export default function OnboardingPage() {
                   {loading ? (
                     <div className="size-5 animate-spin rounded-full border-2 border-white/20 border-t-white" />
                   ) : (
-                    'Complete Setup'
+                    'Submit Application'
                   )}
                 </button>
               </div>

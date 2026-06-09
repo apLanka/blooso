@@ -51,10 +51,7 @@ export default function ClientsPage() {
     getMyBusinesses(token)
       .then((list) => {
         setBusinesses(list);
-        const bid =
-          businessId && list.some((b) => b.id === businessId)
-            ? businessId
-            : list[0]?.id;
+        const bid = businessId && list.some((b) => b.id === businessId) ? businessId : list[0]?.id;
         if (bid && !businessId && list.length > 0) {
           router.replace(`/clients?business=${bid}`);
         }
@@ -127,8 +124,10 @@ export default function ClientsPage() {
   if (businesses.length === 0) {
     return (
       <div className="space-y-4">
-        <p className="text-muted-foreground">Create a business first.</p>
-        <Button onClick={() => router.push('/onboarding')}>Create business</Button>
+        <p className="text-muted-foreground">
+          Apply to list your business on Blooso to manage clients.
+        </p>
+        <Button onClick={() => router.push('/dashboard')}>Apply for Business</Button>
       </div>
     );
   }
@@ -182,69 +181,55 @@ export default function ClientsPage() {
             <CardContent className="pt-6">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Add client</h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setFormOpen(false)}
-                >
+                <Button variant="ghost" size="icon" onClick={() => setFormOpen(false)}>
                   <X className="h-5 w-5" />
                 </Button>
               </div>
               <form onSubmit={handleCreateClient} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label>First name</Label>
-                <Input
-                  value={form.firstName}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, firstName: e.target.value }))
-                  }
-                  required
-                />
-              </div>
-              <div>
-                <Label>Last name</Label>
-                <Input
-                  value={form.lastName}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, lastName: e.target.value }))
-                  }
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <Label>Email</Label>
-              <Input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                required
-              />
-            </div>
-            <div>
-              <Label>Phone (optional)</Label>
-              <Input
-                value={form.phone}
-                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label>Date of birth (optional)</Label>
-              <Input
-                type="date"
-                value={form.dateOfBirth}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, dateOfBirth: e.target.value }))
-                }
-              />
-            </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label>First name</Label>
+                    <Input
+                      value={form.firstName}
+                      onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label>Last name</Label>
+                    <Input
+                      value={form.lastName}
+                      onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Phone (optional)</Label>
+                  <Input
+                    value={form.phone}
+                    onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label>Date of birth (optional)</Label>
+                  <Input
+                    type="date"
+                    value={form.dateOfBirth}
+                    onChange={(e) => setForm((f) => ({ ...f, dateOfBirth: e.target.value }))}
+                  />
+                </div>
                 <div className="flex justify-end gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setFormOpen(false)}
-                  >
+                  <Button type="button" variant="outline" onClick={() => setFormOpen(false)}>
                     Cancel
                   </Button>
                   <Button type="submit" disabled={submitting}>
@@ -292,10 +277,7 @@ export default function ClientsPage() {
               </thead>
               <tbody>
                 {clients.map((c) => (
-                  <tr
-                    key={c.id}
-                    className="border-b transition-colors hover:bg-muted/30"
-                  >
+                  <tr key={c.id} className="border-b transition-colors hover:bg-muted/30">
                     <td className="px-4 py-3">
                       <Link
                         href={`/clients/${c.id}?business=${currentBusinessId}`}
@@ -304,15 +286,9 @@ export default function ClientsPage() {
                         {c.firstName} {c.lastName}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {c.email}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {c.phone || '—'}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {formatDate(c.lastVisit)}
-                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{c.email}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{c.phone || '—'}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{formatDate(c.lastVisit)}</td>
                     <td className="px-4 py-3">{c.totalVisits ?? 0}</td>
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1">
@@ -332,9 +308,7 @@ export default function ClientsPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/clients/${c.id}?business=${currentBusinessId}`}
-                      >
+                      <Link href={`/clients/${c.id}?business=${currentBusinessId}`}>
                         <Button variant="ghost" size="icon">
                           <ChevronRight className="h-4 w-4" />
                         </Button>

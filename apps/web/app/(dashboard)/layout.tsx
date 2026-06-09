@@ -15,6 +15,7 @@ import {
   UserCircle,
   Calendar,
   MessageSquare,
+  ShieldCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -28,6 +29,8 @@ const navItems = [
   { href: '/reviews', label: 'Reviews', icon: MessageSquare },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
+
+const adminNavItems = [{ href: '/admin/applications', label: 'Applications', icon: ShieldCheck }];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -90,6 +93,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Link>
           );
         })}
+        {user?.role === 'admin' && (
+          <>
+            <div className="my-2 h-px" style={{ backgroundColor: 'var(--blooso-border-light)' }} />
+            {adminNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={cn(
+                    'group flex items-center gap-3.5 rounded-[12px] px-4 py-3 text-sm font-semibold transition-all',
+                    isActive ? 'shadow-sm' : 'hover:bg-black/5'
+                  )}
+                  style={{
+                    backgroundColor: isActive ? 'var(--blooso-rose)' : 'transparent',
+                    color: isActive ? '#fff' : 'var(--blooso-text-muted)',
+                  }}
+                >
+                  <Icon
+                    className={cn(
+                      'size-4 transition-transform group-hover:scale-110',
+                      isActive ? 'text-white' : 'text-current'
+                    )}
+                  />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </>
+        )}
       </nav>
 
       <div className="p-6">

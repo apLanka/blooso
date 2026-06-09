@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { getMyBusinesses, type BusinessWithDetails } from '@/lib/business-client';
+import { getMyApplication } from '@/lib/application-client';
 import {
   getDashboard,
   getRevenue,
@@ -20,6 +21,7 @@ import {
   TrendingUp,
   BarChart3,
   Clock,
+  FileText,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -41,6 +43,7 @@ export default function DashboardPage() {
   const businessId = searchParams.get('business');
 
   const [businesses, setBusinesses] = useState<BusinessWithDetails[] | null>(null);
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
   const [stats, setStats] = useState<Awaited<ReturnType<typeof getDashboard>> | null>(null);
   const [revenueData, setRevenueData] = useState<{ date: string; revenue: number }[]>([]);
   const [topServices, setTopServices] = useState<
@@ -60,6 +63,11 @@ export default function DashboardPage() {
         const bid = businessId && list.some((b) => b.id === businessId) ? businessId : list[0]?.id;
         if (bid && !businessId && list.length > 0) {
           router.replace(`/dashboard?business=${bid}`);
+        }
+        if (list.length === 0) {
+          getMyApplication(token)
+            .then((app) => setApplicationStatus(app?.status || null))
+            .catch(() => {});
         }
         return bid;
       })
@@ -101,6 +109,71 @@ export default function DashboardPage() {
   }
 
   if (!businesses || businesses.length === 0) {
+    if (applicationStatus === 'pending') {
+      return (
+        <div
+          className="animate-fade-in flex flex-col items-center justify-center rounded-[32px] px-6 py-24 text-center bg-white shadow-sm"
+          style={{ border: '1px solid var(--blooso-border-light)' }}
+        >
+          <div
+            className="mb-6 flex size-20 items-center justify-center rounded-full"
+            style={{ backgroundColor: '#FEF3C7' }}
+          >
+            <Clock className="size-10 text-yellow-600" />
+          </div>
+          <h2
+            className="mb-3 text-3xl font-bold"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
+            Application Pending
+          </h2>
+          <p className="mb-8 max-w-sm text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
+            Your business application is being reviewed. You'll get access to the dashboard once
+            approved.
+          </p>
+          <button
+            onClick={() => router.push('/my-bookings')}
+            className="rounded-[10px] px-8 py-3.5 text-sm font-semibold transition-all hover:bg-black/5 active:scale-[0.98]"
+            style={{ color: 'var(--blooso-text)', border: '1px solid var(--blooso-border)' }}
+          >
+            Go to Client Dashboard
+          </button>
+        </div>
+      );
+    }
+
+    if (applicationStatus === 'rejected') {
+      return (
+        <div
+          className="animate-fade-in flex flex-col items-center justify-center rounded-[32px] px-6 py-24 text-center bg-white shadow-sm"
+          style={{ border: '1px solid var(--blooso-border-light)' }}
+        >
+          <div
+            className="mb-6 flex size-20 items-center justify-center rounded-full"
+            style={{ backgroundColor: '#FEE2E2' }}
+          >
+            <FileText className="size-10 text-red-600" />
+          </div>
+          <h2
+            className="mb-3 text-3xl font-bold"
+            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
+          >
+            Application Rejected
+          </h2>
+          <p className="mb-8 max-w-sm text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
+            Your previous business application was not approved. You can apply again.
+          </p>
+          <Link
+            href="/onboarding"
+            className="rounded-[10px] px-8 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
+            style={{ backgroundColor: 'var(--blooso-rose)' }}
+          >
+            Apply Again
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div
         className="animate-fade-in flex flex-col items-center justify-center rounded-[32px] px-6 py-24 text-center bg-white shadow-sm"
@@ -121,14 +194,14 @@ export default function DashboardPage() {
           Welcome to Blooso
         </h2>
         <p className="mb-8 max-w-sm text-sm" style={{ color: 'var(--blooso-text-muted)' }}>
-          Get started managing your salon or spa by setting up your business profile.
+          Get started managing your salon or spa by applying to list your business on Blooso.
         </p>
         <Link
           href="/onboarding"
           className="rounded-[10px] px-8 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
           style={{ backgroundColor: 'var(--blooso-rose)' }}
         >
-          Create your business
+          Apply for Business
         </Link>
       </div>
     );

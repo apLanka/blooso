@@ -13,6 +13,7 @@ import { PaymentModule } from './payment/payment.module';
 import { ClientModule } from './client/client.module';
 import { ReviewModule } from './review/review.module';
 import { ReportModule } from './report/report.module';
+import { BusinessApplicationModule } from './business-application/business-application.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
@@ -32,6 +33,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     ClientModule,
     ReviewModule,
     ReportModule,
+    BusinessApplicationModule,
   ],
   controllers: [AppController],
   providers: [

@@ -85,8 +85,10 @@ export default function SettingsPage() {
   if (businesses.length === 0) {
     return (
       <div className="space-y-4">
-        <p className="text-muted-foreground">No businesses yet. Create one to get started.</p>
-        <Button onClick={() => router.push('/onboarding')}>Create business</Button>
+        <p className="text-muted-foreground">
+          Apply to list your business on Blooso to get started.
+        </p>
+        <Button onClick={() => router.push('/dashboard')}>Apply for Business</Button>
       </div>
     );
   }
