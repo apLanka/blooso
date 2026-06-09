@@ -51,7 +51,7 @@ export function FinalCta() {
             </Link>
             <Link
               id="final-cta-business-btn"
-              href="/register"
+              href="/onboarding"
               className={cn(
                 'inline-flex h-12 items-center justify-center rounded-[10px] border px-8 text-sm font-semibold',
                 'transition-all hover:bg-black/[0.04] active:scale-[0.98]'

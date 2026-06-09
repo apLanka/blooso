@@ -8,9 +8,9 @@ const FOOTER_LINKS = {
     { href: '/search?category=nails', label: 'Nail Care' },
   ],
   'For Businesses': [
-    { href: '/register', label: 'List Your Business' },
+    { href: '/onboarding', label: 'List Your Business' },
     { href: '/register', label: 'Pricing' },
-    { href: '/register', label: 'Business Login' },
+    { href: '/login', label: 'Business Login' },
   ],
   Support: [
     { href: '/login', label: 'Help Centre' },

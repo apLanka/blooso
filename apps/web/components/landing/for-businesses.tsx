@@ -74,7 +74,7 @@ export function ForBusinesses() {
             {/* CTA */}
             <Link
               id="business-list-cta-btn"
-              href="/register"
+              href="/onboarding"
               className={cn(
                 'mt-10 inline-flex h-12 items-center justify-center gap-2 rounded-[10px] px-8 text-sm font-semibold',
                 'transition-all hover:opacity-90 active:scale-[0.98]'
