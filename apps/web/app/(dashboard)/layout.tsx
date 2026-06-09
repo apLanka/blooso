@@ -132,7 +132,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ── Desktop Sidebar ── */}
       <aside
-        className="hidden w-72 flex-col border-r pt-[72px] md:flex"
+        className="hidden w-72 flex-col border-r pt-[120px] md:flex"
         style={{
           backgroundColor: 'var(--blooso-bg-warm)',
           borderColor: 'var(--blooso-border-light)',
@@ -176,7 +176,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* ── Main Content Area ── */}
-      <div className="flex flex-1 flex-col overflow-hidden pt-[72px]">
+      <div className="flex flex-1 flex-col overflow-hidden pt-[120px]">
         {/* Mobile Sidebar Toggle */}
         <button
           className="fixed bottom-6 right-6 z-30 flex size-14 items-center justify-center rounded-full shadow-lg md:hidden"
