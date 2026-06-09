@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Navbar } from '@/components/layout/navbar';
 
 const QUOTES = {
   login: {
@@ -30,7 +31,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="relative hidden w-[46%] shrink-0 lg:block">
         {/* Full-bleed photo */}
         <Image
-          key={imageSrc} // Force re-render of image when src changes to prevent cross-fade bugs
+          key={imageSrc}
           src={imageSrc}
           alt={
             isRegister
@@ -75,18 +76,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
       {/* ── Right panel: form ── */}
       <div className="flex flex-1 flex-col">
-        {/* Mobile-only top bar with logo */}
-        <div
-          className="flex h-16 items-center border-b px-6 lg:hidden"
-          style={{ borderColor: 'var(--blooso-border-light)' }}
-        >
-          <Link
-            href="/"
-            className="text-xl font-bold tracking-tight"
-            style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
-          >
-            Blooso
-          </Link>
+        {/* Mobile-only Navbar */}
+        <div className="lg:hidden">
+          <Navbar alwaysSolid />
         </div>
 
         {/* Centred form area */}

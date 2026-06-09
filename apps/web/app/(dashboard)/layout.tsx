@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Navbar } from '@/components/layout/navbar';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -54,17 +55,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return null;
   }
 
+  const handleLogout = async () => {
+    await logout();
+    router.push('/login');
+  };
+
   const SidebarContent = () => (
     <>
-      <div className="flex h-20 items-center px-8">
-        <Link
-          href="/dashboard"
-          className="font-serif text-2xl font-bold tracking-tight"
-          style={{ color: 'var(--blooso-text)' }}
-        >
-          Blooso<span style={{ color: 'var(--blooso-rose)' }}>.</span>
-        </Link>
-      </div>
       <nav className="flex-1 space-y-1.5 px-4 pt-4">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -126,45 +123,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </>
         )}
       </nav>
-
-      <div className="p-6">
-        <div
-          className="rounded-[16px] p-5 shadow-sm"
-          style={{ backgroundColor: '#fff', border: '1px solid var(--blooso-border-light)' }}
-        >
-          <p
-            className="text-xs font-bold uppercase tracking-wider"
-            style={{ color: 'var(--blooso-text-subtle)' }}
-          >
-            Logged in as
-          </p>
-          <p
-            className="mt-1 truncate text-sm font-semibold"
-            style={{ color: 'var(--blooso-text)' }}
-          >
-            {user.name}
-          </p>
-          <button
-            onClick={async () => {
-              await logout();
-              router.push('/login');
-            }}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-[8px] py-2 text-xs font-semibold transition-colors hover:bg-black/5"
-            style={{ color: 'var(--blooso-text-muted)', border: '1px solid var(--blooso-border)' }}
-          >
-            <LogOut className="size-3.5" />
-            Sign out
-          </button>
-        </div>
-      </div>
     </>
   );
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9F7F5' }}>
+      <Navbar alwaysSolid />
+
       {/* ── Desktop Sidebar ── */}
       <aside
-        className="hidden w-72 flex-col border-r md:flex"
+        className="hidden w-72 flex-col border-r pt-[72px] md:flex"
         style={{
           backgroundColor: 'var(--blooso-bg-warm)',
           borderColor: 'var(--blooso-border-light)',
@@ -189,6 +157,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
         style={{ backgroundColor: 'var(--blooso-bg-warm)' }}
       >
+        <div className="flex h-20 items-center px-8">
+          <Link
+            href="/dashboard"
+            className="font-serif text-2xl font-bold tracking-tight"
+            style={{ color: 'var(--blooso-text)' }}
+          >
+            Blooso<span style={{ color: 'var(--blooso-rose)' }}>.</span>
+          </Link>
+        </div>
         <SidebarContent />
         <button
           onClick={() => setSidebarOpen(false)}
@@ -199,30 +176,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* ── Main Content Area ── */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Mobile Header */}
-        <header
-          className="flex h-16 shrink-0 items-center justify-between border-b px-6 md:hidden backdrop-blur-md sticky top-0 z-30"
-          style={{
-            backgroundColor: 'rgba(249, 247, 245, 0.8)',
-            borderColor: 'var(--blooso-border-light)',
-          }}
+      <div className="flex flex-1 flex-col overflow-hidden pt-[72px]">
+        {/* Mobile Sidebar Toggle */}
+        <button
+          className="fixed bottom-6 right-6 z-30 flex size-14 items-center justify-center rounded-full shadow-lg md:hidden"
+          style={{ backgroundColor: 'var(--blooso-rose)', color: '#fff' }}
+          onClick={() => setSidebarOpen(true)}
         >
-          <Link
-            href="/dashboard"
-            className="font-serif text-xl font-bold tracking-tight"
-            style={{ color: 'var(--blooso-text)' }}
-          >
-            Blooso<span style={{ color: 'var(--blooso-rose)' }}>.</span>
-          </Link>
-          <button
-            className="flex size-10 items-center justify-center rounded-full transition-colors hover:bg-black/5"
-            style={{ color: 'var(--blooso-text)' }}
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="size-5" />
-          </button>
-        </header>
+          <Menu className="size-6" />
+        </button>
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-10 lg:p-12">
           <div className="mx-auto max-w-6xl">{children}</div>

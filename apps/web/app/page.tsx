@@ -1,4 +1,6 @@
-import { LandingHeader } from '@/components/landing/landing-header';
+'use client';
+
+import { Navbar } from '@/components/layout/navbar';
 import { Hero } from '@/components/landing/hero';
 import { HowItWorks } from '@/components/landing/how-it-works';
 import { CategoriesSection } from '@/components/landing/categories-section';
@@ -11,7 +13,7 @@ import { LandingFooter } from '@/components/landing/landing-footer';
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <LandingHeader />
+      <Navbar />
       <Hero />
       <HowItWorks />
       <CategoriesSection />
