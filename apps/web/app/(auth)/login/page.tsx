@@ -33,8 +33,9 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginInput) => {
     setError(null);
     try {
-      await login(data.email, data.password);
-      router.push('/dashboard');
+      const user = await login(data.email, data.password);
+      const isClient = user.role === 'client';
+      router.push(isClient ? '/my-bookings' : '/dashboard');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Invalid email or password. Please try again.');
     }

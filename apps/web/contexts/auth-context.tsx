@@ -18,8 +18,8 @@ interface AuthState {
 }
 
 interface AuthContextValue extends AuthState {
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  register: (email: string, password: string, name: string) => Promise<User>;
   logout: () => Promise<void>;
   getToken: () => string | null;
 }
@@ -127,6 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading: false,
       isAuthenticated: true,
     });
+    return data.user;
   }, []);
 
   const register = useCallback(async (email: string, password: string, name: string) => {
@@ -142,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading: false,
       isAuthenticated: true,
     });
+    return data.user;
   }, []);
 
   const logout = useCallback(async () => {

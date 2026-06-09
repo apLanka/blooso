@@ -33,8 +33,9 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterInput) => {
     setError(null);
     try {
-      await registerUser(data.email, data.password, data.name);
-      router.push('/dashboard');
+      const user = await registerUser(data.email, data.password, data.name);
+      const isClient = user.role === 'client';
+      router.push(isClient ? '/my-bookings' : '/dashboard');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Registration failed. Please try again.');
     }
