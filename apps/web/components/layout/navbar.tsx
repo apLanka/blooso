@@ -14,6 +14,7 @@ const PUBLIC_LINKS = [
 const CLIENT_LINKS = [
   { href: '/search', label: 'Services' },
   { href: '/account', label: 'Account' },
+  { href: '/onboarding', label: 'For Businesses' },
 ];
 
 const OWNER_LINKS = [

@@ -34,7 +34,10 @@ export default function OnboardingPage() {
   const token = getToken();
 
   useEffect(() => {
-    if (!token || !user) return;
+    if (!token || !user) {
+      setCheckingApplication(false);
+      return;
+    }
     getMyApplication(token)
       .then((app) => {
         if (app) {
