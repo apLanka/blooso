@@ -28,7 +28,7 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="blooso-section-pad"
+      className="blooso-section-pad pt-28 md:pt-40"
       style={{ backgroundColor: 'var(--blooso-bg)' }}
       aria-labelledby="how-it-works-heading"
     >

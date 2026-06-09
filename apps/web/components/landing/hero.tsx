@@ -13,8 +13,8 @@ export function Hero() {
     >
       {/* ── Full-width Background Image ── */}
       <Image
-        src="/landing/hero_spa_lifestyle_1779628990242.png"
-        alt="Premium spa and salon booking"
+        src="/landing/hero_hair_salon_1781016766456.png"
+        alt="Beautiful girl getting a haircut in a premium hair salon"
         fill
         className="absolute inset-0 z-0 object-cover object-center"
         priority
@@ -64,7 +64,7 @@ export function Hero() {
 
       {/* ── Floating Overlapping Search Bar ── */}
       <div
-        className="absolute bottom-0 left-1/2 z-30 w-full max-w-5xl px-6"
+        className="absolute bottom-0 left-1/2 z-30 w-full max-w-6xl px-6"
         style={{ transform: 'translateX(-50%) translateY(50%)' }}
       >
         <div className="animate-fade-up w-full" style={{ animationDelay: '240ms' }}>
