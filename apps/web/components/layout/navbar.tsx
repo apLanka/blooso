@@ -100,7 +100,7 @@ export function Navbar({ alwaysSolid = false }: NavbarProps) {
       <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <Link
-          href={user ? dashboardHref : '/'}
+          href="/"
           className="font-serif text-2xl font-bold tracking-tight"
           style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
           aria-label="Blooso home"
