@@ -115,7 +115,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
             className="font-serif text-2xl font-bold tracking-tight"
             style={{ color: 'var(--blooso-text)' }}
           >
-            Blooso
+            Blooso<span style={{ color: 'var(--blooso-rose)' }}>.</span>
           </Link>
         </div>
         <SidebarContent />
