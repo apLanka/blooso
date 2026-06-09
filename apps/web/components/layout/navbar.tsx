@@ -89,12 +89,12 @@ export function Navbar({ alwaysSolid = false }: NavbarProps) {
   const dashboardHref = user?.role === 'client' ? '/account' : '/dashboard';
 
   return (
-    <header className="fixed top-4 z-50 w-full px-4 transition-all duration-300">
+    <header className="fixed top-6 z-50 w-full px-4 transition-all duration-300">
       <div
         className={cn(
           'mx-auto flex h-[72px] max-w-6xl items-center justify-between px-6 rounded-2xl transition-all duration-300',
           scrolled
-            ? 'bg-white/80 backdrop-blur-xl shadow-md border border-white/50'
+            ? 'bg-white shadow-md border border-gray-200'
             : 'bg-white/30 backdrop-blur-md border border-white/20 shadow-lg'
         )}
       >
@@ -114,8 +114,8 @@ export function Navbar({ alwaysSolid = false }: NavbarProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:bg-black/5"
-              style={{ color: 'var(--blooso-text-muted)' }}
+              className="rounded-lg px-4 py-2 text-sm font-semibold transition-colors hover:bg-black/5"
+              style={{ color: 'var(--blooso-text)' }}
             >
               {link.label}
             </Link>
@@ -125,8 +125,8 @@ export function Navbar({ alwaysSolid = false }: NavbarProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:bg-black/5"
-              style={{ color: 'var(--blooso-text-muted)' }}
+              className="rounded-lg px-4 py-2 text-sm font-semibold transition-colors hover:bg-black/5"
+              style={{ color: 'var(--blooso-text)' }}
             >
               {link.label}
             </Link>
@@ -248,8 +248,8 @@ export function Navbar({ alwaysSolid = false }: NavbarProps) {
             <>
               <Link
                 href="/login"
-                className="rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:bg-black/5"
-                style={{ color: 'var(--blooso-text-muted)' }}
+                className="rounded-lg px-4 py-2 text-sm font-semibold transition-colors hover:bg-black/5"
+                style={{ color: 'var(--blooso-text)' }}
               >
                 Login
               </Link>
