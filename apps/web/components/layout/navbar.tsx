@@ -89,16 +89,15 @@ export function Navbar({ alwaysSolid = false }: NavbarProps) {
   const dashboardHref = user?.role === 'client' ? '/account' : '/dashboard';
 
   return (
-    <header
-      className={cn(
-        'fixed top-0 z-50 w-full transition-all duration-300',
-        scrolled
-          ? 'border-b bg-white/95 shadow-sm shadow-black/5 backdrop-blur-md'
-          : 'bg-transparent'
-      )}
-      style={{ borderColor: scrolled ? 'var(--blooso-border-light)' : 'transparent' }}
-    >
-      <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-6">
+    <header className="fixed top-4 z-50 w-full px-4 transition-all duration-300">
+      <div
+        className={cn(
+          'mx-auto flex h-[72px] max-w-6xl items-center justify-between px-6 rounded-2xl transition-all duration-300',
+          scrolled
+            ? 'bg-white/80 backdrop-blur-xl shadow-md border border-white/50'
+            : 'bg-white/30 backdrop-blur-md border border-white/20 shadow-lg'
+        )}
+      >
         {/* Logo */}
         <Link
           href="/"

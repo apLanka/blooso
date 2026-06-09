@@ -5,78 +5,140 @@ import { useState, useCallback } from 'react';
 import { Search, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+const CATEGORIES = [
+  { id: 'hair', label: 'Hair & Styling' },
+  { id: 'spa', label: 'Spa & Massage' },
+  { id: 'nails', label: 'Nails' },
+  { id: 'barber', label: 'Barbershops' },
+];
+
 export function HeroSearchBar() {
   const router = useRouter();
+  const [activeCategory, setActiveCategory] = useState(CATEGORIES[0].id);
   const [query, setQuery] = useState('');
+  const [location, setLocation] = useState('');
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      const trimmed = query.trim();
-      if (trimmed) {
-        router.push(`/search?q=${encodeURIComponent(trimmed)}`);
-      } else {
-        router.push('/search');
-      }
+      const params = new URLSearchParams();
+      if (query.trim()) params.append('q', query.trim());
+      if (location.trim()) params.append('location', location.trim());
+      params.append('category', activeCategory);
+
+      router.push(`/search?${params.toString()}`);
     },
-    [query, router]
+    [query, location, activeCategory, router]
   );
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      id="hero-search-form"
-      className={cn(
-        'flex w-full items-center',
-        'h-14 rounded-[12px] bg-white p-1.5',
-        'ring-1 transition-all',
-        'focus-within:ring-2'
-      )}
-      style={{
-        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-        outline: '1px solid var(--blooso-border)',
-      }}
+    <div
+      className="w-full rounded-[24px] bg-white p-5 shadow-2xl md:p-8"
+      style={{ border: '1px solid var(--blooso-border-light)' }}
     >
-      <Search
-        className="ml-3 size-5 shrink-0"
-        style={{ color: 'var(--blooso-text-subtle)' }}
-        aria-hidden
-      />
-      <input
-        id="hero-search-input"
-        type="search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Salon, spa, barbershop..."
-        className="min-w-0 flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-sm"
-        style={{
-          color: 'var(--blooso-text)',
-        }}
-        aria-label="Search for beauty and wellness services"
-      />
+      {/* ── Tabs ── */}
       <div
-        className="hidden h-6 w-px shrink-0 sm:block"
-        style={{ backgroundColor: 'var(--blooso-border)' }}
-        aria-hidden
-      />
-      <div className="hidden shrink-0 items-center gap-1.5 px-3 sm:flex">
-        <MapPin className="size-4" style={{ color: 'var(--blooso-text-subtle)' }} aria-hidden />
-        <span className="text-sm" style={{ color: 'var(--blooso-text-subtle)' }}>
-          Near me
-        </span>
-      </div>
-      <button
-        id="hero-search-submit-btn"
-        type="submit"
-        className={cn(
-          'ml-1 h-11 shrink-0 rounded-[9px] px-5 text-sm font-semibold',
-          'transition-all hover:opacity-90 active:scale-[0.98]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
-        )}
-        style={{ backgroundColor: 'var(--blooso-rose)', color: '#fff' }}
+        className="mb-6 flex overflow-x-auto border-b pb-4 hide-scrollbar gap-2"
+        style={{ borderColor: 'var(--blooso-border-light)' }}
       >
-        Search
-      </button>
-    </form>
+        {CATEGORIES.map((cat) => {
+          const isActive = activeCategory === cat.id;
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setActiveCategory(cat.id)}
+              className={cn(
+                'whitespace-nowrap px-4 py-2 text-sm font-semibold transition-all relative rounded-full',
+                isActive ? 'bg-black/5' : 'hover:bg-black/5'
+              )}
+              style={{
+                color: isActive ? 'var(--blooso-text)' : 'var(--blooso-text-muted)',
+              }}
+            >
+              {cat.label}
+              {isActive && (
+                <div
+                  className="absolute bottom-[-16px] left-1/2 -translate-x-1/2 h-[3px] w-8 rounded-t-full"
+                  style={{ backgroundColor: 'var(--blooso-rose)' }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Search Form ── */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 md:flex-row md:items-end">
+        {/* Service Input */}
+        <div className="flex-1">
+          <label
+            className="mb-2 block text-xs font-bold uppercase tracking-wider pl-1"
+            style={{ color: 'var(--blooso-text-subtle)' }}
+          >
+            What are you looking for?
+          </label>
+          <div
+            className="relative flex h-14 w-full items-center rounded-[12px] px-4 transition-all focus-within:shadow-md"
+            style={{
+              backgroundColor: '#F9F7F5',
+              border: '1px solid var(--blooso-border)',
+            }}
+          >
+            <Search
+              className="mr-3 size-5 shrink-0"
+              style={{ color: 'var(--blooso-text-subtle)' }}
+            />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="e.g. Haircut, Balayage, Massage..."
+              className="w-full bg-transparent text-sm font-medium outline-none placeholder:font-normal placeholder:text-gray-400"
+              style={{ color: 'var(--blooso-text)' }}
+            />
+          </div>
+        </div>
+
+        {/* Location Input */}
+        <div className="flex-1">
+          <label
+            className="mb-2 block text-xs font-bold uppercase tracking-wider pl-1"
+            style={{ color: 'var(--blooso-text-subtle)' }}
+          >
+            Where?
+          </label>
+          <div
+            className="relative flex h-14 w-full items-center rounded-[12px] px-4 transition-all focus-within:shadow-md"
+            style={{
+              backgroundColor: '#F9F7F5',
+              border: '1px solid var(--blooso-border)',
+            }}
+          >
+            <MapPin
+              className="mr-3 size-5 shrink-0"
+              style={{ color: 'var(--blooso-text-subtle)' }}
+            />
+            <input
+              type="search"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="e.g. Colombo, Galle..."
+              className="w-full bg-transparent text-sm font-medium outline-none placeholder:font-normal placeholder:text-gray-400"
+              style={{ color: 'var(--blooso-text)' }}
+            />
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="flex h-14 items-center justify-center rounded-[12px] px-10 text-sm font-bold transition-all hover:opacity-90 active:scale-[0.98] md:w-auto shadow-md"
+          style={{ backgroundColor: 'var(--blooso-rose)', color: '#fff' }}
+        >
+          Search
+        </button>
+      </form>
+    </div>
   );
 }
