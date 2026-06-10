@@ -32,7 +32,8 @@ export async function getAdminBusinesses(token: string): Promise<AdminBusinessDT
     },
   });
   if (!res.ok) {
-    throw new Error('Failed to fetch admin businesses');
+    const errorText = await res.text().catch(() => 'No response body');
+    throw new Error(`Failed to fetch admin businesses: ${res.status} ${errorText}`);
   }
   return res.json();
 }
