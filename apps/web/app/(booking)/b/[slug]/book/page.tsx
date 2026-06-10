@@ -174,7 +174,7 @@ export default function BookPage() {
   const currentStepNum = STEPS[step];
 
   return (
-    <div className="animate-fade-up pb-32">
+    <div className="animate-fade-up pb-32 pt-24">
       {/* ── Top Bar ── */}
       <div className="blooso-container mx-auto px-6 py-8">
         <button
