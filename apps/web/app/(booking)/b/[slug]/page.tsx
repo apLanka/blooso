@@ -71,7 +71,7 @@ export default function BusinessProfilePage() {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="animate-fade-in relative pb-32">
+    <div className="animate-fade-in relative pb-32 pt-24">
       {/* ── Top Navigation / Back ── */}
       <div className="blooso-container mx-auto px-6 py-6">
         <button
