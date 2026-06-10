@@ -15,18 +15,6 @@ const CLIENT_NAV_LINKS = [
   { href: '/my-bookings', label: 'My Bookings' },
 ];
 
-const OWNER_NAV_LINKS = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/calendar', label: 'Calendar' },
-  { href: '/clients', label: 'Clients' },
-  { href: '/services', label: 'Services' },
-  { href: '/staff', label: 'Staff' },
-  { href: '/reviews', label: 'Reviews' },
-  { href: '/settings', label: 'Settings' },
-];
-
-const ADMIN_EXTRA_LINKS = [{ href: '/admin/applications', label: 'Applications' }];
-
 interface LandingHeaderProps {
   alwaysSolid?: boolean;
   user?: { name: string; email: string; role: string } | null;
@@ -44,13 +32,20 @@ export function LandingHeader({ alwaysSolid = false, user, onLogout }: LandingHe
     return () => window.removeEventListener('scroll', onScroll);
   }, [alwaysSolid]);
 
+  const dashboardHref =
+    user?.role === 'admin'
+      ? '/admin/dashboard'
+      : user?.role === 'client'
+        ? '/my-bookings'
+        : '/dashboard';
+
   const navLinks = user
     ? user.role === 'client'
       ? CLIENT_NAV_LINKS
-      : OWNER_NAV_LINKS
+      : [{ href: dashboardHref, label: 'Dashboard' }]
     : PUBLIC_NAV_LINKS;
 
-  const extraLinks = user?.role === 'admin' ? ADMIN_EXTRA_LINKS : [];
+  const extraLinks = [];
 
   return (
     <header
@@ -65,7 +60,7 @@ export function LandingHeader({ alwaysSolid = false, user, onLogout }: LandingHe
       <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <Link
-          href={user ? (user.role === 'client' ? '/my-bookings' : '/dashboard') : '/'}
+          href={user ? dashboardHref : '/'}
           className="font-serif text-2xl font-bold tracking-tight"
           style={{ color: 'var(--blooso-text)', fontFamily: 'var(--font-serif)' }}
           aria-label="Blooso home"
