@@ -1,5 +1,5 @@
 import { AdminDashboardStats, AdminUserDTO, AdminBusinessDTO } from '@repo/shared/types';
-import { API_URL } from './constants';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export async function getAdminDashboardStats(token: string): Promise<AdminDashboardStats> {
   const res = await fetch(`${API_URL}/admin/dashboard-stats`, {
