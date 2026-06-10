@@ -25,7 +25,7 @@ export default function LoginPage() {
             ? '/account'
             : '/dashboard';
       console.log('[LoginPage] already authenticated, redirecting to:', href);
-      router.replace(href);
+      setTimeout(() => router.replace(href), 0);
     }
   }, [isAuthenticated, user, router]);
 

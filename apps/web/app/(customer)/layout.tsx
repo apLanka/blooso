@@ -32,7 +32,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.replace('/login');
+      setTimeout(() => router.replace('/login'), 0);
     }
   }, [isLoading, user, router]);
 

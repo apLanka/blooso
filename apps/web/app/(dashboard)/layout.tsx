@@ -15,7 +15,6 @@ import {
   UserCircle,
   Calendar,
   MessageSquare,
-  ShieldCheck,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -39,7 +38,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.replace('/login');
+      setTimeout(() => router.replace('/login'), 0);
     }
   }, [isLoading, user, router]);
 
