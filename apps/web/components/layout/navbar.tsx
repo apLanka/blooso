@@ -17,18 +17,6 @@ const CLIENT_LINKS = [
   { href: '/onboarding', label: 'For Businesses' },
 ];
 
-const OWNER_LINKS = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/calendar', label: 'Calendar' },
-  { href: '/clients', label: 'Clients' },
-  { href: '/services', label: 'Services' },
-  { href: '/staff', label: 'Staff' },
-  { href: '/reviews', label: 'Reviews' },
-  { href: '/settings', label: 'Settings' },
-];
-
-const ADMIN_EXTRA_LINKS = [{ href: '/admin/applications', label: 'Applications' }];
-
 interface NavbarProps {
   alwaysSolid?: boolean;
 }
@@ -82,11 +70,20 @@ export function Navbar({ alwaysSolid = false }: NavbarProps) {
     }
   }, [profileOpen]);
 
-  const navLinks = user ? (user.role === 'client' ? CLIENT_LINKS : OWNER_LINKS) : PUBLIC_LINKS;
+  const dashboardHref =
+    user?.role === 'admin'
+      ? '/admin/dashboard'
+      : user?.role === 'client'
+        ? '/account'
+        : '/dashboard';
 
-  const extraLinks = user?.role === 'admin' ? ADMIN_EXTRA_LINKS : [];
+  const navLinks = user
+    ? user.role === 'client'
+      ? CLIENT_LINKS
+      : [{ href: dashboardHref, label: 'Dashboard' }]
+    : PUBLIC_LINKS;
 
-  const dashboardHref = user?.role === 'client' ? '/account' : '/dashboard';
+  const extraLinks = [];
 
   return (
     <header className="fixed top-6 z-50 w-full px-4 transition-all duration-300">
