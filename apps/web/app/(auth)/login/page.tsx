@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -16,6 +16,14 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const href = user.role === 'client' ? '/account' : '/dashboard';
+      console.log('[LoginPage] already authenticated, redirecting to:', href);
+      router.replace(href);
+    }
+  }, [isAuthenticated, user, router]);
+
   const {
     register: registerField,
     handleSubmit,
@@ -27,9 +35,6 @@ export default function LoginPage() {
   console.log('[LoginPage] render - isAuthenticated:', isAuthenticated, 'user:', user?.role);
 
   if (isAuthenticated && user) {
-    const href = user.role === 'client' ? '/account' : '/dashboard';
-    console.log('[LoginPage] already authenticated, redirecting to:', href);
-    router.replace(href);
     return null;
   }
 

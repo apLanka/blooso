@@ -17,7 +17,7 @@ import {
   MessageSquare,
   ShieldCheck,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/layout/navbar';
 
@@ -39,6 +39,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.replace('/login');
+    }
+  }, [isLoading, user, router]);
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F9F7F5]">
@@ -51,7 +57,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   if (!user) {
-    router.replace('/login');
     return null;
   }
 
