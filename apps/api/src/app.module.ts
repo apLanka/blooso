@@ -17,6 +17,7 @@ import { BusinessApplicationModule } from './business-application/business-appli
 import { MeModule } from './me/me.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     BusinessApplicationModule,
     MeModule,
     FavoriteModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

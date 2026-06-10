@@ -18,7 +18,12 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      const href = user.role === 'client' ? '/account' : '/dashboard';
+      const href =
+        user.role === 'admin'
+          ? '/admin/dashboard'
+          : user.role === 'client'
+            ? '/account'
+            : '/dashboard';
       console.log('[LoginPage] already authenticated, redirecting to:', href);
       router.replace(href);
     }
@@ -44,7 +49,12 @@ export default function LoginPage() {
       console.log('[LoginPage] onSubmit - calling login()');
       const loggedInUser = await login(data.email, data.password);
       console.log('[LoginPage] login() returned - role:', loggedInUser.role);
-      const href = loggedInUser.role === 'client' ? '/account' : '/dashboard';
+      const href =
+        loggedInUser.role === 'admin'
+          ? '/admin/dashboard'
+          : loggedInUser.role === 'client'
+            ? '/account'
+            : '/dashboard';
       console.log('[LoginPage] pushing to:', href);
       router.push(href);
     } catch (e) {

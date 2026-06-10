@@ -4,42 +4,31 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { cn } from '@/lib/utils';
-import {
-  LayoutDashboard,
-  Settings,
-  Menu,
-  X,
-  LogOut,
-  Scissors,
-  Users,
-  UserCircle,
-  Calendar,
-  MessageSquare,
-  ShieldCheck,
-} from 'lucide-react';
+import { LayoutDashboard, ShieldCheck, Building2, Users, Menu, X, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/layout/navbar';
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/clients', label: 'Clients', icon: UserCircle },
-  { href: '/services', label: 'Services', icon: Scissors },
-  { href: '/staff', label: 'Staff', icon: Users },
-  { href: '/reviews', label: 'Reviews', icon: MessageSquare },
-  { href: '/settings', label: 'Settings', icon: Settings },
+const adminNavItems = [
+  { href: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
+  { href: '/admin/applications', label: 'Applications', icon: ShieldCheck },
+  { href: '/admin/businesses', label: 'Businesses', icon: Building2 },
+  { href: '/admin/users', label: 'Users', icon: Users },
 ];
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isLoading, logout } = useAuth();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace('/login');
+    if (!isLoading) {
+      if (!user) {
+        router.replace('/login');
+      } else if (user.role !== 'admin') {
+        router.replace('/dashboard');
+      }
     }
   }, [isLoading, user, router]);
 
@@ -54,7 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
 
-  if (!user) {
+  if (!user || user.role !== 'admin') {
     return null;
   }
 
@@ -66,9 +55,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const SidebarContent = () => (
     <>
       <nav className="flex-1 space-y-1.5 px-4 pt-4">
-        {navItems.map((item) => {
+        <div className="mb-6 px-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+            Admin Platform
+          </p>
+        </div>
+        {adminNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href;
+          const isActive = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
@@ -94,6 +88,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           );
         })}
       </nav>
+      <div className="border-t p-4" style={{ borderColor: 'var(--blooso-border-light)' }}>
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3.5 rounded-[12px] px-4 py-3 text-sm font-semibold transition-colors hover:bg-black/5"
+          style={{ color: 'var(--blooso-text-muted)' }}
+        >
+          <LogOut className="size-4" />
+          Sign out
+        </button>
+      </div>
     </>
   );
 
@@ -130,7 +134,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       >
         <div className="flex h-20 items-center px-8">
           <Link
-            href="/dashboard"
+            href="/admin/dashboard"
             className="font-serif text-2xl font-bold tracking-tight"
             style={{ color: 'var(--blooso-text)' }}
           >
